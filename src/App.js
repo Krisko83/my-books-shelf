@@ -1,11 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import { StyleSheet, View, StatusBar } from 'react-native';
+import AddBookScreen from './screens/AddBookScreen.jsx';
+import BookDetailsScreen from './screens/BookDetailsScreen.jsx';
+import HomeScreen from './screens/HomeScreen.jsx';
+import LoginScreen from './screens/LoginScreen.jsx';
+import ProfileScreen from './screens/ProfileScreen.jsx';
+import RegisterScreen from './screens/RegisterScreen.jsx';
+import SettingsScreen from './screens/SettingsScreen.jsx';
+import WelcomeScreen from './screens/WelcomeScreen.jsx';
+ 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      {/* <HomeScreen /> */}
+      <LoginScreen />
+      {/* <RegisterScreen /> */}
+      {/* <SettingsScreen /> */}
+      {/* <WelcomeScreen /> */}
+      {/* <ProfileScreen /> */}
+      {/* <AddBookScreen /> */}
+      {/* <BookDetailsScreen /> */}
+      <StatusBar barStyle='dark-content' />
     </View>
   );
 }
