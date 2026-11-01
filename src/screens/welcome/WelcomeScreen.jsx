@@ -1,5 +1,5 @@
 import { View, Text, StatusBar, StyleSheet, Image, ScrollView, Pressable } from 'react-native';
-import { colors } from '../../theme';
+import { colors } from '../../../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function WelcomeScreen() {
@@ -7,7 +7,7 @@ export default function WelcomeScreen() {
     <View style={styles.screen}>
       <View style={styles.container}>
 
-        <Image source={require('../assets/books.jpg')} style={styles.image} />
+        <Image source={require('../../assets/books.jpg')} style={styles.image} />
 
         <View style={styles.overlay}>
 

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, StatusBar } from 'react-native';
-import { colors, common } from '../../theme';
+import { colors, common } from '../../../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const rows = ['My Library', 'Reading Statistics', 'Settings', 'Help & Support', 'About MyBookShelf'];

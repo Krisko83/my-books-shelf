@@ -1,16 +1,18 @@
 import { StyleSheet, View, StatusBar } from 'react-native';
-import AddBookScreen from './screens/AddBookScreen.jsx';
-import BookDetailsScreen from './screens/BookDetailsScreen.jsx';
-import HomeScreen from './screens/HomeScreen.jsx';
-import LoginScreen from './screens/LoginScreen.jsx';
-import ProfileScreen from './screens/ProfileScreen.jsx';
-import RegisterScreen from './screens/RegisterScreen.jsx';
-import SettingsScreen from './screens/SettingsScreen.jsx';
-import WelcomeScreen from './screens/WelcomeScreen.jsx';
+// import HomeScreen from './screens/home/HomeScreen.jsx';
+import LoginScreen from './screens/login/LoginScreen.jsx';
+import RegisterScreen from './screens/register/RegisterScreen.jsx';
+// import SettingsScreen from './screens/settings-screen/SettingsScreen.jsx';
+import WelcomeScreen from './screens/welcome/WelcomeScreen.jsx';
+// import ProfileScreen from './screens/profile/ProfileScreen.jsx';
+// import AddBookScreen from './screens/add-book/AddBookScreen.jsx';
+// import BookDetailsScreen from './screens/book-details/BookDetailsScreen.jsx';
+ 
  
 export default function App() {
   return (
     <View style={styles.container}>
+     
       {/* <HomeScreen /> */}
       <LoginScreen />
       {/* <RegisterScreen /> */}
@@ -23,6 +25,7 @@ export default function App() {
     </View>
   );
 }
+ 
 
 const styles = StyleSheet.create({
   container: {

@@ -1,5 +1,5 @@
 import { View, Text, TextInput, ScrollView, StatusBar } from 'react-native';
-import { colors, common } from '../../theme.js';
+import { colors, common } from '../../../theme.js';
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function AddBookScreen() {
