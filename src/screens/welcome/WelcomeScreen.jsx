@@ -1,6 +1,5 @@
 import { View, Text, StatusBar, StyleSheet, Image, ScrollView, Pressable } from 'react-native';
-import { colors } from '../../../theme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../../theme'; 
 
 export default function WelcomeScreen() {
   return (

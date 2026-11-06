@@ -1,12 +1,12 @@
-import { View, Text, ScrollView, StatusBar } from 'react-native';
-import { colors, common } from '../../../theme';
+import { View, Text, ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { colors } from '../../../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function BookDetailsScreen() {
   return (
-    <SafeAreaView style={common.screen}>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView contentContainerStyle={common.content}>
+    <View style={styles.screen}>
+
+      <ScrollView contentContainerStyle={styles.content}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 22 }}>
           <Text style={{ fontSize: 24, color: colors.text }}>‹</Text>
           <Text style={{ fontSize: 22, color: colors.text }}>♡</Text>
@@ -23,7 +23,7 @@ export default function BookDetailsScreen() {
             <Text style={{ color: colors.greenText, fontSize: 12, fontWeight: '700' }}>✓  Read</Text>
           </View>
         </View>
-        <View style={[common.card, { marginTop: 25 }]}>
+        <View style={[styles.card, { marginTop: 25 }]}>
           <Text style={{ color: colors.text, fontSize: 17, fontWeight: '800', marginBottom: 9 }}>About this book</Text>
           <Text style={{ color: colors.muted, lineHeight: 23, fontSize: 14 }}>On the desert planet Arrakis, the source of the most valuable substance in the universe, a young heir discovers his destiny.</Text>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
@@ -34,10 +34,30 @@ export default function BookDetailsScreen() {
           </View>
         </View>
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
-          <View style={[common.button, { flex: 1 }]}><Text style={common.buttonText}>✎  Edit</Text></View>
+          <View style={[styles.button, { flex: 1 }]}><Text style={styles.buttonText}>✎  Edit</Text></View>
           <View style={{ flex: 1, borderRadius: 16, backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: colors.redText, fontWeight: '700' }}>▤  Delete</Text></View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.background },
+  content: { padding: 22, paddingBottom: 36 },
+  input: {
+    minHeight: 50, borderWidth: 1, borderColor: colors.border, borderRadius: 13,
+    paddingHorizontal: 15, backgroundColor: colors.surface, color: colors.text,
+    fontSize: 14, marginBottom: 17,
+  },
+  button: {
+    minHeight: 52, borderRadius: 16, backgroundColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center', paddingHorizontal: 18,
+  },
+  buttonText: { color: '#FFFFFF', fontSize: 15, fontWeight: '700' },
+  card: {
+    backgroundColor: colors.surface, borderRadius: 18, padding: 16,
+    borderWidth: 1, borderColor: '#EFEEF6',
+  },
+});

@@ -1,6 +1,5 @@
 import { View, Text, TextInput, ScrollView, StatusBar } from 'react-native';
 import { colors, common } from '../../../theme';
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 const books = [
   { title: 'Atomic Habits', author: 'James Clear', status: 'Reading', cover: '#E8D6B2', ink: '#765B39', mark: 'A' },
@@ -11,8 +10,8 @@ const books = [
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={common.screen}>
-      <StatusBar barStyle="dark-content" />
+    <View style={common.screen}>
+       
       <View style={{ paddingHorizontal: 20, paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>MyBookShelf</Text>
         <Text style={{ fontSize: 22 }}>♧   <Text style={{ fontSize: 17 }}>👤</Text></Text>
@@ -49,6 +48,6 @@ export default function HomeScreen() {
       <View style={{ height: 66, backgroundColor: '#FFF', borderTopWidth: 1, borderTopColor: colors.border, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
         {['⌂\nHome', '▤\nMy Books', '+\nAdd', '▥\nStats', '⚙\nProfile'].map((item, i) => <Text key={item} style={{ textAlign: 'center', color: i === 0 ? colors.primary : colors.muted, fontSize: 11, fontWeight: i === 0 ? '800' : '500', lineHeight: 18 }}>{item}</Text>)}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

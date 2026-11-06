@@ -1,6 +1,5 @@
 import { View, Text, TextInput, ScrollView, StatusBar, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
 import { colors } from '../../../theme';
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { Controller, useForm } from 'react-hook-form';
 import EyeIcon from '../../components/eye-icon/EyeIcon.jsx';
 import { useState } from 'react';

@@ -3,9 +3,7 @@ import { colors } from '../../../theme';
 import { useForm, Controller } from 'react-hook-form';
 
 import EyeIcon from '../../components/eye-icon/EyeIcon';
-import { useState } from 'react';
-
-// import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react'; 
 
 
 export default function RegisterScreen() {
