@@ -3,6 +3,8 @@ import { colors } from '../../../theme.js';
 import { useForm, Controller } from 'react-hook-form';
 import InputController from '../../components/input-controller/InputController.jsx';
 import { Picker } from '@react-native-picker/picker';
+import RadioButton from '../../components/radio-button/RadioButton.jsx';
+import StarRating from '../../components/star-rating/StarRating.jsx';
 
 export default function AddBookScreen() {
   const { handleSubmit, getValues, control, reset, formState: { errors, isSubmitting } } = useForm({
@@ -12,12 +14,17 @@ export default function AddBookScreen() {
       title: '',
       author: '',
       description: '',
-      genre: ''
+      genre: '',
+      status: '',
+      rating: 0
     }
   })
 
+
+
   const submitHandler = (data) => {
     console.log(data);
+
 
     console.log('Submit');
     reset()
@@ -37,7 +44,7 @@ export default function AddBookScreen() {
           </View>
 
 
-          <Text style={styles.label}>Title *</Text>
+          <Text style={styles.label}>Title</Text>
           <InputController
             name='title'
             control={control}
@@ -61,7 +68,7 @@ export default function AddBookScreen() {
           }
 
 
-          <Text style={styles.label}>Author *</Text>
+          <Text style={styles.label}>Author</Text>
           <InputController
             name='author'
             control={control}
@@ -85,7 +92,7 @@ export default function AddBookScreen() {
           }
 
 
-          <Text style={styles.label}>Description *</Text>
+          <Text style={styles.label}>Description</Text>
           <InputController
             control={control}
             name='description'
@@ -136,17 +143,67 @@ export default function AddBookScreen() {
               </Picker>
             )}
           />
- 
+
+          {errors.genre &&
+            <Text style={styles.error}>{errors.genre.message}</Text>
+          }
+
+
 
           <Text style={styles.label}>Reading status</Text>
 
-          <View style={{ flexDirection: 'row', gap: 7, marginBottom: 20 }}>
-            {['Want to Read', 'Reading', 'Read'].map((x, i) => <View key={x} style={{ flex: 1, paddingVertical: 12, borderRadius: 11, backgroundColor: i === 1 ? colors.primary : '#ECEBF5', alignItems: 'center' }}><Text style={{ color: i === 1 ? '#FFF' : colors.muted, fontSize: 10, fontWeight: '700' }}>{x}</Text></View>)}
-          </View>
+          <Controller
+            control={control}
+            name='status'
+            rules={{
+              required: 'Reading status is required!'
+            }}
+            render={({ field: { onChange, value } }) => (
+              <View style={{ flexDirection: 'row', gap: 7, marginBottom: 20 }}>
+                <RadioButton
+                  label='Want to Read'
+                  selected={value === 'want-to-read'}
+                  onPress={() => onChange('want-to-read')}
+                />
+
+                <RadioButton
+                  label='Reading'
+                  selected={value === 'reading'}
+                  onPress={() => onChange('reading')}
+                />
+
+                <RadioButton
+                  label='Read'
+                  selected={value === 'read'}
+                  onPress={() => onChange('read')}
+                />
+              </View>
+            )}
+          />
+
+          {errors.status &&
+            <Text style={styles.error}>{errors.status.message}</Text>
+          }
 
           <Text style={styles.label}>Your rating</Text>
 
-          <Text style={{ color: colors.gold, fontSize: 29, marginBottom: 22 }}>★ ★ ★ ☆ ☆</Text>
+          <Controller
+            control={control}
+            name='rating'
+            rules={{
+              validate: value => value > 0 || 'Please select a rating!'
+            }}
+            render={({ field: { value, onChange } }) => (
+              <StarRating
+                onChange={onChange}
+                rating={value}
+              />
+            )}
+          />
+
+          {errors.rating &&
+            <Text style={styles.error}>{errors.rating.message}</Text>
+          }
 
           <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
             <Text style={styles.buttonText}>Save Book</Text>

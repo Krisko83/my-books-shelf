@@ -3,6 +3,7 @@ import { colors } from '../../../theme';
 import { Controller, useForm } from 'react-hook-form';
 import EyeIcon from '../../components/eye-icon/EyeIcon.jsx';
 import { useState } from 'react';
+import InputController from '../../components/input-controller/InputController.jsx';
 
 
 export default function LoginScreen() {
@@ -47,7 +48,22 @@ export default function LoginScreen() {
 
           <Text style={styles.label}>Email address</Text>
 
-          <Controller
+          <InputController
+            control={control}
+            name='email'
+            rules={{
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Invalid email address'
+              }
+            }}
+            placeholder="you@example.com"
+            handleSubmit={handleSubmit(submitHandler)}
+            keyboardType="email-address"
+          />
+
+          {/* <Controller
             control={control}
             name='email'
             rules={{
@@ -70,7 +86,7 @@ export default function LoginScreen() {
                 autoCapitalize="none"
               />
             )}
-          />
+          /> */}
 
           {errors.email &&
             <Text style={styles.error}>{errors.email.message}</Text>
