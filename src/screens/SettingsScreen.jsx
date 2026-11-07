@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, StatusBar, StyleSheet } from 'react-native';
-import { colors } from '../../../theme';
+import { colors } from '../../theme.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 

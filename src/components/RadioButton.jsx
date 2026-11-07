@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text } from "react-native";
-import { colors } from "../../../theme.js";
+import { colors } from "../../theme.js";
 
 export default function RadioButton({ label, onPress, selected }) {
 

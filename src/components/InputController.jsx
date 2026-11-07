@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { StyleSheet, TextInput } from "react-native";
-import { colors } from "../../../theme.js";
+import { colors } from "../../theme.js";
 
 export default function InputController({control, name, rules, placeholder, handleSubmit, capitalize='sentences', keyboardType = 'default'}) {
 

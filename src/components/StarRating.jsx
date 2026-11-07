@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native"
-import { colors } from "../../../theme.js";
+import { colors } from "../../theme.js";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function StarRating({ onChange, rating }) {

@@ -1,12 +1,12 @@
 import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
-import { colors } from '../../../theme';
+import { colors } from '../../theme.js';
 import { useForm, Controller } from 'react-hook-form';
+import { useState } from 'react';
+import EyeIcon from '../components/EyeIcon.jsx';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import EyeIcon from '../../components/eye-icon/EyeIcon';
-import { useState } from 'react'; 
 
-
-export default function RegisterScreen() {
+export default function RegisterScreen({ navigation }) {
   const { control, reset, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -18,7 +18,7 @@ export default function RegisterScreen() {
   })
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+  const insets = useSafeAreaInsets();
 
   const submitHandler = (data) => {
     console.log(data);
@@ -28,22 +28,22 @@ export default function RegisterScreen() {
   };
 
   const switchPasswordVisibility = (field) => {
- 
+
     setIsPasswordVisible(state => ({
       ...state,
       [field]: isPasswordVisible[field] ? false : true
     }))
   }
 
- 
-  
+
+
   return (
     <View style={styles.screen}>
-      <KeyboardAvoidingView behavior='padding'>
+      <KeyboardAvoidingView behavior='height' >
 
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} keyboardShouldPersistTaps="handled">
 
-          <View style={{ alignItems: 'center', marginTop: 22, marginBottom: 34 }}>
+          <View style={{ alignItems: 'center', marginBottom: 34 }}>
             <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
             <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
           </View>
@@ -64,18 +64,18 @@ export default function RegisterScreen() {
                 message: 'Invalid email address'
               }
             }}
-            render={({ field: { onBlur, onChange, value } }) => (          
-                <TextInput
-                  style={styles.input}
-                  placeholder="you@example.com"
-                  placeholderTextColor={colors.muted}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  onSubmitEditing={handleSubmit(submitHandler)}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                /> 
+            render={({ field: { onBlur, onChange, value } }) => (
+              <TextInput
+                style={styles.input}
+                placeholder="you@example.com"
+                placeholderTextColor={colors.muted}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                onSubmitEditing={handleSubmit(submitHandler)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
             )}
           />
 
@@ -106,7 +106,7 @@ export default function RegisterScreen() {
             render={({ field: { onBlur, onChange, value } }) => (
               <View style={styles.inputContainer}>
 
-                <TextInput 
+                <TextInput
                   style={styles.input}
                   value={value}
                   onBlur={onBlur}
@@ -144,7 +144,7 @@ export default function RegisterScreen() {
             render={({ field: { onBlur, onChange, value } }) => (
               <View style={styles.inputContainer}>
 
-                <TextInput 
+                <TextInput
                   style={styles.input}
                   value={value}
                   onBlur={onBlur}
@@ -172,10 +172,7 @@ export default function RegisterScreen() {
           <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
             <Text style={styles.buttonText}>Create Account</Text>
           </Pressable>
-
-          <Pressable onPress={() => console.log('Sign In')}>
-            <Text style={styles.buttonSignUp}>Already have an account? <Text style={{ color: colors.primary, fontWeight: '700' }}>Sign In</Text></Text>
-          </Pressable>
+ 
 
         </ScrollView>
       </KeyboardAvoidingView>
@@ -188,16 +185,19 @@ export const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.background,
-    width: '100%'
+    width: '100%',
   },
   content: {
-    padding: 22,
-    paddingBottom: 36
+    flexGrow: 1,
+    backgroundColor: colors.background,
+    paddingLeft: 22,
+    paddingRight: 22,
+
   },
   heading: {
     color: colors.text,
     fontSize: 27,
-    fontWeight: '800'
+    fontWeight: 800
   },
   subheading: {
     color: colors.muted,
@@ -222,24 +222,21 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     color: colors.text,
     fontSize: 14,
-    marginBottom: 17,
+    marginBottom: 20,
   },
   button: {
-    minHeight: 52, borderRadius: 16, backgroundColor: colors.primary,
-    alignItems: 'center', justifyContent: 'center', paddingHorizontal: 18,
-    marginTop: 8
+    minHeight: 52,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700'
-  },
-  buttonSignUp: {
-    textAlign: 'center',
-    color: colors.muted,
-    marginTop: 25,
-    fontSize: 13
-  },
+  }, 
   error: {
     color: 'red',
     marginBottom: 12,

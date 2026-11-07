@@ -1,21 +1,20 @@
-import { View, Text, TextInput, ScrollView, StatusBar } from 'react-native';
-import { colors, common } from '../../../theme';
+import { View, Text, TextInput, ScrollView } from 'react-native';
+import { colors, common } from '../../theme.js'; import { Link } from '@react-navigation/native';
+;
 
 const books = [
-  { title: 'Atomic Habits', author: 'James Clear', status: 'Reading', cover: '#E8D6B2', ink: '#765B39', mark: 'A' },
-  { title: 'Dune', author: 'Frank Herbert', status: 'Read', cover: '#D88C48', ink: '#35251D', mark: 'D' },
-  { title: 'The Midnight Library', author: 'Matt Haig', status: 'Want to Read', cover: '#27435C', ink: '#FFFFFF', mark: '✦' },
-  { title: 'Project Hail Mary', author: 'Andy Weir', status: 'Read', cover: '#D5B84A', ink: '#342B16', mark: 'P' },
+  { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWvaDsMEloTWdi1UzXzrlsL5BUTUq2eHfZGipoSf3dReBFhMQkMFeIc0k&s=10://upload.wikimedia.org/wikipedia/commons/b/b6/Gutenberg_Bible%2C_Lenox_Copy%2C_New_York_Public_Library%2C_2009._Pic_01.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original', id: 1, title: 'Atomic Habits', author: 'James Clear', status: 'Reading', genre: 'action', cover: '#E8D6B2', ink: '#765B39', mark: 'A' },
+  { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWvaDsMEloTWdi1UzXzrlsL5BUTUq2eHfZGipoSf3dReBFhMQkMFeIc0k&s=10://upload.wikimedia.org/wikipedia/commons/b/b6/Gutenberg_Bible%2C_Lenox_Copy%2C_New_York_Public_Library%2C_2009._Pic_01.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original', id: 2, title: 'Dune', author: 'Frank Herbert', status: 'Read', genre: 'action', cover: '#D88C48', ink: '#35251D', mark: 'D' },
+  { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWvaDsMEloTWdi1UzXzrlsL5BUTUq2eHfZGipoSf3dReBFhMQkMFeIc0k&s=10://upload.wikimedia.org/wikipedia/commons/b/b6/Gutenberg_Bible%2C_Lenox_Copy%2C_New_York_Public_Library%2C_2009._Pic_01.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original', id: 3, title: 'The Midnight Library', author: 'Matt Haig', genre: 'action', status: 'Want to Read', cover: '#27435C', ink: '#FFFFFF', mark: '✦' },
+  { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWvaDsMEloTWdi1UzXzrlsL5BUTUq2eHfZGipoSf3dReBFhMQkMFeIc0k&s=10://upload.wikimedia.org/wikipedia/commons/b/b6/Gutenberg_Bible%2C_Lenox_Copy%2C_New_York_Public_Library%2C_2009._Pic_01.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original', id: 4, title: 'Project Hail Mary', author: 'Andy Weir', genre: 'action', status: 'Read', cover: '#D5B84A', ink: '#342B16', mark: 'P' },
 ];
 
 export default function HomeScreen() {
+
   return (
     <View style={common.screen}>
-       
-      <View style={{ paddingHorizontal: 20, paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>MyBookShelf</Text>
-        <Text style={{ fontSize: 22 }}>♧   <Text style={{ fontSize: 17 }}>👤</Text></Text>
-      </View>
+
+
       <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 28 }}>
         <TextInput style={[common.input, { marginTop: 18, marginBottom: 15 }]} placeholder="⌕  Search books..." placeholderTextColor={colors.muted} />
         <View style={{ flexDirection: 'row', gap: 8, marginBottom: 22 }}>
@@ -27,7 +26,9 @@ export default function HomeScreen() {
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
           <Text style={{ color: colors.text, fontSize: 19, fontWeight: '800' }}>Your Library</Text>
-          <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>See all</Text>
+          <Link screen='MainMyBooks'>
+            <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>See all</Text>
+          </Link>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 18 }}>
           {books.map(book => (
@@ -45,9 +46,7 @@ export default function HomeScreen() {
           ))}
         </View>
       </ScrollView>
-      <View style={{ height: 66, backgroundColor: '#FFF', borderTopWidth: 1, borderTopColor: colors.border, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
-        {['⌂\nHome', '▤\nMy Books', '+\nAdd', '▥\nStats', '⚙\nProfile'].map((item, i) => <Text key={item} style={{ textAlign: 'center', color: i === 0 ? colors.primary : colors.muted, fontSize: 11, fontWeight: i === 0 ? '800' : '500', lineHeight: 18 }}>{item}</Text>)}
-      </View>
+
     </View>
   );
 }

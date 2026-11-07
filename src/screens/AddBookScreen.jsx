@@ -1,13 +1,14 @@
-import { View, Text, TextInput, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView } from 'react-native';
-import { colors } from '../../../theme.js';
+import { View, Text, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView } from 'react-native';
+
 import { useForm, Controller } from 'react-hook-form';
-import InputController from '../../components/input-controller/InputController.jsx';
 import { Picker } from '@react-native-picker/picker';
-import RadioButton from '../../components/radio-button/RadioButton.jsx';
-import StarRating from '../../components/star-rating/StarRating.jsx';
+import RadioButton from '../components/RadioButton.jsx';
+import InputController from '../components/InputController.jsx';
+import StarRating from '../components/StarRating.jsx';
+import { colors } from '../../theme.js';
 
 export default function AddBookScreen() {
-  const { handleSubmit, getValues, control, reset, formState: { errors, isSubmitting } } = useForm({
+  const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -36,7 +37,7 @@ export default function AddBookScreen() {
 
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 
-          <Text style={{ color: colors.text, fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 25 }}>Add Book</Text>
+          {/* <Text style={{ color: colors.text, fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 25 }}>Add Book</Text> */}
 
           <View style={{ height: 125, width: 125, borderRadius: 18, backgroundColor: '#ECEBF5', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
             <Text style={{ fontSize: 32, color: colors.primary }}>▧</Text>

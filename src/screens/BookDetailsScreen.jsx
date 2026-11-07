@@ -1,15 +1,13 @@
 import { View, Text, ScrollView, StatusBar, StyleSheet } from 'react-native';
-import { colors } from '../../../theme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../theme.js';
 
 export default function BookDetailsScreen() {
   return (
     <View style={styles.screen}>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 22 }}>
-          <Text style={{ fontSize: 24, color: colors.text }}>‹</Text>
-          <Text style={{ fontSize: 22, color: colors.text }}>♡</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 22 }}>     
+          {/* <Text style={{ fontSize: 22, color: colors.text }}>♡</Text> */}
         </View>
         <View style={{ alignItems: 'center' }}>
           <View style={{ width: 190, height: 270, backgroundColor: '#D98B43', borderRadius: 12, alignItems: 'center', justifyContent: 'center', elevation: 5 }}>

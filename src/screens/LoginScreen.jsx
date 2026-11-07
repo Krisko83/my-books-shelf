@@ -1,12 +1,13 @@
 import { View, Text, TextInput, ScrollView, StatusBar, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
-import { colors } from '../../../theme';
+import { colors } from '../../theme.js';
 import { Controller, useForm } from 'react-hook-form';
-import EyeIcon from '../../components/eye-icon/EyeIcon.jsx';
 import { useState } from 'react';
-import InputController from '../../components/input-controller/InputController.jsx';
+import EyeIcon from '../components/EyeIcon.jsx';
+import InputController from '../components/InputController.jsx';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -16,6 +17,7 @@ export default function LoginScreen() {
     }
   })
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const submitHandler = (data) => {
     console.log(data);
@@ -33,12 +35,12 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.screen}>
-      <KeyboardAvoidingView behavior='padding'>
+      <KeyboardAvoidingView behavior='padding' >
 
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} keyboardShouldPersistTaps="handled">
 
-          <View style={{ alignItems: 'center', marginBottom: 42 }}>
-            <Text style={{ fontSize: 45, color: colors.primary }}>&#128214;</Text>
+          <View style={{ alignItems: 'center', marginBottom: 34 }}>
+            <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
             <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
           </View>
 
@@ -137,11 +139,7 @@ export default function LoginScreen() {
             disabled={isSubmitting}>
             <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
           </Pressable>
-
-          <Pressable onPress={() => console.log('Sign Up')}>
-            <Text style={styles.buttonSignIn}>Don't have an account? <Text style={{ color: colors.primary, fontWeight: '700' }}>Register</Text></Text>
-          </Pressable>
-
+ 
         </ScrollView>
 
       </KeyboardAvoidingView>
@@ -153,11 +151,12 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: 'colors.background',
-    width: '100%'
+    backgroundColor: colors.background,
+    width: '100%',
   },
   content: {
-    padding: 22,
+    paddingLeft: 22,
+    paddingRight: 22,
     paddingBottom: 36,
     flexGrow: 1,
     justifyContent: 'center',
@@ -190,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     color: colors.text,
     fontSize: 14,
-    marginBottom: 17,
+    marginBottom: 20,
   },
   button: {
     minHeight: 52,
@@ -206,13 +205,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700'
 
-  },
-  buttonSignIn: {
-    textAlign: 'center',
-    color: colors.muted,
-    marginTop: 28,
-    fontSize: 13
-  },
+  }, 
   error: {
     color: 'red',
     marginBottom: 12,
