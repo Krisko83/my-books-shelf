@@ -18,7 +18,7 @@ export default function RootNavigator() {
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Details" component={BookDetailsScreen} />
-            <Stack.Screen name="MainMyBooks" component={MyBookScreen} options={{ title: 'My Books'}} />
+            <Stack.Screen name="MainMyBooks" component={MyBookScreen} options={{ title: 'My Library'}} />
          </Stack.Navigator>
     );
 }

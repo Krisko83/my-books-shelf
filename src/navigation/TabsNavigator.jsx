@@ -13,7 +13,7 @@ export default function TabsNavigator() {
     return (
         <Tab.Navigator>
             <Tab.Screen name="HomeTab" component={HomeNavigator} options={{ title: 'Home', headerShown: false, tabBarIcon: () => <Ionicons name="home" size={24} /> }} />
-            <Tab.Screen name="MyBooks" component={MyBookScreen} options={{title: 'My books', headerShown: false, tabBarIcon: () => <Ionicons name="book-sharp" size={24} /> }} />
+            <Tab.Screen name="Library" component={MyBookScreen} options={{title: 'Library', headerShown: false, tabBarIcon: () => <Ionicons name="book-sharp" size={24} /> }} />
             <Tab.Screen name="Add" component={AddBookScreen} options={{ title: 'Add book',tabBarIcon: () => <Ionicons name="add" size={24} /> }} />
             <Tab.Screen name="ProfileTab" component={ProfileScreen} options={{title: 'Profile', headerShown: false, tabBarIcon: () => <Ionicons name="person-sharp" size={24} /> }} />
         </Tab.Navigator>

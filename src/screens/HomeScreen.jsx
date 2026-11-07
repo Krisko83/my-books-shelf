@@ -1,5 +1,8 @@
-import { View, Text, TextInput, ScrollView } from 'react-native';
-import { colors, common } from '../../theme.js'; import { Link } from '@react-navigation/native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet } from 'react-native';
+import { colors } from '../../theme.js'; import { Link } from '@react-navigation/native';
+import BookItem from '../components/BookItem.jsx';
+import { useForm, Controller } from 'react-hook-form';
+import RadioButton from '../components/RadioButton.jsx';
 ;
 
 const books = [
@@ -10,38 +13,101 @@ const books = [
 ];
 
 export default function HomeScreen() {
+  const { control, handleSubmit } = useForm({
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      search: '',
+      sort: 'all'
+    }
+  });
+
+  const submitSortHandler = (data) => {
+    console.log(data.sort);
+
+  }
+
+  const submitSearchHandler = (data) => {
+    console.log(data.search);
+
+  }
 
   return (
-    <View style={common.screen}>
+    <View style={styles.screen}>
 
 
       <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 28 }}>
-        <TextInput style={[common.input, { marginTop: 18, marginBottom: 15 }]} placeholder="⌕  Search books..." placeholderTextColor={colors.muted} />
-        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 22 }}>
-          {['All', 'Reading', 'Want to Read', 'Read'].map((item, i) => (
-            <View key={item} style={{ paddingVertical: 9, paddingHorizontal: 13, borderRadius: 20, backgroundColor: i === 0 ? colors.primary : '#ECEBF5' }}>
-              <Text style={{ color: i === 0 ? '#FFF' : colors.muted, fontSize: 11, fontWeight: '700' }}>{item}</Text>
-            </View>
-          ))}
+
+        <Controller
+          control={control}
+          name='search'
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
+              placeholder="⌕  Search books..."
+              placeholderTextColor={colors.muted}
+              onSubmitEditing={handleSubmit(submitSearchHandler)}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+        />
+
+        <View>
+
+          <Controller
+            control={control}
+            name='sort'
+            render={({ field: { onChange, value } }) => (
+              <View style={{ flexDirection: 'row', gap: 5, marginBottom: 22 }}>
+                <RadioButton
+                  label='All'
+                  selected={value === 'all'}
+                  onPress={() => onChange('all')}
+                  onPressOut={handleSubmit(submitSortHandler)}
+                />
+
+                <RadioButton
+                  label='Reading'
+                  selected={value === 'reading'}
+                  onPress={() => onChange('reading')}
+                  onPressOut={handleSubmit(submitSortHandler)}
+                />
+
+                <RadioButton
+                  label='Want to Read'
+                  selected={value === 'want-to-read'}
+                  onPress={() => onChange('want-to-read')}
+                  onPressOut={handleSubmit(submitSortHandler)}
+                />
+
+                <RadioButton
+                  label='Read'
+                  selected={value === 'read'}
+                  onPress={() => onChange('read')}
+                  onPressOut={handleSubmit(submitSortHandler)}
+                />
+              </View>
+            )}
+          />
+
+
         </View>
+
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
           <Text style={{ color: colors.text, fontSize: 19, fontWeight: '800' }}>Your Library</Text>
+
           <Link screen='MainMyBooks'>
             <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>See all</Text>
           </Link>
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 18 }}>
+
+        <View style={styles.libContainer}>
           {books.map(book => (
-            <View key={book.title} style={{ width: '48%', backgroundColor: colors.surface, borderRadius: 17, padding: 9, borderWidth: 1, borderColor: '#EFEEF6' }}>
-              <View style={{ height: 150, backgroundColor: book.cover, borderRadius: 11, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: book.ink, fontSize: 45, fontWeight: '900' }}>{book.mark}</Text>
-                <Text style={{ color: book.ink, fontSize: 13, fontWeight: '800', marginTop: 5 }}>{book.title}</Text>
-              </View>
-              <Text numberOfLines={1} style={{ color: colors.text, fontWeight: '800', fontSize: 13, marginTop: 10 }}>{book.title}</Text>
-              <Text style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>{book.author}</Text>
-              <View style={{ alignSelf: 'flex-start', backgroundColor: book.status === 'Want to Read' ? colors.softPurple : colors.green, paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, marginTop: 9 }}>
-                <Text style={{ color: book.status === 'Want to Read' ? colors.primary : colors.greenText, fontSize: 10, fontWeight: '700' }}>{book.status}</Text>
-              </View>
+            <View key={book.id} style={styles.cart} >
+              <Link screen='Details' params={{ bookId: book.id}} >
+                <BookItem {...book} />
+              </Link>
             </View>
           ))}
         </View>
@@ -50,3 +116,34 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  cart: {
+    marginBottom: 10,
+    textAlign: 'center',
+    backgroundColor: 'white',
+    elevation: 10,
+  },
+  libContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 20,
+    marginHorizontal: 'auto'
+  },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.background
+  },
+  input: {
+    minHeight: 50,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 13,
+    paddingHorizontal: 15,
+    backgroundColor: colors.surface,
+    color: colors.text,
+    fontSize: 14,
+    marginBottom: 17,
+  },
+})
