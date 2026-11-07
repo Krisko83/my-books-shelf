@@ -63,29 +63,37 @@ export default function HomeScreen() {
                 <RadioButton
                   label='All'
                   selected={value === 'all'}
-                  onPress={() => onChange('all')}
-                  onPressOut={handleSubmit(submitSortHandler)}
+                  onPress={() => {
+                    onChange('all')
+                    submitSortHandler({ sort: 'all' })
+                  }}
                 />
 
                 <RadioButton
                   label='Reading'
                   selected={value === 'reading'}
-                  onPress={() => onChange('reading')}
-                  onPressOut={handleSubmit(submitSortHandler)}
+                  onPress={() => {
+                    onChange('reading')
+                    submitSortHandler({ sort: 'reading' })
+                  }}
                 />
 
                 <RadioButton
                   label='Want to Read'
                   selected={value === 'want-to-read'}
-                  onPress={() => onChange('want-to-read')}
-                  onPressOut={handleSubmit(submitSortHandler)}
+                  onPress={() => {
+                    onChange('want-to-read')
+                    submitSortHandler({ sort: 'want-to-read' })
+                  }}
                 />
 
                 <RadioButton
                   label='Read'
                   selected={value === 'read'}
-                  onPress={() => onChange('read')}
-                  onPressOut={handleSubmit(submitSortHandler)}
+                  onPress={() => {
+                    onChange('read')
+                    submitSortHandler({ sort: 'read' })
+                  }}
                 />
               </View>
             )}
@@ -105,7 +113,7 @@ export default function HomeScreen() {
         <View style={styles.libContainer}>
           {books.map(book => (
             <View key={book.id} style={styles.cart} >
-              <Link screen='Details' params={{ bookId: book.id}} >
+              <Link screen='Details' params={{ bookId: book.id }} >
                 <BookItem {...book} />
               </Link>
             </View>
