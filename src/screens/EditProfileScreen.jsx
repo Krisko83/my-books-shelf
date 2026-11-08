@@ -1,60 +1,137 @@
-
-import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView } from 'react-native';
 import { colors } from '../../theme.js';
 import { CountryPicker } from 'react-native-country-picker-modal';
-import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import RadioButton from '../components/RadioButton.jsx';
+import * as ImagePicker from 'expo-image-picker'
+import { useState } from 'react';
+import { supabase } from '../../supabase.js';
 
 export default function EditProfileScreen() {
-    const [countryCode, setCountryCode] = useState('')
-    const [country, setCountry] = useState('')
-    const [showPicker, setShowPicker] = useState(false);
-
     const { control, handleSubmit } = useForm({
         defaultValues: {
             fullName: '',
             age: '',
-            country: '',
             gender: '',
+            country: {
+                cca2: '',
+                name: ''
+            },
         }
     })
 
-    const submitHandler = (data) => {
-        console.log(data);
+    const [imageUri, setImageUri] = useState(null);
 
+    const pickImage = async () => {
+        const permisionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!permisionResult.granted) {
+            return
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            ediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setImageUri(result.assets[0].uri)
+        }
+
+    }
+
+    const takePhoto = async () => {
+        const permisionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+        if (!permisionResult.granted) {
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync({
+            ediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1
+        })
+
+        if (!result.canceled) {
+            setImageUri(result.assets[0].uri)
+        }
+    }
+
+    // const uploadImage = async (imageUri) => {
+    //     try {
+    //         // Read the local image
+    //         const arrayBuffer = await fetch(imageUri)
+    //             .then(response => response.arrayBuffer());
+
+    //         // Generate a unique file name
+    //         const fileName = `${Date.now()}.jpg`;
+
+    //         // Upload to Supabase Storage
+    //         const { data, error } = await supabase.storage
+    //             .from('book-covers')
+    //             .upload(fileName, arrayBuffer, {
+    //                 contentType: 'image/jpeg',
+    //                 upsert: false
+    //             });
+
+    //         if (error) throw error;
+
+    //         console.log('Uploaded:', data.path);
+
+    //         return data.path;
+
+    //     } catch (error) {
+    //         console.log('Upload error:', error.message);
+    //     }
+    // };
+
+    const submitHandler = async (data) => {
+
+        // const imagePath = await uploadImage(imageUri);
+
+        // const { data } = supabase.storage
+        //     .from('book-covers')
+        //     .getPublicUrl(imagePath);
+
+        // const imageUrl = data.publicUrl;
+        
+        
     };
 
     return (
-        <View style={styles.screen}>
+        <KeyboardAvoidingView style={styles.screen} behavior='padding'>
             <ScrollView
                 contentContainerStyle={styles.content}
-                showsVerticalScrollIndicator={false}
+            // showsVerticalScrollIndicator={false}
             >
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.back}>‹</Text>
-                    <Text style={styles.headerTitle}>Edit Profile</Text>
-                    <View style={{ width: 25 }} />
-                </View>
+
 
                 {/* Profile Image */}
                 <View style={styles.imageContainer}>
                     <View style={styles.imageWrapper}>
                         <Image
                             source={{
-                                uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400'
+                                uri: imageUri
                             }}
                             style={styles.profileImage}
                         />
                     </View>
 
-                    <View style={styles.cameraButton}>
+                    <Pressable style={styles.cameraButton} onPress={takePhoto}>
                         <Text style={styles.cameraIcon}>📷</Text>
-                    </View>
+                    </Pressable>
+
+                </View>
+                <View style={{ marginTop: 20 }}>
+                    <Pressable onPress={pickImage}>
+                        <Text >Upload from gallery</Text>
+                    </Pressable>
                 </View>
 
-                {/* Email */}
+
                 <View style={[styles.field, styles.disabledField]}>
                     <Text style={styles.fieldIcon}>✉</Text>
 
@@ -70,7 +147,7 @@ export default function EditProfileScreen() {
                     <Text style={styles.lockIcon}>🔒</Text>
                 </View>
 
-                {/* Full Name */}
+
                 <View style={styles.field}>
                     <Text style={styles.fieldIcon}>♟</Text>
 
@@ -94,7 +171,7 @@ export default function EditProfileScreen() {
                     </View>
                 </View>
 
-                {/* Age */}
+
                 <View style={styles.field}>
                     <Text style={styles.fieldIcon}>▦</Text>
 
@@ -118,31 +195,36 @@ export default function EditProfileScreen() {
                 </View>
 
 
-                <Pressable
-                    style={styles.field}
-                    onPress={() => setShowPicker(true)}
-                >
-                    <Text style={styles.fieldIcon}>◎</Text>
+                <Controller
+                    control={control}
+                    name='country'
+                    render={({ field: { value, onChange } }) => (
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Country</Text>
-                        <Text style={styles.input}>{country}</Text>
-                    </View>
+                        <View style={styles.field} >
+                            <Text style={styles.fieldIcon}>◎</Text>
 
-                    <CountryPicker
-                        countryCode={countryCode}
-                        visible={showPicker}
-                        withFilter
-                        withFlag
-                        onSelect={(selectedCountry) => {
-                            setCountryCode(selectedCountry.cca2);
-                            setCountry(selectedCountry.name);
-                            setShowPicker(false);
-                        }}
-                        onClose={() => setShowPicker(false)}
-                    />
-                    <Text style={styles.arrow}>⌄</Text>
-                </Pressable>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Country</Text>
+                                <Text style={styles.input}>{value.name}</Text>
+                            </View>
+
+                            <CountryPicker
+                                countryCode={value.cca2}
+                                withFilter
+                                withFlag
+                                onSelect={(selectedCountry) => {
+                                    onChange({
+                                        cca2: selectedCountry.cca2,
+                                        name: selectedCountry.name
+                                    })
+
+                                }}
+
+                            />
+                            <Text style={styles.arrow}>⌄</Text>
+                        </View>
+                    )}
+                />
 
 
 
@@ -195,14 +277,14 @@ export default function EditProfileScreen() {
                     </View>
                 </View>
 
-                {/* Update Button */}
+
                 <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
                     <Text style={styles.buttonIcon}>✎</Text>
                     <Text style={styles.buttonText}>Update Profile</Text>
                 </Pressable>
 
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -210,6 +292,7 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         backgroundColor: colors.background,
+        marginBottom: 30
     },
     content: {
         paddingHorizontal: 20,
@@ -234,6 +317,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         alignItems: 'center',
         marginBottom: 35,
+        marginTop: 20
     },
     imageWrapper: {
         width: 155,
@@ -331,7 +415,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 12,
     },
-    genderOptions: { 
+    genderOptions: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -341,7 +425,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         gap: 13,
-    }, 
+    },
     radioCircle: {
         width: 19,
         height: 19,
