@@ -7,7 +7,7 @@ import InputController from '../components/InputController.jsx';
 import StarRating from '../components/StarRating.jsx';
 import { colors } from '../../theme.js';
 
-export default function AddBookScreen() {
+export default function AddBookScreen({ route }) {
   const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -21,7 +21,7 @@ export default function AddBookScreen() {
     }
   })
 
-
+  const inputPath = route.name;
 
   const submitHandler = (data) => {
     console.log(data);
@@ -32,7 +32,7 @@ export default function AddBookScreen() {
   }
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, {paddingBottom: inputPath === 'Edit' && 40}]}>
       <KeyboardAvoidingView behavior='padding'>
 
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">

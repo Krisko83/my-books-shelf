@@ -9,8 +9,8 @@ export default function HomeNavigator() {
 
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'My Book Shelf' }} />
-             
+            <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'My Book Shelf', headerLeft: () => null }} />
+
         </Stack.Navigator>
     );
 }

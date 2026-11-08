@@ -39,7 +39,7 @@ export default function BookDetailsScreen({ route }) {
         </View>
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
 
-          <Link style={styles.button} screen='MainAdd'>
+          <Link style={styles.button} screen='Edit'>
             <Text style={styles.buttonText}>✎  Edit</Text>
           </Link>
 

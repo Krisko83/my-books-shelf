@@ -1,10 +1,10 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 import { colors } from "../../theme.js";
 
-export default function RadioButton({ label, onPress, selected, onPressOut }) {
+export default function RadioButton({ label, onPress, selected}) {
 
     return (
-        <Pressable onPress={onPress} onPressOut={onPressOut} style={[styles.btn, { backgroundColor: selected ? colors.primary : '#ECEBF5', }]}>
+        <Pressable onPress={onPress} style={[styles.btn, { backgroundColor: selected ? colors.primary : '#ECEBF5', }]}>
             <Text style={[styles.btnText, { color: selected ? '#fff' : colors.muted }]}>{label}</Text>
         </Pressable>
     );

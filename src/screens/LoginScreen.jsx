@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }) {
 
   const submitHandler = (data) => {
     console.log(data);
-
+    navigation.navigate('MainHome')
     reset()
   }
 

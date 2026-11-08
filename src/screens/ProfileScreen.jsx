@@ -1,35 +1,48 @@
-import { View, Text, ScrollView, StatusBar, StyleSheet } from 'react-native';
-import { colors } from '../../theme.js';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, ScrollView, StatusBar, StyleSheet, Pressable } from 'react-native';
+import { colors } from '../../theme.js'; 
+import ProfileButton from '../components/ProfileButton.jsx';
 
-const rows = ['My Library', 'Reading Statistics', 'Settings', 'Help & Support', 'About MyBookShelf'];
+const rows = ['My Library', 'Edit Profile', 'Settings', 'Help & Support', 'About MyBookShelf'];
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
   return (
     <View style={styles.screen}>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={{ alignItems: 'center', marginTop: 25, marginBottom: 28 }}>
-          <View style={{ width: 94, height: 94, borderRadius: 47, backgroundColor: colors.softPurple, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: colors.primary }}>
+
+        <View style={styles.imageContainer}>
+
+          <View style={styles.image}>
             <Text style={{ fontSize: 39 }}>👤</Text>
           </View>
-          <Text style={{ color: colors.text, fontSize: 22, fontWeight: '900', marginTop: 13 }}>John Doe</Text>
-          <Text style={{ color: colors.muted, fontSize: 13, marginTop: 4 }}>john.doe@example.com</Text>
+
+          <Text style={styles.name}>John Doe</Text>
+          <Text style={styles.email}>john.doe@example.com</Text>
+
         </View>
+
         <View style={[styles.card, { paddingVertical: 4 }]}>
-          {rows.map((row, i) => (
-            <View key={row} style={{ minHeight: 57, flexDirection: 'row', alignItems: 'center', borderBottomWidth: i === rows.length - 1 ? 0 : 1, borderBottomColor: colors.border }}>
-              <Text style={{ color: colors.primary, fontSize: 19, width: 36 }}>{['▤', '▥', '⚙', '?', 'ⓘ'][i]}</Text>
-              <Text style={{ color: colors.text, fontSize: 14, fontWeight: '600', flex: 1 }}>{row}</Text>
-              <Text style={{ color: colors.muted, fontSize: 22 }}>›</Text>
-            </View>
-          ))}
+          <ProfileButton icon='▤' name='My Library' onPress={() => navigation.navigate('MainMyBooks')} />
+
+          <ProfileButton icon='▥' name='Edit Profile' onPress={() => navigation.navigate('EditProfile')} />
+
+          <ProfileButton icon='⚙' name='Settings' onPress={() => navigation.navigate('Settings')} />
+
+          <ProfileButton icon='?' name='Help & Support' onPress={() => navigation.navigate('MainMyBooks')} />
+
+          <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => navigation.navigate('MainMyBooks')} />
         </View>
-        <View style={[styles.outlineButton, { marginTop: 24 }]}><Text style={styles.outlineButtonText}>⇥  Log Out</Text></View>
+
+        <Pressable style={styles.outlineButton}>
+          <Text style={styles.outlineButtonText}>⇥  Log Out</Text>
+        </Pressable>
+
       </ScrollView>
+
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   screen: {
@@ -62,6 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
+    marginTop: 24
   },
   outlineButtonText: {
     color: colors.primary,
@@ -75,5 +89,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#EFEEF6',
   },
+  image: {
+    width: 94,
+    height: 94,
+    borderRadius: 47,
+    backgroundColor: colors.softPurple,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: colors.primary
+  },
+  name: {
+    color: colors.text,
+    fontSize: 22,
+    fontWeight: '900',
+    marginTop: 13
+  },
+  email: {
+    color: colors.muted,
+    fontSize: 13,
+    marginTop: 4
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginTop: 25,
+    marginBottom: 28
+  }
 });
 
