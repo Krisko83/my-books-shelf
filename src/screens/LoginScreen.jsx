@@ -5,7 +5,7 @@ import { use, useState } from 'react';
 import EyeIcon from '../components/EyeIcon.jsx';
 import InputController from '../components/InputController.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AuthContext } from '../contexts/auth/AuthContext.js';
+import { AuthContext, useAuthContext } from '../contexts/auth/AuthContext.js';
 
 
 export default function LoginScreen({ navigation }) {
@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
   })
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const insets = useSafeAreaInsets();
-  const { login } = use(AuthContext);
+  const { login } = useAuthContext()
 
   const submitHandler = (data) => {
     login(data)

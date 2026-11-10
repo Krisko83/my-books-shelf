@@ -1,28 +1,68 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-
-export default function AuthContextProvider({ children }) {
+export default function AuthProvider({ children }) {
     const [state, setState] = useState(null);
 
-    const login = (userData) => {
-        setState(userData)
+    useEffect(() => {
+        loadUser()
+    }, [])
+
+    const login = async (userData) => {
+       await saveUser(userData)
+    };
+
+    const register = async (userData) => {
+       await saveUser(userData)
+    };
+
+    const logout = async () => {
+        try {
+            await AsyncStorage.removeItem('auth')
+            setState(null);
+
+        } catch (error) {
+            alert(error.message)
+        }
+    };
+
+    const saveUser = async (data) => {
+        try {
+            await AsyncStorage.setItem('auth', JSON.stringify(data))
+            setState(data);
+
+        } catch (error) {
+            alert('Cannot save in storage!')
+        }
     }
 
-    const register = (userData) => {
-        setState(userData)
+    const loadUser = async () => {
+        const user = await AsyncStorage.getItem('auth');
+        console.log('User', JSON.parse(user))
+
+        if (user) {
+            return setState(JSON.parse(user))
+        }
+
+        return null
     }
+
 
     const contextValues = {
         isAuthenticated: !!state,
         user: state,
         login,
-        register
-    }
+        register,
+        logout
+    };
+    console.log('state', state);
+
+    console.log('from provider', !!state);
+
     return (
         <AuthContext.Provider value={contextValues}>
             {children}
         </AuthContext.Provider>
     );
-}
+};

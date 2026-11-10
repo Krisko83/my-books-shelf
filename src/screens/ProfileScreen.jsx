@@ -1,10 +1,13 @@
-import { View, Text, ScrollView, StatusBar, StyleSheet, Pressable } from 'react-native';
-import { colors } from '../../theme.js'; 
+import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { colors } from '../../theme.js';
 import ProfileButton from '../components/ProfileButton.jsx';
+import { useAuthContext } from '../contexts/auth/AuthContext.js';
 
 const rows = ['My Library', 'Edit Profile', 'Settings', 'Help & Support', 'About MyBookShelf'];
 
 export default function ProfileScreen({ navigation }) {
+  const { logout } = useAuthContext()
+
   return (
     <View style={styles.screen}>
 
@@ -33,7 +36,7 @@ export default function ProfileScreen({ navigation }) {
           <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => navigation.navigate('MainMyBooks')} />
         </View>
 
-        <Pressable style={styles.outlineButton}>
+        <Pressable style={styles.outlineButton} onPress={logout}>
           <Text style={styles.outlineButtonText}>⇥  Log Out</Text>
         </Pressable>
 

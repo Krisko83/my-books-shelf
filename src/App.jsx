@@ -1,11 +1,12 @@
 import { StatusBar, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthContext } from './contexts/auth/AuthContext.js';
-import RootNavigator from './navigation/RootNavigator.jsx';
-import AuthContextProvider from './contexts/auth/AuthContext.jsx';
+import RootNavigator from './navigation/RootNavigator.jsx'; 
 import AuthNavigator from './navigation/AuthNavigator.jsx';
+import AuthProvider from './contexts/auth/AuthContext.jsx';
+import * as SplashScreen from 'expo-splash-screen';
 
-
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
 
@@ -13,7 +14,7 @@ export default function App() {
     <>
       <StatusBar barStyle="dark-content" />
       <NavigationContainer>
-        <AuthContextProvider>
+        <AuthProvider>
 
           <AuthContext.Consumer>
             {({ isAuthenticated }) =>
@@ -25,7 +26,7 @@ export default function App() {
             }
           </AuthContext.Consumer>
 
-        </AuthContextProvider>
+        </AuthProvider>
       </NavigationContainer>
     </>
   );

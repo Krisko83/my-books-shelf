@@ -4,6 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useState, useRef } from 'react';
 import EyeIcon from '../components/EyeIcon.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuthContext } from '../contexts/auth/AuthContext.js';
 
 
 export default function RegisterScreen({ navigation }) {
@@ -18,9 +19,10 @@ export default function RegisterScreen({ navigation }) {
   })
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const { register } = useAuthContext()
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef(null);
-  const submitButtonRef = useRef(null);
+  // const submitButtonRef = useRef(null);
 
   const scrollToInput = (event) => {
     const input = event.target;
@@ -49,8 +51,8 @@ export default function RegisterScreen({ navigation }) {
 
   const submitHandler = (data) => {
     Keyboard.dismiss();
-    console.log(data);
-
+    register(data);
+    
     reset();
 
   };
