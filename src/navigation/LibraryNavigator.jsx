@@ -6,7 +6,7 @@ export default function LibraryNavigator() {
 
     return (
         <Stack.Navigator>
-            <Stack.Screen name='Library' component={MyBookScreen} options={{ title: 'My Library', headerLeft: () => null }} />
+            <Stack.Screen name='Library' component={MyBookScreen} options={{ title: 'My Library' }} />
         </Stack.Navigator>
     );
 }

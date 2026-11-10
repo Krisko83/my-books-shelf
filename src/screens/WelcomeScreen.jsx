@@ -5,40 +5,42 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function WelcomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
 
-  return ( 
-      <View style={styles.container}>
+  return (
+    <View style={styles.container}>
 
-        <Image source={require('../assets/books.jpg')} style={styles.image} />
+      <Image source={require('../assets/books.jpg')} style={styles.image} />
 
-        <View style={styles.overlay}>
+      <View style={styles.overlay}>
 
-          <View style={styles.logo}>
-            <Text style={styles.logo}>&#128214;</Text>
-          </View>
+        <View style={styles.logo}>
+          <Text style={styles.logo}>&#128214;</Text>
+        </View>
 
-          <View style={styles.brand}>
-            <Text style={styles.title}>My BookShelf</Text>
-            <Text style={styles.subtitle}>Your personal library,{"\n"}always with you.</Text>
-          </View>
+        <View style={styles.brand}>
+          <Text style={styles.title}>My BookShelf</Text>
+          <Text style={styles.subtitle}>Your personal library,{"\n"}always with you.</Text>
+        </View>
 
-          <View style={{ width: '100%', paddingBottom: 60, justifyContent: 'center' }}>
+        <View style={{ width: '100%', paddingBottom: 60, justifyContent: 'center' }}>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate('Register')}>
-              <Text style={styles.buttonText}>Get Started</Text>
-            </Pressable>
+          <Pressable style={styles.button} onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.buttonText}>Get Started</Text>
+          </Pressable>
 
-            <Pressable onPress={() => navigation.navigate('Login')} style={{ marginTop: 15 }} >
-              <Text style={styles.signIn}>Already have an account? <Text style={{ color: colors.primary, fontWeight: '700' }}>Sign In</Text></Text>
-            </Pressable>
-
-          </View>
+          <Pressable onPress={() => navigation.navigate('Login')} style={{ marginTop: 15 }} >
+            <Text style={styles.signIn}>Already have an account?
+              <Text style={{ color: colors.primary, fontWeight: '700' }}>Sign In</Text>
+            </Text>
+          </Pressable>
 
         </View>
-      </View> 
+
+      </View>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',

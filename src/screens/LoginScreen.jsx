@@ -1,10 +1,11 @@
 import { View, Text, TextInput, ScrollView, StatusBar, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
 import { colors } from '../../theme.js';
 import { Controller, useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { use, useState } from 'react';
 import EyeIcon from '../components/EyeIcon.jsx';
 import InputController from '../components/InputController.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AuthContext } from '../contexts/auth/AuthContext.js';
 
 
 export default function LoginScreen({ navigation }) {
@@ -18,10 +19,11 @@ export default function LoginScreen({ navigation }) {
   })
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const insets = useSafeAreaInsets();
+  const { login } = use(AuthContext);
 
   const submitHandler = (data) => {
-    console.log(data);
-    navigation.navigate('MainHome')
+    login(data)
+    // navigation.navigate('MainHome')
     reset()
   }
 
@@ -35,7 +37,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.screen}>
-      <KeyboardAvoidingView behavior='padding' >
+      <KeyboardAvoidingView behavior='padding' style={{flex: 1}}>
 
         <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} keyboardShouldPersistTaps="handled">
 
@@ -139,7 +141,16 @@ export default function LoginScreen({ navigation }) {
             disabled={isSubmitting}>
             <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
           </Pressable>
- 
+
+
+          {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
+            <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>
+            <Pressable onPress={() => navigation.navigate('Register')}>
+              <Text style={{ color: colors.primary, fontWeight: '700' }}>Register</Text>
+            </Pressable>
+          </View> */}
+
+
         </ScrollView>
 
       </KeyboardAvoidingView>
@@ -205,7 +216,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700'
 
-  }, 
+  },
   error: {
     color: 'red',
     marginBottom: 12,
