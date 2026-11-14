@@ -22,7 +22,7 @@ export default function MyBookScreen({ route }) {
                 <FlatList
                     data={books}
                     keyExtractor={(item) => item.id}
-                    numColumns={2}
+                    numColumns={1}
                     vertical
                     renderItem={({ item }) => (
                         <View style={styles.container}>
@@ -47,6 +47,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         backgroundColor: 'white',
         elevation: 15,
-
+        width: '80%'
     }
 })

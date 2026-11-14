@@ -22,14 +22,14 @@ export default function AddBookScreen({ navigation, route }) {
       image_url: ''
     }
   })
-console.log(navigation);
-
+  
   const inputPath = route.name;
-
+  
   const submitHandler = async (data) => {
-
+    
     try {
       await createBook(data);
+      console.log('navi',navigation);
 
       navigation.navigate('MainHome');
 

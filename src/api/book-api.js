@@ -38,10 +38,11 @@ export async function getLastFourBooks() {
 export async function getBookById(bookId) {
      try {
         const response = await api.get(`/books?id=eq.${bookId}`)
+console.log('bookApi',response.data);
 
         return response.data;
     } catch (err) {
-        // throw new Error('')
-        Alert.alert('err', err.message)
+        throw new Error('This Book cannot be retrive.Please try again later!')
+    
     }
 }
