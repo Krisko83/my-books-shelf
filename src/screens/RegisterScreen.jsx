@@ -1,10 +1,12 @@
-import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable, Keyboard } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable, Keyboard, Alert } from 'react-native';
 import { colors } from '../../theme.js';
 import { useForm, Controller } from 'react-hook-form';
 import { useState, useRef } from 'react';
 import EyeIcon from '../components/EyeIcon.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
+import { authApi } from '../api/index.js';
+ 
 
 
 export default function RegisterScreen({ navigation }) {
@@ -49,11 +51,17 @@ export default function RegisterScreen({ navigation }) {
   //   });
   // };
 
-  const submitHandler = (data) => {
+  const submitHandler = async (data) => {
     Keyboard.dismiss();
-    register(data);
-    
-    reset();
+
+    try {
+      const userData = await authApi.register(data)
+      register(userData);
+
+      reset();
+    } catch (err) {
+      Alert.alert(err.message)
+    }
 
   };
 
@@ -149,6 +157,7 @@ export default function RegisterScreen({ navigation }) {
                     placeholder="Create a password"
                     placeholderTextColor={colors.muted}
                     secureTextEntry={!isPasswordVisible['password']}
+                    autoCapitalize="none"
                   // onFocus={scrollToInput}
                   />
 
@@ -188,6 +197,7 @@ export default function RegisterScreen({ navigation }) {
                     placeholder="Repeat your password"
                     placeholderTextColor={colors.muted}
                     secureTextEntry={!isPasswordVisible['confirmPassword']}
+                    autoCapitalize="none"
                   // onFocus={scrollToInput}
                   />
 

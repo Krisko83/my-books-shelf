@@ -1,10 +1,36 @@
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Alert } from 'react-native';
 import { colors } from '../../theme.js';
 import ProfileButton from '../components/ProfileButton.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
+import { useEffect, useState } from 'react';
+import { authApi, userApi } from '../api/index.js';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
+
+  const [userInfo, setUserInfo] = useState([]);
+  const userId = user.id;
+
+  useEffect(() => {
+    userApi.getUserInfo(userId)
+      .then(data => setUserInfo(data[0]))
+      .catch(err => Alert.alert(err.message))
+  }, [])
+
+  const logoutHandler = async () => {
+
+    try {
+      await authApi.logout();
+      // logout();
+
+    } catch (err) {
+
+      Alert.alert(err.message)
+    } finally {
+      logout();
+    }
+  }
+
 
 
   return (
@@ -18,15 +44,17 @@ export default function ProfileScreen({ navigation }) {
             <Text style={{ fontSize: 39 }}>👤</Text>
           </View>
 
-          <Text style={styles.name}>{user.fullName}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.name}>Name: {userInfo?.fullName || 'Anonymous'}</Text>
+          <Text style={styles.username}>Username:{userInfo?.username || 'Anonymous'}</Text>
+          <Text style={styles.email}>Email: {user.email}</Text>
+          {/* <Text style={styles.email}>{user.country.name} {country.cca2}</Text> */}
 
         </View>
 
         <View style={[styles.card, { paddingVertical: 4 }]}>
           <ProfileButton icon='▤' name='My Library' onPress={() => navigation.navigate('MainMyBooks')} />
 
-          <ProfileButton icon='▥' name='Edit Profile' onPress={() => navigation.navigate('EditProfile')} />
+          <ProfileButton icon='▥' name='Edit Profile' onPress={() => navigation.navigate('EditProfile', userInfo )} />
 
           <ProfileButton icon='⚙' name='Settings' onPress={() => navigation.navigate('Settings')} />
 
@@ -35,7 +63,7 @@ export default function ProfileScreen({ navigation }) {
           <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => navigation.navigate('MainMyBooks')} />
         </View>
 
-        <Pressable style={styles.outlineButton} onPress={logout}>
+        <Pressable style={styles.outlineButton} onPress={logoutHandler}>
           <Text style={styles.outlineButtonText}>⇥  Log Out</Text>
         </Pressable>
 
@@ -106,6 +134,12 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '900',
     marginTop: 13
+  },
+  username: {
+    color: colors.text,
+    fontSize: 15,
+    fontWeight: '700',
+    // marginTop: 13
   },
   email: {
     color: colors.muted,

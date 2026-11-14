@@ -1,13 +1,13 @@
-import { View, Text, ScrollView, StyleSheet, Image, RefreshControl, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, RefreshControl, Alert, Pressable } from 'react-native';
 import { colors } from '../../theme.js';
 import { Link } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { bookApi } from '../api';
-import convertDate from '../utils/convertDate.js'; 
+import convertDate from '../utils/convertDate.js';
 
-export default function BookDetailsScreen({ route }) {
+export default function BookDetailsScreen({ navigation ,route }) {
   const [book, setBook] = useState({})
-  const [refreshing, setRefreshing] = useState(false); 
+  const [refreshing, setRefreshing] = useState(false);
   const bookId = route.params.bookId;
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function BookDetailsScreen({ route }) {
       .catch(err => Alert.alert(err))
   }, [bookId])
 
-  const ratingStars = '★'.repeat(book.rating);
+  const ratingStars = '★'.repeat(book?.rating);
 
   const refreshHandler = async () => {
     setRefreshing(true);
@@ -34,6 +34,18 @@ export default function BookDetailsScreen({ route }) {
 
   }
 
+  const deleteHandler = async (bookId) => {
+    const confirmation = confirm('Are you sure?')
+    try {
+      await bookApi.deleteBook(bookId)
+
+      navigation.navigate('MainHome')
+    } catch (err) {
+      Alert.alert(err.message)
+    }
+  };
+
+
   return (
     <View style={styles.screen}>
 
@@ -45,35 +57,45 @@ export default function BookDetailsScreen({ route }) {
         {/* <Text style={{ fontSize: 22, color: colors.text }}>♡</Text> */}
         {/* </View> */}
         <View style={{ alignItems: 'center' }}>
+
           <View style={styles.imgContainer}>
             <Image source={{ uri: book.imageUrl }} style={styles.img} />
           </View>
+
           <Text style={styles.title}>{book.title}</Text>
           <Text style={styles.author}>{book.author}</Text>
           <Text style={styles.stars}>{ratingStars}</Text>
+
           <View style={styles.statusContainer}>
             <Text style={styles.status}>✓ {book.status}</Text>
           </View>
+
         </View>
+
         <View style={styles.card}>
+
           <Text style={styles.about}>About this book</Text>
           <Text style={styles.description}>{book.description}</Text>
+
           <View style={styles.genreContainer}>
             <Text style={styles.genre}>Genre</Text><Text style={styles.genreText}>{book.genre}</Text>
           </View>
+
           <View style={styles.dateContainer}>
             <Text style={styles.date}>Date added</Text><Text style={styles.dateText}>{convertDate(book.created_at)}</Text>
           </View>
+
         </View>
+
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
 
-          <Link style={styles.button} screen='Edit'>
+          <Link style={styles.button} screen='Edit' params={{ bookId }}>
             <Text style={styles.buttonText}>✎  Edit</Text>
           </Link>
 
-          <Link style={[styles.button, { backgroundColor: colors.red }]}>
+          <Pressable style={[styles.button, { backgroundColor: colors.red }]} onPress={() => deleteHandler(bookId)}>
             <Text style={{ color: colors.redText, fontWeight: '700' }}>▤  Delete</Text>
-          </Link>
+          </Pressable>
 
         </View>
       </ScrollView>

@@ -1,31 +1,33 @@
-import { View, Text, TextInput, ScrollView, StyleSheet, Alert, RefreshControl, FlatList } from 'react-native';
-import { colors } from '../../theme.js'; import { Link } from '@react-navigation/native';
-import BookItem from '../components/BookItem.jsx';
-import { useForm, Controller } from 'react-hook-form';
-import RadioButton from '../components/RadioButton.jsx';
-import { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Alert, RefreshControl, FlatList } from 'react-native';
+import { colors } from '../../theme.js'; import { Link, useFocusEffect } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
 import { bookApi } from '../api';
+import BookItem from '../components/BookItem.jsx';
 
 
 
 export default function HomeScreen() {
-  // const { control, handleSubmit } = useForm({
-  //   mode: 'onBlur',
-  //   reValidateMode: 'onChange',
-  //   defaultValues: {
-  //     search: '',
-  //     sort: 'all'
-  //   }
-  // });
 
   const [books, setBooks] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    bookApi.getLastFourBooks()
-      .then(setBooks)
-      .catch(err => Alert.alert(err))
-  }, [])
+  useFocusEffect(
+
+    useCallback(() => {
+      const getBooks = async () => {
+        try {
+          const data = await bookApi.getAllBooks();
+          setBooks(data);
+
+        } catch (err) {
+          Alert.alert(err.message)
+        }
+      };
+
+      getBooks();
+    }, [])
+
+  )
 
   const refreshHandler = async () => {
     setRefreshing(true);
@@ -39,16 +41,6 @@ export default function HomeScreen() {
       setRefreshing(false)
     }
   }
-
-  // const submitSortHandler = (data) => {
-  //   console.log(data.sort);
-
-  // }
-
-  // const submitSearchHandler = (data) => {
-  //   console.log(data.search);
-
-  // }
 
   return (
     <View style={styles.screen}>
@@ -136,7 +128,7 @@ export default function HomeScreen() {
             data={books}
             keyExtractor={item => item.id}
             horizontal
-            contentContainerStyle={{gap: 10, paddingHorizontal: 10}}
+            contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
             renderItem={({ item }) => (
               <View key={item.id} style={styles.cart}   >
                 <Link screen='Details' params={{ bookId: item.id }} >
@@ -165,11 +157,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
     backgroundColor: 'white',
-    elevation: 5, 
+    elevation: 5,
     flex: 1
     // padding: 10
 
-  }, 
+  },
   screen: {
     flex: 1,
     backgroundColor: colors.background

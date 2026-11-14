@@ -6,10 +6,11 @@ import RadioButton from '../components/RadioButton.jsx';
 import InputController from '../components/InputController.jsx';
 import StarRating from '../components/StarRating.jsx';
 import { colors } from '../../theme.js';
-import { createBook } from '../api/book-api.js';
+import { useEffect } from 'react';
+import { bookApi } from '../api';
 
 export default function AddBookScreen({ navigation, route }) {
-  const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
+  const { handleSubmit, control, setValues, reset, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -22,15 +23,32 @@ export default function AddBookScreen({ navigation, route }) {
       image_url: ''
     }
   })
-  
+
   const inputPath = route.name;
-  
+  const bookId = inputPath === 'Edit' && route.params.bookId;
+
+  useEffect(() => {
+    if (bookId) {
+      bookApi.getBookById(bookId)
+        .then(data => setValues(data[0]))
+    }
+  }, [bookId])
+
   const submitHandler = async (data) => {
-    
+
     try {
-      await createBook(data);
- 
-      navigation.navigate('MainHome');
+
+      if (inputPath === 'Edit') {
+        await bookApi.updateBook(bookId, data);
+
+        navigation.goBack();
+
+      } else {
+
+        await bookApi.createBook(data);
+      }
+      navigation.goBack();
+      // navigation.navigate('MainHome');
 
       reset()
     } catch (error) {
@@ -43,7 +61,10 @@ export default function AddBookScreen({ navigation, route }) {
     <View style={[styles.screen, { paddingBottom: inputPath === 'Edit' && 40 }]}>
       <KeyboardAvoidingView behavior='padding'>
 
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
 
           {/* <Text style={{ color: colors.text, fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 25 }}>Add Book</Text> */}
 

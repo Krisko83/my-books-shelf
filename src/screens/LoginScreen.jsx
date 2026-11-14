@@ -1,4 +1,4 @@
-import { View, Text, TextInput, ScrollView, StatusBar, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
+import { View, Text, TextInput, ScrollView, StatusBar, StyleSheet, KeyboardAvoidingView, Pressable, Alert } from 'react-native';
 import { colors } from '../../theme.js';
 import { Controller, useForm } from 'react-hook-form';
 import { use, useState } from 'react';
@@ -6,6 +6,8 @@ import EyeIcon from '../components/EyeIcon.jsx';
 import InputController from '../components/InputController.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuthContext, useAuthContext } from '../contexts/auth/AuthContext.js';
+import { authApi } from '../api/index.js';
+
 
 
 export default function LoginScreen({ navigation }) {
@@ -21,10 +23,17 @@ export default function LoginScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { login } = useAuthContext()
 
-  const submitHandler = (data) => {
-    login(data)
-    // navigation.navigate('MainHome')
-    reset()
+  const submitHandler = async (data) => {
+
+    try {
+      const userData = await authApi.login(data)
+
+      login(userData);
+
+      reset()
+    } catch (err) {
+      Alert.alert(err.message)
+    }
   }
 
   const switchPasswordVisibility = (field) => {
@@ -37,7 +46,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.screen}>
-      <KeyboardAvoidingView behavior='padding' style={{flex: 1}}>
+      <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
 
         <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} keyboardShouldPersistTaps="handled">
 
@@ -65,6 +74,7 @@ export default function LoginScreen({ navigation }) {
             placeholder="you@example.com"
             handleSubmit={handleSubmit(submitHandler)}
             keyboardType="email-address"
+            capitalize="none"
           />
 
           {/* <Controller
@@ -119,6 +129,7 @@ export default function LoginScreen({ navigation }) {
                   placeholder="Enter your password"
                   placeholderTextColor={colors.muted}
                   secureTextEntry={!isPasswordVisible['password']}
+                  autoCapitalize="none"
                 />
 
                 <Pressable

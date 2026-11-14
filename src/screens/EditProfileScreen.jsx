@@ -1,14 +1,18 @@
-import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert } from 'react-native';
 import { colors } from '../../theme.js';
 import { CountryPicker } from 'react-native-country-picker-modal';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker'
-import { useState } from 'react'; 
+import { useEffect, useState } from 'react';
+import { uuid } from 'expo';
+import { userApi } from '../api/index.js';
+import { useAuthContext } from '../contexts/auth/AuthContext.js';
 
-export default function EditProfileScreen() {
-    const { control, handleSubmit } = useForm({
+export default function EditProfileScreen({ navigation, route }) {
+    const { control, handleSubmit, setValues } = useForm({
         defaultValues: {
             fullName: '',
+            username: '',
             age: '',
             gender: '',
             country: {
@@ -17,6 +21,25 @@ export default function EditProfileScreen() {
             },
         }
     })
+    const { user } = useAuthContext()
+    const userInfo = route.params;
+
+
+    useEffect(() => {
+        if (userInfo) {
+            const user = {
+                fullName: userInfo.fullName,
+                username: userInfo.username,
+                age: userInfo.age,
+                country: {
+                    cca2: userInfo.country_cca2,
+                    name: userInfo.country_name
+                },
+                gender: userInfo.gender
+            }
+            setValues(user)
+        }
+    }, [])
 
     const [imageUri, setImageUri] = useState(null);
 
@@ -59,28 +82,37 @@ export default function EditProfileScreen() {
         }
     }
 
-    // const uploadImage = async (imageUri) => {
+    // const uploadImage = async (image) => {
+    //     if (!image) return;
     //     try {
     //         // Read the local image
-    //         const arrayBuffer = await fetch(imageUri)
-    //             .then(response => response.arrayBuffer());
+    //         const response = await fetch(image);
 
+    //         console.log('Status:', response.status);
+    //         console.log('Response OK:', response.ok);
+
+    //         const buffer = await response.arrayBuffer();
+
+    //         console.log('Buffer:', buffer);
+    //         console.log('Type:', buffer?.constructor?.name);
+    //         console.log('Length:', buffer?.byteLength)
     //         // Generate a unique file name
-    //         const fileName = `${Date.now()}.jpg`;
+    //         const fileName = `${uuid.v4()}${arrayBuffer}.jpg`;
 
     //         // Upload to Supabase Storage
-    //         const { data, error } = await supabase.storage
-    //             .from('book-covers')
-    //             .upload(fileName, arrayBuffer, {
-    //                 contentType: 'image/jpeg',
-    //                 upsert: false
-    //             });
+    //         // const { data, error } = await supabase.storage
+    //         //     .from('book-covers')
+    //         //     .upload(fileName, arrayBuffer, {
+    //         //         contentType: 'image/jpeg',
+    //         //         upsert: false
+    //         //     });
 
-    //         if (error) throw error;
+    //         // if (error) throw error;
 
-    //         console.log('Uploaded:', data.path);
+    //         // console.log('Uploaded:', data.path);
+    //         console.log(fileName);
 
-    //         return data.path;
+    //         // return data.path;
 
     //     } catch (error) {
     //         console.log('Upload error:', error.message);
@@ -88,16 +120,37 @@ export default function EditProfileScreen() {
     // };
 
     const submitHandler = async (data) => {
+        console.log('from handler', data);
 
-        // const imagePath = await uploadImage(imageUri);
+        const userInputInfo = {
+            fullName: data.fullName,
+            username: data.username,
+            gender: data.gender,
+            age: data.age,
+            country_name: data.country.name,
+            country_cca2: data.country.cca2
+        }
 
-        // const { data } = supabase.storage
-        //     .from('book-covers')
-        //     .getPublicUrl(imagePath);
 
-        // const imageUrl = data.publicUrl;
-        
-        
+
+        try {
+            if (userInfo) {
+                console.log('update');
+                
+                await userApi.updateUserInfo(user.id, userInfo)
+            } else {
+                console.log('create');
+
+                await userApi.createUserInfo(userInputInfo);
+
+            }
+
+            navigation.goBack()
+        } catch (err) {
+            Alert.alert(err.message)
+        }
+
+
     };
 
     return (
@@ -155,13 +208,34 @@ export default function EditProfileScreen() {
                         <Controller
                             control={control}
                             name='fullName'
-
                             render={({ field: { value, onChange } }) => (
                                 <TextInput
                                     value={value}
                                     onChangeText={onChange}
                                     style={styles.input}
                                     placeholder='Full Name'
+                                    keyboardType="default"
+                                />
+                            )}
+                        />
+
+                    </View>
+                </View>
+
+                <View style={styles.field}>
+                    <Text style={styles.fieldIcon}>♟</Text>
+
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Username</Text>
+                        <Controller
+                            control={control}
+                            name='username'
+                            render={({ field: { value, onChange } }) => (
+                                <TextInput
+                                    value={value}
+                                    onChangeText={onChange}
+                                    style={styles.input}
+                                    placeholder='Username'
                                     keyboardType="default"
                                 />
                             )}
