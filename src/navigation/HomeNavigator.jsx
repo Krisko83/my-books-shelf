@@ -1,8 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "../screens/HomeScreen.jsx";
-import LoginScreen from "../screens/LoginScreen.jsx";
-import RegisterScreen from "../screens/RegisterScreen.jsx";
-import ProfileScreen from "../screens/ProfileScreen.jsx";
+import HomeScreen from "../screens/HomeScreen.jsx"; 
 
 export default function HomeNavigator() {
     const Stack = createStackNavigator();

@@ -1,12 +1,13 @@
-import { View, Text, TextInput, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
 import { colors } from '../../theme.js'; import { Link } from '@react-navigation/native';
 import BookItem from '../components/BookItem.jsx';
 import { useForm, Controller } from 'react-hook-form';
-import RadioButton from '../components/RadioButton.jsx';
-import { books } from './MyBookScreen.jsx';
+import RadioButton from '../components/RadioButton.jsx'; 
+import { useEffect, useState } from 'react';
+import { bookApi } from '../api';
  
 
- 
+
 export default function HomeScreen() {
   const { control, handleSubmit } = useForm({
     mode: 'onBlur',
@@ -17,8 +18,16 @@ export default function HomeScreen() {
     }
   });
 
- 
+  const [books, setBooks] = useState([]);
 
+  useEffect(() => {
+    bookApi.getLastFourBooks()
+      .then(setBooks)
+      .catch(err => Alert.alert(err))
+  }, [])
+
+  console.log(books[0]);
+  
   const submitSortHandler = (data) => {
     console.log(data.sort);
 
@@ -125,14 +134,14 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   cart: {
-    marginBottom: 10, 
-    textAlign: 'center', 
+    marginBottom: 10,
+    textAlign: 'center',
     backgroundColor: 'white',
     elevation: 10,
   },
   libContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',    
+    flexWrap: 'wrap',
     gap: 5,
     justifyContent: 'space-between',
     marginHorizontal: 'auto'

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView, Alert } from 'react-native';
 
 import { useForm, Controller } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
@@ -6,8 +6,9 @@ import RadioButton from '../components/RadioButton.jsx';
 import InputController from '../components/InputController.jsx';
 import StarRating from '../components/StarRating.jsx';
 import { colors } from '../../theme.js';
+import { createBook } from '../api/book-api.js';
 
-export default function AddBookScreen({ route }) {
+export default function AddBookScreen({ navigation, route }) {
   const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -17,22 +18,30 @@ export default function AddBookScreen({ route }) {
       description: '',
       genre: '',
       status: '',
-      rating: 0
+      rating: 0,
+      image_url: ''
     }
   })
+console.log(navigation);
 
   const inputPath = route.name;
 
-  const submitHandler = (data) => {
-    console.log(data);
+  const submitHandler = async (data) => {
 
+    try {
+      await createBook(data);
 
-    console.log('Submit');
-    reset()
+      navigation.navigate('MainHome');
+
+      reset()
+    } catch (error) {
+      Alert.alert(error)
+    }
+
   }
 
   return (
-    <View style={[styles.screen, {paddingBottom: inputPath === 'Edit' && 40}]}>
+    <View style={[styles.screen, { paddingBottom: inputPath === 'Edit' && 40 }]}>
       <KeyboardAvoidingView behavior='padding'>
 
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
@@ -206,7 +215,7 @@ export default function AddBookScreen({ route }) {
             <Text style={styles.error}>{errors.rating.message}</Text>
           }
 
-          <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
+          <Pressable style={styles.button} onPress={handleSubmit(submitHandler)} disabled={isSubmitting}>
             <Text style={styles.buttonText}>Save Book</Text>
           </Pressable>
 

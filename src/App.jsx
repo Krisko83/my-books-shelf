@@ -6,7 +6,7 @@ import AuthNavigator from './navigation/AuthNavigator.jsx';
 import AuthProvider from './contexts/auth/AuthContext.jsx';
 import * as SplashScreen from 'expo-splash-screen';
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 export default function App() {
 

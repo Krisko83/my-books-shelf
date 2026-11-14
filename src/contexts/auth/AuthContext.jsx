@@ -39,8 +39,7 @@ export default function AuthProvider({ children }) {
 
     const loadUser = async () => {
         const user = await AsyncStorage.getItem('auth');
-        console.log('User', JSON.parse(user))
-
+   
         if (user) {
             return setState(JSON.parse(user))
         }
@@ -56,9 +55,7 @@ export default function AuthProvider({ children }) {
         register,
         logout
     };
-    console.log('state', state);
-
-    console.log('from provider', !!state);
+ 
 
     return (
         <AuthContext.Provider value={contextValues}>
