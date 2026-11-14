@@ -1,13 +1,13 @@
-import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, RefreshControl, Alert } from 'react-native';
 import { colors } from '../../theme.js';
 import { Link } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { bookApi } from '../api';
-import convertDate from '../utils/convertDate.js';
+import convertDate from '../utils/convertDate.js'; 
 
 export default function BookDetailsScreen({ route }) {
   const [book, setBook] = useState({})
-
+  const [refreshing, setRefreshing] = useState(false); 
   const bookId = route.params.bookId;
 
   useEffect(() => {
@@ -16,12 +16,31 @@ export default function BookDetailsScreen({ route }) {
       .catch(err => Alert.alert(err))
   }, [bookId])
 
-  const ratingStars = '★'.repeat(book.rating)
+  const ratingStars = '★'.repeat(book.rating);
+
+  const refreshHandler = async () => {
+    setRefreshing(true);
+
+    try {
+      const data = await bookApi.getBookById(bookId);
+
+      setBook(data[0]);
+
+    } catch (err) {
+      Alert.alert(err)
+    } finally {
+      setRefreshing(false)
+    }
+
+  }
 
   return (
     <View style={styles.screen}>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+      >
         {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 22 }}> */}
         {/* <Text style={{ fontSize: 22, color: colors.text }}>♡</Text> */}
         {/* </View> */}

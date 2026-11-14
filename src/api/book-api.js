@@ -15,7 +15,7 @@ export async function createBook(bookData){
 
 export async function getAllBooks() {
      try {
-        const response = await api.get('/books')
+        const response = await api.get('/books?order=created_at.desc')
 
         return response.data;
     } catch (err) {
@@ -26,7 +26,7 @@ export async function getAllBooks() {
 
 export async function getLastFourBooks() {
      try {
-        const response = await api.get('/books?limit=4')
+        const response = await api.get('/books?order=created_at.desc&limit=4')
 
         return response.data;
     } catch (err) {
@@ -38,8 +38,7 @@ export async function getLastFourBooks() {
 export async function getBookById(bookId) {
      try {
         const response = await api.get(`/books?id=eq.${bookId}`)
-console.log('bookApi',response.data);
-
+ 
         return response.data;
     } catch (err) {
         throw new Error('This Book cannot be retrive.Please try again later!')

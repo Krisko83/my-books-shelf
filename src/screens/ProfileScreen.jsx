@@ -3,10 +3,9 @@ import { colors } from '../../theme.js';
 import ProfileButton from '../components/ProfileButton.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 
-const rows = ['My Library', 'Edit Profile', 'Settings', 'Help & Support', 'About MyBookShelf'];
-
 export default function ProfileScreen({ navigation }) {
-  const { logout } = useAuthContext()
+  const { logout, user } = useAuthContext();
+
 
   return (
     <View style={styles.screen}>
@@ -19,8 +18,8 @@ export default function ProfileScreen({ navigation }) {
             <Text style={{ fontSize: 39 }}>👤</Text>
           </View>
 
-          <Text style={styles.name}>John Doe</Text>
-          <Text style={styles.email}>john.doe@example.com</Text>
+          <Text style={styles.name}>{user.fullName}</Text>
+          <Text style={styles.email}>{user.email}</Text>
 
         </View>
 

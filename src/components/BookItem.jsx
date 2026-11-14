@@ -24,8 +24,8 @@ export default function BookItem({
 
 const styles = StyleSheet.create({
     image: {
-        width: 150,
-        height: 200
+        width: 120,
+        height: 150
     },
     card: {
         gap: 5,

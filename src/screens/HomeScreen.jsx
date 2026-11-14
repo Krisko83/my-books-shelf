@@ -1,24 +1,25 @@
-import { View, Text, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, Alert, RefreshControl, FlatList } from 'react-native';
 import { colors } from '../../theme.js'; import { Link } from '@react-navigation/native';
 import BookItem from '../components/BookItem.jsx';
 import { useForm, Controller } from 'react-hook-form';
-import RadioButton from '../components/RadioButton.jsx'; 
+import RadioButton from '../components/RadioButton.jsx';
 import { useEffect, useState } from 'react';
 import { bookApi } from '../api';
- 
+
 
 
 export default function HomeScreen() {
-  const { control, handleSubmit } = useForm({
-    mode: 'onBlur',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      search: '',
-      sort: 'all'
-    }
-  });
+  // const { control, handleSubmit } = useForm({
+  //   mode: 'onBlur',
+  //   reValidateMode: 'onChange',
+  //   defaultValues: {
+  //     search: '',
+  //     sort: 'all'
+  //   }
+  // });
 
   const [books, setBooks] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     bookApi.getLastFourBooks()
@@ -26,25 +27,39 @@ export default function HomeScreen() {
       .catch(err => Alert.alert(err))
   }, [])
 
-  console.log(books[0]);
-  
-  const submitSortHandler = (data) => {
-    console.log(data.sort);
+  const refreshHandler = async () => {
+    setRefreshing(true);
 
+    try {
+      const data = await bookApi.getLastFourBooks();
+      setBooks(data)
+    } catch (err) {
+      Alert.alert(err)
+    } finally {
+      setRefreshing(false)
+    }
   }
 
-  const submitSearchHandler = (data) => {
-    console.log(data.search);
+  // const submitSortHandler = (data) => {
+  //   console.log(data.sort);
 
-  }
+  // }
+
+  // const submitSearchHandler = (data) => {
+  //   console.log(data.search);
+
+  // }
 
   return (
     <View style={styles.screen}>
 
 
-      <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 28 }}>
+      <ScrollView
+        contentContainerStyle={{ padding: 20, paddingHorizontal: 10 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+      >
 
-        <Controller
+        {/* <Controller
           control={control}
           name='search'
           render={({ field: { onChange, value } }) => (
@@ -106,7 +121,7 @@ export default function HomeScreen() {
           />
 
 
-        </View>
+        </View> */}
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
           <Text style={{ color: colors.text, fontSize: 19, fontWeight: '800' }}>Your Library</Text>
@@ -117,13 +132,26 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.libContainer}>
-          {books.map(book => (
+          <FlatList
+            data={books}
+            keyExtractor={item => item.id}
+            horizontal
+            contentContainerStyle={{gap: 10, paddingHorizontal: 10}}
+            renderItem={({ item }) => (
+              <View key={item.id} style={styles.cart}   >
+                <Link screen='Details' params={{ bookId: item.id }} >
+                  <BookItem {...item} />
+                </Link>
+              </View>
+            )}
+          />
+          {/* {books.map(book => (
             <View key={book.id} style={styles.cart} >
               <Link screen='Details' params={{ bookId: book.id }} >
                 <BookItem {...book} />
               </Link>
             </View>
-          ))}
+          ))} */}
         </View>
       </ScrollView>
 
@@ -137,15 +165,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
     backgroundColor: 'white',
-    elevation: 10,
-  },
-  libContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 5,
-    justifyContent: 'space-between',
-    marginHorizontal: 'auto'
-  },
+    elevation: 5, 
+    flex: 1
+    // padding: 10
+
+  }, 
   screen: {
     flex: 1,
     backgroundColor: colors.background

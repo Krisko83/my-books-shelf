@@ -29,8 +29,7 @@ export default function AddBookScreen({ navigation, route }) {
     
     try {
       await createBook(data);
-      console.log('navi',navigation);
-
+ 
       navigation.navigate('MainHome');
 
       reset()

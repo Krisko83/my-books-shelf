@@ -3,8 +3,7 @@ import { colors } from '../../theme.js';
 import { CountryPicker } from 'react-native-country-picker-modal';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker'
-import { useState } from 'react';
-import { supabase } from '../../supabase.js';
+import { useState } from 'react'; 
 
 export default function EditProfileScreen() {
     const { control, handleSubmit } = useForm({
