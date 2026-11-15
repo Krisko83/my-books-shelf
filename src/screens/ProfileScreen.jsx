@@ -1,21 +1,39 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Alert, Image } from 'react-native';
 import { colors } from '../../theme.js';
 import ProfileButton from '../components/ProfileButton.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { authApi, userApi } from '../api/index.js';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
 
-  const [userInfo, setUserInfo] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
   const userId = user.id;
+  console.log(userId);
 
-  useEffect(() => {
-    userApi.getUserInfo(userId)
-      .then(data => setUserInfo(data[0]))
-      .catch(err => Alert.alert(err.message))
-  }, [])
+
+
+  useFocusEffect(
+
+    useCallback(() => {
+
+      const getUserInfo = async () => {
+        try {
+          const data = await userApi.getUserInfo(userId);
+
+          setUserInfo(data[0])
+
+        } catch (err) {
+          Alert.alert(err.message)
+        }
+      }
+
+      getUserInfo()
+    }, [])
+  )
+
 
   const logoutHandler = async () => {
 
@@ -31,8 +49,6 @@ export default function ProfileScreen({ navigation }) {
     }
   }
 
-
-
   return (
     <View style={styles.screen}>
 
@@ -40,8 +56,22 @@ export default function ProfileScreen({ navigation }) {
 
         <View style={styles.imageContainer}>
 
-          <View style={styles.image}>
-            <Text style={{ fontSize: 39 }}>👤</Text>
+          {/* <View style={styles.image}>
+            {userInfo.hasOwnProperty('imageUrl') ?
+              <Image source={{ uri: userInfo.imageUrl }} style={{ width: '100%', height: 50 }} />
+              :
+              <Text style={{ fontSize: 39 }}>👤</Text>
+            }
+          </View> */}
+          <View style={styles.imageContainer}>
+
+            <View style={styles.imageWrapper}>
+              {userInfo.imageUrl !== '' ?
+                <Image source={{ uri: userInfo.imageUrl }} style={styles.profileImage} />
+                :
+                <Text style={{ fontSize: 80, textAlign: 'center', alignContent: 'center' }}>👤</Text>
+              }
+            </View>
           </View>
 
           <Text style={styles.name}>Name: {userInfo?.fullName || 'Anonymous'}</Text>
@@ -54,7 +84,7 @@ export default function ProfileScreen({ navigation }) {
         <View style={[styles.card, { paddingVertical: 4 }]}>
           <ProfileButton icon='▤' name='My Library' onPress={() => navigation.navigate('MainMyBooks')} />
 
-          <ProfileButton icon='▥' name='Edit Profile' onPress={() => navigation.navigate('EditProfile', userInfo )} />
+          <ProfileButton icon='▥' name='Edit Profile' onPress={() => navigation.navigate('EditProfile', userInfo)} />
 
           <ProfileButton icon='⚙' name='Settings' onPress={() => navigation.navigate('Settings')} />
 
@@ -148,8 +178,26 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    marginTop: 25,
-    marginBottom: 28
-  }
+    marginBottom: 35,
+    marginTop: 20
+  },
+  // imageContainer: {
+  //   alignItems: 'center',
+  //   marginTop: 25,
+  //   marginBottom: 28
+  // },
+  imageWrapper: {
+    width: 155,
+    height: 155,
+    borderRadius: 80,
+    borderWidth: 3,
+    borderColor: '#5944D6',
+    padding: 4,
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 80,
+  },
 });
 

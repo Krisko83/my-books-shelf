@@ -23,7 +23,7 @@ export const authenticationApi = axios.create({
 
 export const storageApi = axios.create({
     ...base.defaults,
-    baseURL: `${base.defaults.baseURL}/storage/v1/object`
+    baseURL: `${base.defaults.baseURL}/storage/v1/object/`
 })
 
 
@@ -50,20 +50,26 @@ const refreshTokenInterceptor = (instance) => {
 
         async (error) => {
             const originalRequest = error.config;
+            const result = error.response?.data;
 
             if (
-                error.response?.status !== 401 || originalRequest?._retry) {
+                error.response?.status !== 401 ||
+                !originalRequest ||
+                originalRequest._retry
+            ) {
                 return Promise.reject(error);
             }
 
-            const result = error.response.data;
-
             if (
-                result.message !== 'JWT expired' && result.code !== 'PGRST303') {
+                result?.message !== 'JWT expired' &&
+                result?.code !== 'PGRST301'
+            ) {
                 return Promise.reject(error);
             }
 
             originalRequest._retry = true;
+
+            let refreshedData;
 
             try {
                 // Get stored authentication data
@@ -77,25 +83,94 @@ const refreshTokenInterceptor = (instance) => {
                 }
 
                 // Request new tokens
-                const response = await authenticationApi.post('/token?grant_type=refresh_token', { refresh_token: refreshToken });
+                const response = await authenticationApi.post(
+                    '/token?grant_type=refresh_token',
+                    { refresh_token: refreshToken }
+                );
 
-                // Store new authentication data
-                await AsyncStorage.setItem('auth', JSON.stringify(response.data));
+                refreshedData = response.data;
 
-                // Update original request with new access token
-                originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
-
-                // Retry original request
-                return instance(originalRequest);
+                // Save new tokens
+                await AsyncStorage.setItem(
+                    'auth',
+                    JSON.stringify({
+                        ...user,
+                        ...refreshedData
+                    })
+                );
 
             } catch (refreshError) {
+                console.log('Refresh failed:', refreshError.response?.data || refreshError.message);
+
                 await AsyncStorage.removeItem('auth');
 
                 return Promise.reject(refreshError);
             }
+
+            // Update original request
+            originalRequest.headers = {
+                ...originalRequest.headers,
+                Authorization: `Bearer ${refreshedData.access_token}`
+            };
+
+            // Retry original request
+            return instance(originalRequest);
         }
     );
 };
+
+// const refreshTokenInterceptor = (instance) => {
+//     instance.interceptors.response.use(
+//         (response) => response,
+
+//         async (error) => {
+//             const originalRequest = error.config;
+
+//             if (
+//                 error.response?.status !== 401 || !originalRequest || originalRequest?._retry) {
+//                 return Promise.reject(error);
+//             }
+
+//             const result = error.response.data;
+
+//             if (
+//                 result.message !== 'JWT expired' && result.code !== 'PGRST301') {
+//                 return Promise.reject(error);
+//             }
+
+//             originalRequest._retry = true;
+
+//             try {
+//                 // Get stored authentication data
+//                 const userData = await AsyncStorage.getItem('auth');
+//                 const user = userData ? JSON.parse(userData) : null;
+
+//                 const refreshToken = user?.refresh_token;
+
+//                 if (!refreshToken) {
+//                     throw new Error('No refresh token available');
+//                 }
+
+//                 // Request new tokens
+//                 const response = await authenticationApi.post('/token?grant_type=refresh_token', { refresh_token: refreshToken });
+
+//                 // Store new authentication data
+//                 await AsyncStorage.setItem('auth', JSON.stringify(response.data));
+
+//                 // Update original request with new access token
+//                 originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
+
+//                 // Retry original request
+//                 return instance(originalRequest);
+
+//             } catch (refreshError) {
+//                 await AsyncStorage.removeItem('auth');
+
+//                 return Promise.reject(refreshError);
+//             }
+//         }
+//     );
+// };
 
 authInterceptor(api);
 refreshTokenInterceptor(api);

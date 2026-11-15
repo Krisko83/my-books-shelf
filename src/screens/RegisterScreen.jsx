@@ -5,8 +5,8 @@ import { useState, useRef } from 'react';
 import EyeIcon from '../components/EyeIcon.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
-import { authApi } from '../api/index.js';
- 
+import { authApi, userApi } from '../api/index.js';
+
 
 
 export default function RegisterScreen({ navigation }) {
@@ -56,7 +56,18 @@ export default function RegisterScreen({ navigation }) {
 
     try {
       const userData = await authApi.register(data)
+
       register(userData);
+
+      await userApi.createUserInfo({
+        fullName: '',
+        username: '',
+        gender: '',
+        age: '',
+        country_name: '',
+        country_cca2: '',
+        imageUrl: '',
+      })
 
       reset();
     } catch (err) {

@@ -7,8 +7,7 @@ export async function createBook(bookData) {
 
         return response;
     } catch (err) {
-        console.log(err.message);
-        
+ 
         throw new Error('Book cannot be created. Please try again later!')
 
     }

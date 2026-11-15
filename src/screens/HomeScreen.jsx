@@ -1,10 +1,9 @@
 import { View, Text, ScrollView, StyleSheet, Alert, RefreshControl, FlatList } from 'react-native';
-import { colors } from '../../theme.js'; import { Link, useFocusEffect } from '@react-navigation/native';
+import { colors } from '../../theme.js';
+import { Link, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { bookApi } from '../api';
 import BookItem from '../components/BookItem.jsx';
-
-
 
 export default function HomeScreen() {
 
@@ -16,7 +15,7 @@ export default function HomeScreen() {
     useCallback(() => {
       const getBooks = async () => {
         try {
-          const data = await bookApi.getAllBooks();
+          const data = await bookApi.getLastFourBooks();
           setBooks(data);
 
         } catch (err) {

@@ -38,8 +38,8 @@ export async function logout() {
         await authenticationApi.post('logout')
 
     } catch (error) {
-        console.log('Status:', error.response?.status);
-        console.log('Data:', error.response?.data);
+        // console.log('Status:', error.response?.status);
+        // console.log('Data:', error.response?.data);
 
         throw new Error('Unable to logout user. Please try again later!')
     }

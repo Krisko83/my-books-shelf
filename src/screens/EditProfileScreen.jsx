@@ -1,14 +1,19 @@
-import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert, Button } from 'react-native';
 import { colors } from '../../theme.js';
 import { CountryPicker } from 'react-native-country-picker-modal';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker'
 import { useEffect, useState } from 'react';
 import { uuid } from 'expo';
-import { userApi } from '../api/index.js';
+import { userApi } from '../api';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
+import { File } from 'expo-file-system';
+
 
 export default function EditProfileScreen({ navigation, route }) {
+    const [imageUri, setImageUri] = useState(null);
+    const [photo, setPhoto] = useState('');
+
     const { control, handleSubmit, setValues } = useForm({
         defaultValues: {
             fullName: '',
@@ -19,15 +24,18 @@ export default function EditProfileScreen({ navigation, route }) {
                 cca2: '',
                 name: ''
             },
+            imageUrl: ''
         }
     })
+
+
     const { user } = useAuthContext()
     const userInfo = route.params;
 
 
     useEffect(() => {
         if (userInfo) {
-            const user = {
+            const userData = {
                 fullName: userInfo.fullName,
                 username: userInfo.username,
                 age: userInfo.age,
@@ -35,19 +43,24 @@ export default function EditProfileScreen({ navigation, route }) {
                     cca2: userInfo.country_cca2,
                     name: userInfo.country_name
                 },
-                gender: userInfo.gender
+                gender: userInfo.gender,
+                imageUrl: photo,
             }
-            setValues(user)
+            setValues(userData)
         }
     }, [])
 
-    const [imageUri, setImageUri] = useState(null);
 
     const pickImage = async () => {
         const permisionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (!permisionResult.granted) {
-            return
+            return (
+                <View>
+                    <Text>In order to use the camera you need to grant camera permission!</Text>
+                    <Button title='Grant Camera Permission' onPress={permisionResult} />
+                </View>
+            )
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -82,45 +95,27 @@ export default function EditProfileScreen({ navigation, route }) {
         }
     }
 
-    // const uploadImage = async (image) => {
-    //     if (!image) return;
-    //     try {
-    //         // Read the local image
-    //         const response = await fetch(image);
-
-    //         console.log('Status:', response.status);
-    //         console.log('Response OK:', response.ok);
-
-    //         const buffer = await response.arrayBuffer();
-
-    //         console.log('Buffer:', buffer);
-    //         console.log('Type:', buffer?.constructor?.name);
-    //         console.log('Length:', buffer?.byteLength)
-    //         // Generate a unique file name
-    //         const fileName = `${uuid.v4()}${arrayBuffer}.jpg`;
-
-    //         // Upload to Supabase Storage
-    //         // const { data, error } = await supabase.storage
-    //         //     .from('book-covers')
-    //         //     .upload(fileName, arrayBuffer, {
-    //         //         contentType: 'image/jpeg',
-    //         //         upsert: false
-    //         //     });
-
-    //         // if (error) throw error;
-
-    //         // console.log('Uploaded:', data.path);
-    //         console.log(fileName);
-
-    //         // return data.path;
-
-    //     } catch (error) {
-    //         console.log('Upload error:', error.message);
-    //     }
-    // };
-
     const submitHandler = async (data) => {
-        console.log('from handler', data);
+        let imageUrl = userInfo.imageUrl;
+
+        if (imageUri) {
+            try {
+                const file = new File(imageUri)
+                const arrayBuffer = await file.arrayBuffer()
+
+                const fileName = `${uuid.v4()}.jpg`
+                await userApi.uploadImage(fileName, arrayBuffer);
+
+                imageUrl = `https://jekwxfohagnknpkqdgdo.supabase.co/storage/v1/object/public/avatars/${fileName}`;
+
+
+                setPhoto(imageUrl);
+
+            } catch (err) {
+                Alert.alert(err.message)
+            }
+        }
+
 
         const userInputInfo = {
             fullName: data.fullName,
@@ -128,30 +123,26 @@ export default function EditProfileScreen({ navigation, route }) {
             gender: data.gender,
             age: data.age,
             country_name: data.country.name,
-            country_cca2: data.country.cca2
+            country_cca2: data.country.cca2,
+            imageUrl,
         }
 
-
-
         try {
-            if (userInfo) {
-                console.log('update');
-                
-                await userApi.updateUserInfo(user.id, userInfo)
-            } else {
-                console.log('create');
 
-                await userApi.createUserInfo(userInputInfo);
+            await userApi.updateUserInfo(user.id, userInputInfo)
 
-            }
+            navigation.goBack();
 
-            navigation.goBack()
         } catch (err) {
             Alert.alert(err.message)
         }
-
-
     };
+
+    const image = userInfo.imageUrl !== '' 
+        ? userInfo.imageUrl
+        : imageUri
+            ? imageUri
+            : null;
 
     return (
         <KeyboardAvoidingView style={styles.screen} behavior='padding'>
@@ -166,7 +157,7 @@ export default function EditProfileScreen({ navigation, route }) {
                     <View style={styles.imageWrapper}>
                         <Image
                             source={{
-                                uri: imageUri
+                                uri: image
                             }}
                             style={styles.profileImage}
                         />
@@ -191,7 +182,7 @@ export default function EditProfileScreen({ navigation, route }) {
                         <Text style={styles.label}>Email</Text>
                         <TextInput
                             style={styles.input}
-                            value="jane.doe@example.com"
+                            value={user.email}
                             editable={false}
                         />
                     </View>
