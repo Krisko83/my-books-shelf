@@ -1,18 +1,16 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, Alert, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Alert, Image, RefreshControl } from 'react-native';
 import { colors } from '../../theme.js';
 import ProfileButton from '../components/ProfileButton.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { authApi, userApi } from '../api/index.js';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
-
+  const [refreshing, setRefreshing] = useState(false)
   const [userInfo, setUserInfo] = useState({});
   const userId = user.id;
-  console.log(userId);
-
 
 
   useFocusEffect(
@@ -49,20 +47,30 @@ export default function ProfileScreen({ navigation }) {
     }
   }
 
+  const refreshHandler = async () => {
+    setRefreshing(true)
+    try {
+      const data = await userApi.getUserInfo(userId);
+
+      setUserInfo(data[0]);
+
+    } catch (err) {
+      Alert.alert(err.message)
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
   return (
     <View style={styles.screen}>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+      >
 
         <View style={styles.imageContainer}>
 
-          {/* <View style={styles.image}>
-            {userInfo.hasOwnProperty('imageUrl') ?
-              <Image source={{ uri: userInfo.imageUrl }} style={{ width: '100%', height: 50 }} />
-              :
-              <Text style={{ fontSize: 39 }}>👤</Text>
-            }
-          </View> */}
           <View style={styles.imageContainer}>
 
             <View style={styles.imageWrapper}>

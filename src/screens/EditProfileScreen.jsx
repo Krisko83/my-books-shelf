@@ -1,4 +1,4 @@
-import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert, Button } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert, Button, RefreshControl } from 'react-native';
 import { colors } from '../../theme.js';
 import { CountryPicker } from 'react-native-country-picker-modal';
 import { useForm, Controller } from 'react-hook-form';
@@ -13,8 +13,11 @@ import { File } from 'expo-file-system';
 export default function EditProfileScreen({ navigation, route }) {
     const [imageUri, setImageUri] = useState(null);
     const [photo, setPhoto] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
+    const { user } = useAuthContext()
+    const userInfo = route.params;
 
-    const { control, handleSubmit, setValues } = useForm({
+    const { control, handleSubmit, setValues, formState: { isSubmitting } } = useForm({
         defaultValues: {
             fullName: '',
             username: '',
@@ -26,29 +29,25 @@ export default function EditProfileScreen({ navigation, route }) {
             },
             imageUrl: ''
         }
-    })
+    });
 
-
-    const { user } = useAuthContext()
-    const userInfo = route.params;
-
+    const userData = {
+        fullName: userInfo.fullName,
+        username: userInfo.username,
+        age: userInfo.age,
+        country: {
+            cca2: userInfo.country_cca2,
+            name: userInfo.country_name
+        },
+        gender: userInfo.gender,
+        imageUrl: photo,
+    }
 
     useEffect(() => {
-        if (userInfo) {
-            const userData = {
-                fullName: userInfo.fullName,
-                username: userInfo.username,
-                age: userInfo.age,
-                country: {
-                    cca2: userInfo.country_cca2,
-                    name: userInfo.country_name
-                },
-                gender: userInfo.gender,
-                imageUrl: photo,
-            }
-            setValues(userData)
-        }
-    }, [])
+        setRefreshing(true)
+        setValues(userData)
+        setRefreshing(false)
+    }, []);
 
 
     const pickImage = async () => {
@@ -138,7 +137,11 @@ export default function EditProfileScreen({ navigation, route }) {
         }
     };
 
-    const image = userInfo.imageUrl !== '' 
+    const refreshHandler = async () => {
+        setValues(userData)
+    }
+
+    const image = userInfo.imageUrl !== ''
         ? userInfo.imageUrl
         : imageUri
             ? imageUri
@@ -148,6 +151,7 @@ export default function EditProfileScreen({ navigation, route }) {
         <KeyboardAvoidingView style={styles.screen} behavior='padding'>
             <ScrollView
                 contentContainerStyle={styles.content}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
             // showsVerticalScrollIndicator={false}
             >
 
@@ -344,7 +348,7 @@ export default function EditProfileScreen({ navigation, route }) {
 
                 <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
                     <Text style={styles.buttonIcon}>✎</Text>
-                    <Text style={styles.buttonText}>Update Profile</Text>
+                    <Text style={styles.buttonText}>{isSubmitting ? 'Updating...' : 'Update Profile'}</Text>
                 </Pressable>
 
             </ScrollView>
