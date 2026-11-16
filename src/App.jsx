@@ -1,12 +1,17 @@
 import { StatusBar, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthContext } from './contexts/auth/AuthContext.js';
-import RootNavigator from './navigation/RootNavigator.jsx'; 
+import RootNavigator from './navigation/RootNavigator.jsx';
 import AuthNavigator from './navigation/AuthNavigator.jsx';
 import AuthProvider from './contexts/auth/AuthContext.jsx';
 import * as SplashScreen from 'expo-splash-screen';
+import { Entypo } from '@expo/vector-icons';
 
-// SplashScreen.preventAutoHideAsync();
+// SplashScreen.setOptions({
+//   duration: 1000,
+//   fade: true,
+// });
+
 
 export default function App() {
 
@@ -25,6 +30,7 @@ export default function App() {
                 <AuthNavigator />
             }
           </AuthContext.Consumer>
+          {/* <Entypo name="rocket" size={30} /> */}
 
         </AuthProvider>
       </NavigationContainer>

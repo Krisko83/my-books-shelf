@@ -27,11 +27,22 @@
       "backgroundColor": "#F5F0E8"
     },
     "plugins": [
-      "expo-font",
-      "expo-splash-screen",
+      "expo-font", 
       "expo-status-bar",
-      "expo-image-picker",
-      "expo-file-system"
+      "expo-image-picker",  
+      "expo-file-system",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#232323",
+          "image": "./assets/splash-icon.png",
+          "dark": {
+            "image": "./assets/splash-icon-dark.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 200
+        }
+      ]
     ]
   }
 }

@@ -141,10 +141,10 @@ export default function EditProfileScreen({ navigation, route }) {
         setValues(userData)
     }
 
-    const image = userInfo.imageUrl !== ''
-        ? userInfo.imageUrl
-        : imageUri
-            ? imageUri
+    const image = imageUri
+        ? imageUri
+        : userInfo.imageUrl !== ''
+            ? userInfo.imageUrl
             : null;
 
     return (

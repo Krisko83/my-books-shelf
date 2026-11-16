@@ -1,7 +1,7 @@
 import { View, Text, TextInput, ScrollView, StatusBar, StyleSheet, KeyboardAvoidingView, Pressable, Alert } from 'react-native';
 import { colors } from '../../theme.js';
 import { Controller, useForm } from 'react-hook-form';
-import { use, useState } from 'react';
+import { use, useRef, useState } from 'react';
 import EyeIcon from '../components/EyeIcon.jsx';
 import InputController from '../components/InputController.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,7 +21,11 @@ export default function LoginScreen({ navigation }) {
   })
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const insets = useSafeAreaInsets();
-  const { login } = useAuthContext()
+  const { login } = useAuthContext();
+  const scrollViewRef = useRef(null);
+  const secondInputRef = useRef(null)
+  const thirdInputRef = useRef(null);
+
 
   const submitHandler = async (data) => {
 
@@ -44,6 +48,25 @@ export default function LoginScreen({ navigation }) {
     }))
   }
 
+  const handleFirstFocus = (event) => {
+    const input = event.target;
+
+    if (input === secondInputRef.current ||
+      input === thirdInputRef.current) {
+      return;
+    }
+
+    input.measureLayout(
+      scrollViewRef.current,
+      (x, y) => {
+        scrollViewRef.current?.scrollTo({
+          y: y + 200,
+          animated: true
+        });
+      }
+    );
+  };
+
   return (
     <View style={styles.screen}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
@@ -61,7 +84,7 @@ export default function LoginScreen({ navigation }) {
 
           <Text style={styles.label}>Email address</Text>
 
-          <InputController
+          {/* <InputController
             control={control}
             name='email'
             rules={{
@@ -75,9 +98,9 @@ export default function LoginScreen({ navigation }) {
             handleSubmit={handleSubmit(submitHandler)}
             keyboardType="email-address"
             capitalize="none"
-          />
+          /> */}
 
-          {/* <Controller
+          <Controller
             control={control}
             name='email'
             rules={{
@@ -89,18 +112,21 @@ export default function LoginScreen({ navigation }) {
             }}
             render={({ field: { onBlur, onChange, value } }) => (
               <TextInput
+                ref={secondInputRef}
+                submitBehavior="submit"
                 style={styles.input}
                 placeholder="you@example.com"
                 placeholderTextColor={colors.muted}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                onSubmitEditing={handleSubmit(submitHandler)}
+                onSubmitEditing={() => secondInputRef.current?.focus()}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                returnKeyType="next"
               />
             )}
-          /> */}
+          />
 
           {errors.email &&
             <Text style={styles.error}>{errors.email.message}</Text>

@@ -8,7 +8,6 @@ import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { authApi, userApi } from '../api/index.js';
 
 
-
 export default function RegisterScreen({ navigation }) {
   const { control, reset, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
@@ -24,32 +23,9 @@ export default function RegisterScreen({ navigation }) {
   const { register } = useAuthContext()
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef(null);
-  // const submitButtonRef = useRef(null);
+  const secondInputRef = useRef(null)
+  const thirdInputRef = useRef(null);
 
-  const scrollToInput = (event) => {
-    const input = event.target;
-
-    input.measureLayout(
-      scrollViewRef.current,
-      (x, y) => {
-        scrollViewRef.current?.scrollTo({
-          y: y + 200,
-          animated: true
-        });
-      },
-      () => console.log('Could not measure input')
-    );
-
-  };
-
-  // const returnToTop = () => {
-  //   Keyboard.dismiss();
-
-  //   scrollViewRef.current?.scrollTo({
-  //     y: 0,
-  //     animated: true
-  //   });
-  // };
 
   const submitHandler = async (data) => {
     Keyboard.dismiss();
@@ -85,10 +61,29 @@ export default function RegisterScreen({ navigation }) {
   }
 
 
+  const handleFirstFocus = (event) => { 
+    const input = event.target;
+
+    if (input === secondInputRef.current ||
+      input === thirdInputRef.current) {
+      return;
+    }
+
+    input.measureLayout(
+      scrollViewRef.current,
+      (x, y) => {
+        scrollViewRef.current?.scrollTo({
+          y: y + 200,
+          animated: true
+        });
+      }
+    );
+  };
+
 
   return (
     <View style={styles.screen}>
-      <KeyboardAvoidingView behavior='padding' contentContainerStyle={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior='padding' contentContainerStyle={{ flex: 1 }} >
 
         <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]} keyboardShouldPersistTaps="handled" ref={scrollViewRef}>
 
@@ -101,7 +96,7 @@ export default function RegisterScreen({ navigation }) {
 
           {/* <Text style={styles.subheading}>Start building your personal library</Text> */}
 
-          <View onFocus={scrollToInput} >
+          <View onFocus={handleFirstFocus}>
 
 
             <Text style={styles.label}>Email address</Text>
@@ -118,16 +113,17 @@ export default function RegisterScreen({ navigation }) {
               }}
               render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
+                  submitBehavior="submit"
                   style={styles.input}
                   placeholder="Email address"
                   placeholderTextColor={colors.muted}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
-                  onSubmitEditing={handleSubmit(submitHandler)}
+                  onSubmitEditing={() => secondInputRef.current?.focus()}
                   keyboardType="email-address"
+                  returnKeyType="next"
                   autoCapitalize="none"
-                // onFocus={scrollToInput}
                 />
               )}
             />
@@ -160,16 +156,18 @@ export default function RegisterScreen({ navigation }) {
                 <View style={styles.inputContainer}>
 
                   <TextInput
+                    ref={secondInputRef}
+                    submitBehavior="submit"
                     style={styles.input}
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    onSubmitEditing={handleSubmit(submitHandler)}
+                    onSubmitEditing={() => thirdInputRef.current?.focus()}
                     placeholder="Create a password"
                     placeholderTextColor={colors.muted}
+                    returnKeyType="next"
                     secureTextEntry={!isPasswordVisible['password']}
                     autoCapitalize="none"
-                  // onFocus={scrollToInput}
                   />
 
                   <Pressable
@@ -200,6 +198,8 @@ export default function RegisterScreen({ navigation }) {
                 <View style={styles.inputContainer}>
 
                   <TextInput
+                    ref={thirdInputRef}
+                    submitBehavior="submit"
                     style={styles.input}
                     value={value}
                     onBlur={onBlur}
@@ -209,7 +209,7 @@ export default function RegisterScreen({ navigation }) {
                     placeholderTextColor={colors.muted}
                     secureTextEntry={!isPasswordVisible['confirmPassword']}
                     autoCapitalize="none"
-                  // onFocus={scrollToInput}
+                    returnKeyType="done"
                   />
 
                   <Pressable
@@ -304,7 +304,7 @@ export const styles = StyleSheet.create({
   },
   error: {
     color: 'red',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   inputContainer: {
     flexDirection: 'row',
