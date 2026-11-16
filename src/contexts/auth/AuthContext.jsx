@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext.js";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { authApi } from "../../api/index.js";
+ import { authApi } from "../../api/index.js";
 import { Alert } from "react-native";
+import useSecureState from "../../hooks/useSecureState.js";
+
 
 export default function AuthProvider({ children }) {
-    const [state, setState] = useState(null);
+    const [auth, setAuth] = useSecureState('auth', null);
 
-    useEffect(() => {
-        loadUser()
-    }, [])
-
+    console.log(auth);
+ 
     const login = async (userData) => {
         await saveUser(userData);
     };
@@ -20,8 +19,7 @@ export default function AuthProvider({ children }) {
     };
 
     const logout = async () => {
-        await AsyncStorage.removeItem('auth')
-        setState(null);
+         setAuth(null);
     };
 
     const saveUser = async (data) => {
@@ -33,29 +31,30 @@ export default function AuthProvider({ children }) {
             refresh_token: data.refresh_token
         };
 
-        try {
-            await AsyncStorage.setItem('auth', JSON.stringify(userInfo))
-            setState(userInfo);
+        // try {
+        //     await AsyncStorage.setItem('auth', JSON.stringify(userInfo))
 
-        } catch (error) {
-            alert('Cannot save in storage!')
-        }
+            setAuth(userInfo);
+
+        // } catch (error) {
+        //     alert('Cannot save in storage!')
+        // }
     }
 
-    const loadUser = async () => {
-        const user = await AsyncStorage.getItem('auth');
+    // const loadUser = async () => {
+    //     const user = await AsyncStorage.getItem('auth');
 
-        if (user) {
-            return setState(JSON.parse(user))
-        }
+    //     if (user) {
+    //         return setAuth(JSON.parse(user))
+    //     }
 
-        return null
-    }
+    //     return null
+    // }
 
 
     const contextValues = {
-        isAuthenticated: !!state,
-        user: state,
+        isAuthenticated: !!auth,
+        user: auth,
         login,
         register,
         logout

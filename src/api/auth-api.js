@@ -1,8 +1,4 @@
-import { use } from "react";
-import { AuthContext, useAuthContext } from "../contexts/auth/AuthContext.js";
 import { authenticationApi } from "./api.js"
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 
 export async function register(userData) {
