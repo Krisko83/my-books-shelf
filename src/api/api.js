@@ -28,7 +28,7 @@ export const storageApi = axios.create({
 
 const authInterceptor = (instance) => {
     instance.interceptors.request.use(async (config) => {
-        const storedUser = await SecureStore.getItem('auth');
+        const storedUser = await SecureStore.getItemAsync('auth');
 
         if (storedUser) {
             const user = JSON.parse(storedUser);
@@ -37,8 +37,8 @@ const authInterceptor = (instance) => {
                 config.headers.Authorization =
                     `Bearer ${user.access_token}`;
             }
-        }
-
+        } 
+        
         return config;
     });
 }
@@ -65,7 +65,7 @@ const refreshTokenInterceptor = (instance) => {
 
             try {
     
-                const userData = await SecureStore.getItem('auth');
+                const userData = await SecureStore.getItemAsync('auth');
                 const user = userData ? JSON.parse(userData) : null;
 
                 const refreshToken = user?.refresh_token;
@@ -79,11 +79,9 @@ const refreshTokenInterceptor = (instance) => {
                     { refresh_token: refreshToken }
                 );
 
-                refreshedData = response.data;
-
-                console.log('from interceptor',refreshedData);
+                refreshedData = response.data; 
                 
-                await SecureStore.setItem(
+                await SecureStore.setItemAsync(
                     'auth',
                     JSON.stringify({
                         ...user,
@@ -94,7 +92,7 @@ const refreshTokenInterceptor = (instance) => {
             } catch (refreshError) {
                 console.log('Refresh failed:', refreshError.response?.data || refreshError.message);
 
-                await SecureStore.removeItem('auth');
+                await SecureStore.deleteItemAsync('auth');
 
                 return Promise.reject(refreshError);
             }

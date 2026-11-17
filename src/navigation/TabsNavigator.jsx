@@ -5,8 +5,9 @@ import ProfileNavigator from "./ProfileNavigator.jsx";
 import AddEditNavigator from "./AddEditNavigator.jsx";
 import LibraryNavigator from "./LibraryNavigator.jsx";
 
+const Tab = createBottomTabNavigator();
+
 export default function TabsNavigator() {
-    const Tab = createBottomTabNavigator();
 
     return (
         <Tab.Navigator>

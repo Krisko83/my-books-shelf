@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext.js";
- import { authApi } from "../../api/index.js";
-import { Alert } from "react-native";
-import useSecureState from "../../hooks/useSecureState.js";
-
+import { AuthContext } from "./AuthContext.js"; 
+import useSecureAuth from "../../hooks/useSecureState.js";
 
 export default function AuthProvider({ children }) {
-    const [auth, setAuth] = useSecureState('auth', null);
+    const [user, saveUser, removeUser] = useSecureAuth('auth', null)
 
-    console.log(auth);
- 
+    // useEffect(() => {
+    //     loadUser()
+    // }, [])
+
     const login = async (userData) => {
         await saveUser(userData);
     };
@@ -19,33 +17,33 @@ export default function AuthProvider({ children }) {
     };
 
     const logout = async () => {
-         setAuth(null);
+        await removeUser();
     };
 
-    const saveUser = async (data) => {
- 
-        const userInfo = {
-            id: data.user.id,
-            email: data.user.email,
-            access_token: data.access_token,
-            refresh_token: data.refresh_token
-        };
+    // const saveUser = async (data) => {
 
-        // try {
-        //     await AsyncStorage.setItem('auth', JSON.stringify(userInfo))
+    //     const userInfo = {
+    //         id: data.user.id,
+    //         email: data.user.email,
+    //         access_token: data.access_token,
+    //         refresh_token: data.refresh_token
+    //     };
 
-            setAuth(userInfo);
+    //     try {
+    //         await SecureStore.setItemAsync('auth', JSON.stringify(userInfo))
 
-        // } catch (error) {
-        //     alert('Cannot save in storage!')
-        // }
-    }
+    //         setState(userInfo);
+
+    //     } catch (error) {
+    //         alert('Cannot save in storage!')
+    //     }
+    // }
 
     // const loadUser = async () => {
-    //     const user = await AsyncStorage.getItem('auth');
+    //     const user = await SecureStore.getItemAsync('auth');
 
-    //     if (user) {
-    //         return setAuth(JSON.parse(user))
+    //     if (user !== null) {
+    //         return setState(JSON.parse(user))
     //     }
 
     //     return null
@@ -53,8 +51,8 @@ export default function AuthProvider({ children }) {
 
 
     const contextValues = {
-        isAuthenticated: !!auth,
-        user: auth,
+        isAuthenticated: !!user,
+        user,
         login,
         register,
         logout

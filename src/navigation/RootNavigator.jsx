@@ -6,8 +6,9 @@ import MyBookScreen from "../screens/MyBookScreen.jsx";
 import AddBookScreen from "../screens/AddBookScreen.jsx";
 import EditProfileScreen from "../screens/EditProfileScreen.jsx";
 
+const Stack = createStackNavigator()
+
 export default function RootNavigator() {
-    const Stack = createStackNavigator()
 
     return (
         <Stack.Navigator>

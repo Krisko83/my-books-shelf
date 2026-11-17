@@ -1,5 +1,6 @@
 import { uuid } from "expo";
 import { api, storageApi } from "./api.js";
+import { getErrorMessage } from "../utils/error.utils.js";
 
 export async function getUserInfo(userId) {
 
@@ -10,7 +11,7 @@ export async function getUserInfo(userId) {
         return response.data;
 
     } catch (err) {
-        throw new Error('Unable to retrive user info.Please try again later!')
+        throw new Error(getErrorMessage(err))
     }
 }
 
@@ -21,7 +22,7 @@ export async function createUserInfo(data) {
 
         return response.data
     } catch (err) {
-        throw new Error('Info cannot be uploaded!')
+        throw new Error(getErrorMessage(err))
     }
 }
 
@@ -33,7 +34,7 @@ export async function updateUserInfo(userId, data) {
         return response.data
     } catch (err) {
 
-        throw new Error('Info cannot be uploaded! Try again later!')
+        throw new Error(getErrorMessage(err))
     }
 }
 
@@ -50,6 +51,6 @@ export async function uploadImage(fileName, arrayBuffer) {
     } catch (err) {
         //      console.log('Status:', err.response?.status);
         // console.log('Supabase error:', err.response?.data);
-        throw new Error('Image cannot be uploaded! Try again later!')
+        throw new Error(getErrorMessage(err))
     }
 }

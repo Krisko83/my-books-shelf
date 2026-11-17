@@ -1,16 +1,16 @@
-import { View, Text, TextInput, ScrollView, StatusBar, StyleSheet, KeyboardAvoidingView, Pressable, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable, Alert, Keyboard } from 'react-native';
 import { colors } from '../../theme.js';
 import { Controller, useForm } from 'react-hook-form';
-import { use, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import EyeIcon from '../components/EyeIcon.jsx';
-import InputController from '../components/InputController.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AuthContext, useAuthContext } from '../contexts/auth/AuthContext.js';
+import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { authApi } from '../api/index.js';
+import ActivityItem from '../components/ActivityItem.jsx';
 
 
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -23,11 +23,20 @@ export default function LoginScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { login } = useAuthContext();
   const scrollViewRef = useRef(null);
-  const secondInputRef = useRef(null)
-  const thirdInputRef = useRef(null);
+  const secondInputRef = useRef(null);
+  const emailInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
+  if (loading) {
+    return (
+      <ActivityItem action='Signing...' />
+    )
+  }
 
   const submitHandler = async (data) => {
+    Keyboard.dismiss();
+
+    setLoading(true);
 
     try {
       const userData = await authApi.login(data)
@@ -37,7 +46,10 @@ export default function LoginScreen({ navigation }) {
       reset()
     } catch (err) {
       Alert.alert(err.message)
+    } finally {
+      setLoading(false);
     }
+
   }
 
   const switchPasswordVisibility = (field) => {
@@ -48,22 +60,34 @@ export default function LoginScreen({ navigation }) {
     }))
   }
 
-  const handleFirstFocus = (event) => {
-    const input = event.target;
+  // const handleFirstFocus = (event) => {
+  //   const input = event.target;
 
-    if (input === secondInputRef.current ||
-      input === thirdInputRef.current) {
-      return;
-    }
+  //   if (input === secondInputRef.current) {
+  //     return;
+  //   }
 
-    input.measureLayout(
+  //   input.measureLayout(
+  //     scrollViewRef.current,
+  //     (x, y) => {
+  //       scrollViewRef.current?.scrollTo({
+  //         y: y + 200,
+  //         animated: true
+  //       });
+  //     }
+  //   );
+  // };
+
+  const handleFirstFocus = () => {
+    emailInputRef.current?.measureLayout(
       scrollViewRef.current,
       (x, y) => {
         scrollViewRef.current?.scrollTo({
           y: y + 200,
           animated: true
         });
-      }
+      },
+      () => console.log('Measurement failed')
     );
   };
 
@@ -71,7 +95,10 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.screen}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
 
-        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]}
+          keyboardShouldPersistTaps="handled"
+          ref={scrollViewRef} >
 
           <View style={{ alignItems: 'center', marginBottom: 34 }}>
             <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
@@ -82,7 +109,6 @@ export default function LoginScreen({ navigation }) {
 
           <Text style={styles.subheading}>Sign in to your account</Text>
 
-          <Text style={styles.label}>Email address</Text>
 
           {/* <InputController
             control={control}
@@ -98,86 +124,93 @@ export default function LoginScreen({ navigation }) {
             handleSubmit={handleSubmit(submitHandler)}
             keyboardType="email-address"
             capitalize="none"
-          /> */}
+            /> */}
 
-          <Controller
-            control={control}
-            name='email'
-            rules={{
-              required: 'Email is required',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Invalid email address'
-              }
-            }}
-            render={({ field: { onBlur, onChange, value } }) => (
-              <TextInput
-                ref={secondInputRef}
-                submitBehavior="submit"
-                style={styles.input}
-                placeholder="you@example.com"
-                placeholderTextColor={colors.muted}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                onSubmitEditing={() => secondInputRef.current?.focus()}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                returnKeyType="next"
-              />
-            )}
-          />
+          <View onFocus={handleFirstFocus}>
 
-          {errors.email &&
-            <Text style={styles.error}>{errors.email.message}</Text>
-          }
+            <Text style={styles.label}>Email address</Text>
 
-          <Text style={styles.label}>Password</Text>
-
-          <Controller
-            control={control}
-            name='password'
-            rules={{
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password should be at least 6 characters long!'
-              }
-            }}
-            render={({ field: { onBlur, onChange, value } }) => (
-              <View style={styles.inputContainer}>
+            <Controller
+              control={control}
+              name='email'
+              rules={{
+                required: 'Email is required',
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Invalid email address'
+                }
+              }}
+              render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
+                  ref={emailInputRef}
+                  submitBehavior="submit"
                   style={styles.input}
-                  value={value}
+                  placeholder="you@example.com"
+                  placeholderTextColor={colors.muted}
                   onBlur={onBlur}
                   onChangeText={onChange}
-                  onSubmitEditing={handleSubmit(submitHandler)}
-                  placeholder="Enter your password"
-                  placeholderTextColor={colors.muted}
-                  secureTextEntry={!isPasswordVisible['password']}
+                  value={value}
+                  onSubmitEditing={() => secondInputRef.current?.focus()}
+                  keyboardType="email-address"
                   autoCapitalize="none"
+                  returnKeyType="next"
                 />
+              )}
+            />
 
-                <Pressable
-                  onPress={() => switchPasswordVisibility('password')}
-                  style={styles.eyeIcon}
-                >
-                  <EyeIcon isVisible={isPasswordVisible['password']} />
-                </Pressable>
-              </View>
-            )}
-          />
+            {errors.email &&
+              <Text style={styles.error}>{errors.email.message}</Text>
+            }
 
-          {errors.password &&
-            <Text style={styles.error}>{errors.password.message}</Text>
-          }
+            <Text style={styles.label}>Password</Text>
 
-          <Pressable
-            style={styles.button}
-            onPress={handleSubmit(submitHandler)}
-            disabled={isSubmitting}>
-            <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
-          </Pressable>
+            <Controller
+              control={control}
+              name='password'
+              rules={{
+                required: 'Password is required',
+                minLength: {
+                  value: 6,
+                  message: 'Password should be at least 6 characters long!'
+                }
+              }}
+              render={({ field: { onBlur, onChange, value } }) => (
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    ref={secondInputRef}
+                    submitBehavior="submit"
+                    style={[styles.input, { flex: 1 }]}
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    onSubmitEditing={handleSubmit(submitHandler)}
+                    placeholder="Enter your password"
+                    placeholderTextColor={colors.muted}
+                    secureTextEntry={!isPasswordVisible['password']}
+                    autoCapitalize="none"
+                  />
+
+                  <Pressable
+                    onPress={() => switchPasswordVisibility('password')}
+                    style={styles.eyeIcon}
+                  >
+                    <EyeIcon isVisible={isPasswordVisible['password']} />
+                  </Pressable>
+                </View>
+              )}
+            />
+
+            {errors.password &&
+              <Text style={styles.error}>{errors.password.message}</Text>
+            }
+            <Pressable
+              style={styles.button}
+              onPress={handleSubmit(submitHandler)}
+              disabled={isSubmitting}>
+              <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
+            </Pressable>
+          </View>
+
 
 
           {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
@@ -228,7 +261,6 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   input: {
-    flex: 1,
     minHeight: 50,
     borderWidth: 1,
     borderColor: colors.border,
@@ -272,4 +304,5 @@ const styles = StyleSheet.create({
     right: 15,
     paddingBottom: 14,
   },
+
 });

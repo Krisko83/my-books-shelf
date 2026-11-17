@@ -6,8 +6,9 @@ import RadioButton from '../components/RadioButton.jsx';
 import InputController from '../components/InputController.jsx';
 import StarRating from '../components/StarRating.jsx';
 import { colors } from '../../theme.js';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { bookApi } from '../api';
+import ActivityItem from '../components/ActivityItem.jsx';
 
 export default function AddBookScreen({ navigation, route }) {
   const { handleSubmit, control, setValues, reset, formState: { errors, isSubmitting } } = useForm({
@@ -23,7 +24,7 @@ export default function AddBookScreen({ navigation, route }) {
       image_url: ''
     }
   })
-
+  const [loading, setLoading] = useState(false);
   const inputPath = route.name;
   const bookId = inputPath === 'Edit' && route.params.bookId;
 
@@ -34,25 +35,32 @@ export default function AddBookScreen({ navigation, route }) {
     }
   }, [bookId])
 
+
+  if (loading) {
+    return <ActivityItem />
+  }
+
+
   const submitHandler = async (data) => {
 
     try {
+      setLoading(true);
 
       if (inputPath === 'Edit') {
         await bookApi.updateBook(bookId, data);
-
-        navigation.goBack();
 
       } else {
 
         await bookApi.createBook(data);
       }
+
       navigation.goBack();
-      // navigation.navigate('MainHome');
 
       reset()
     } catch (error) {
       Alert.alert(error)
+    } finally {
+      setLoading(false)
     }
 
   }

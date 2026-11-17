@@ -7,8 +7,8 @@ export async function createBook(bookData) {
 
         return response;
     } catch (err) {
- 
-        throw new Error('Book cannot be created. Please try again later!')
+
+        throw new Error(getErrorMessage(err))
 
     }
 }
@@ -19,7 +19,7 @@ export async function getAllBooks() {
 
         return response.data;
     } catch (err) {
-        throw new Error('Books cannot be retrieve from server. Please try again later!')
+        throw new Error(getErrorMessage(err))
 
     }
 }
@@ -30,7 +30,7 @@ export async function getLastFourBooks() {
 
         return response.data;
     } catch (err) {
-        throw new Error('Books cannot be retrieve from server. Please try again later!')
+        throw new Error(getErrorMessage(err))
 
     }
 }
@@ -41,18 +41,18 @@ export async function getBookById(bookId) {
 
         return response.data;
     } catch (err) {
-        throw new Error('This Book cannot be retrieve.Please try again later!')
+        throw new Error(getErrorMessage(err))
 
     }
 }
 
 export async function updateBook(bookId, bookData) {
     try {
-        const response = await api.patch(`/books?id=eq.${bookId}`, bookData )
+        const response = await api.patch(`/books?id=eq.${bookId}`, bookData)
 
         return response.data;
     } catch (err) {
-        throw new Error('Failed to update this book.Please try again later!')
+        throw new Error(getErrorMessage(err))
 
     }
 }
@@ -63,7 +63,7 @@ export async function deleteBook(bookId) {
 
         return response.data;
     } catch (err) {
-        throw new Error('Failed to delete this book. Please try again later!')
+        throw new Error(getErrorMessage(err))
 
     }
 }

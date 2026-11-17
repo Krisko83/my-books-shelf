@@ -3,8 +3,9 @@ import WelcomeScreen from "../screens/WelcomeScreen.jsx";
 import LoginScreen from "../screens/LoginScreen.jsx";
 import RegisterScreen from "../screens/RegisterScreen.jsx";
 
+const Stack = createStackNavigator();
+
 export default function AuthNavigator() {
-    const Stack = createStackNavigator();
 
     return (
         <Stack.Navigator>

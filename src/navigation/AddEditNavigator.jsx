@@ -1,8 +1,9 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import AddBookScreen from "../screens/AddBookScreen.jsx";
 
+const Stack = createStackNavigator();
+
 export default function AddEditNavigator() {
-    const Stack = createStackNavigator();
 
     return (
         <Stack.Navigator>

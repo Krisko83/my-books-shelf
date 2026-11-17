@@ -8,6 +8,7 @@ import { uuid } from 'expo';
 import { userApi } from '../api';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { File } from 'expo-file-system';
+import ActivityItem from '../components/ActivityItem.jsx';
 
 
 export default function EditProfileScreen({ navigation, route }) {
@@ -16,6 +17,7 @@ export default function EditProfileScreen({ navigation, route }) {
     const [refreshing, setRefreshing] = useState(false);
     const { user } = useAuthContext()
     const userInfo = route.params;
+    const [loading, setLoading] = useState(false);
 
     const { control, handleSubmit, setValues, formState: { isSubmitting } } = useForm({
         defaultValues: {
@@ -41,6 +43,10 @@ export default function EditProfileScreen({ navigation, route }) {
         },
         gender: userInfo.gender,
         imageUrl: photo,
+    }
+
+    if (loading) {
+        return <ActivityItem />
     }
 
     useEffect(() => {
@@ -96,6 +102,7 @@ export default function EditProfileScreen({ navigation, route }) {
 
     const submitHandler = async (data) => {
         let imageUrl = userInfo.imageUrl;
+        // setLoading(true)
 
         if (imageUri) {
             try {
@@ -134,7 +141,7 @@ export default function EditProfileScreen({ navigation, route }) {
 
         } catch (err) {
             Alert.alert(err.message)
-        }
+        }  
     };
 
     const refreshHandler = async () => {

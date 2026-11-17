@@ -6,6 +6,7 @@ import { bookApi } from "../api/index.js";
 import { Controller, set, useForm } from "react-hook-form";
 import { colors } from "../../theme.js";
 import RadioButton from "../components/RadioButton.jsx";
+import ActivityItem from "../components/ActivityItem.jsx";
 
 export default function MyBookScreen({ route }) {
     const { control, handleSubmit } = useForm({
@@ -18,14 +19,23 @@ export default function MyBookScreen({ route }) {
     });
     const [books, setBooks] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     const inputPath = route.name;
-   
+
     useEffect(() => {
-        bookApi.getAllBooks()
-            .then(setBooks)
-            .catch(err => Alert.alert(err))
+        setLoading(true)
+        setTimeout(() => {
+
+            bookApi.getAllBooks()
+                .then(setBooks)
+                .catch(err => Alert.alert(err))
+                .finally(() => setLoading(false))
+        }, 5000)
     }, []);
+
+    if(loading) {
+        return <ActivityItem />
+    }
 
     const refreshHandler = async () => {
         setRefreshing(true);
@@ -53,7 +63,7 @@ export default function MyBookScreen({ route }) {
     return (
 
         <View style={{ marginBottom: 128 }} >
-            <View style={{paddingHorizontal: 15}} >
+            <View style={{ paddingHorizontal: 15 }} >
                 <Controller
                     control={control}
                     name='search'

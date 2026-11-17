@@ -4,17 +4,27 @@ import { Link } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { bookApi } from '../api';
 import convertDate from '../utils/convertDate.js';
+import ActivityItem from '../components/ActivityItem.jsx';
 
-export default function BookDetailsScreen({ navigation ,route }) {
+export default function BookDetailsScreen({ navigation, route }) {
   const [book, setBook] = useState({})
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const bookId = route.params.bookId;
 
+
   useEffect(() => {
+    setLoading(true)
+
     bookApi.getBookById(bookId)
       .then(data => setBook(data[0]))
       .catch(err => Alert.alert(err))
+      .finally(() => setLoading(false))
   }, [bookId])
+
+  if (loading) {
+    return <ActivityItem />
+  }
 
   const ratingStars = '★'.repeat(book?.rating);
 
@@ -36,12 +46,19 @@ export default function BookDetailsScreen({ navigation ,route }) {
 
   const deleteHandler = async (bookId) => {
     const confirmation = confirm('Are you sure?')
+
+    if (!confirmation) return;
+
     try {
+      setLoading(true);
+
       await bookApi.deleteBook(bookId)
 
       navigation.navigate('MainHome')
     } catch (err) {
       Alert.alert(err.message)
+    } finally {
+      setLoading(false)
     }
   };
 

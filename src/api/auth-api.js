@@ -1,3 +1,4 @@
+import { getErrorMessage } from "../utils/error.utils.js";
 import { authenticationApi } from "./api.js"
 
 
@@ -10,7 +11,7 @@ export async function register(userData) {
         return response.data;
 
     } catch (err) {
-        throw new Error('Unable to register user.Please try again later!')
+        throw new Error(getErrorMessage(err))
     }
 }
 
@@ -21,8 +22,8 @@ export async function login(userData) {
 
         return response.data;
 
-    } catch (error) {
-        throw new Error('Unable to login user.Please try again later!')
+    } catch (err) {
+        throw new Error(getErrorMessage(err))
     }
 }
 
@@ -37,6 +38,6 @@ export async function logout() {
         // console.log('Status:', error.response?.status);
         // console.log('Data:', error.response?.data);
 
-        throw new Error('Unable to logout user. Please try again later!')
+        throw new Error(getErrorMessage(err))
     }
 }

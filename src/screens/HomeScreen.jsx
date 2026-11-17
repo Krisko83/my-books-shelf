@@ -4,22 +4,27 @@ import { Link, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { bookApi } from '../api';
 import BookItem from '../components/BookItem.jsx';
+import ActivityItem from '../components/ActivityItem.jsx';
 
 export default function HomeScreen() {
 
   const [books, setBooks] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   useFocusEffect(
 
     useCallback(() => {
       const getBooks = async () => {
+        setLoading(true)
         try {
           const data = await bookApi.getLastFourBooks();
           setBooks(data);
 
         } catch (err) {
           Alert.alert(err.message)
+        } finally {
+          setLoading(false)
         }
       };
 
@@ -27,6 +32,10 @@ export default function HomeScreen() {
     }, [])
 
   )
+
+  if (loading) {
+    return <ActivityItem />
+  }
 
   const refreshHandler = async () => {
     setRefreshing(true);

@@ -1,8 +1,9 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import ProfileScreen from "../screens/ProfileScreen.jsx";
 
+const Stack = createStackNavigator();
+
 export default function ProfileNavigator() {
-    const Stack = createStackNavigator()
     return (
         <Stack.Navigator>
             <Stack.Screen name="Profile" component={ProfileScreen}  />

@@ -2,47 +2,66 @@ import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from "react-native";
 
-export default function useSecureState(key, initialValues) {
-
+export default function useSecureAuth(key, initialValues) {
     const [state, setState] = useState(initialValues);
-
-    
-    useEffect(() => {
-        const loadState = async () => {
-
-            try {
-                const storedState = await SecureStore.getItemAsync(key);
-
-                if (storedState !== null) {
-                    setState(JSON.parse(storedState))
-                }
-            } catch (err) {
-                Alert.alert("Failed to load state from SecureStore", err.message)
-            }
-
-        }
-        loadState()
-    }, [key]);
+    const [loading, setLoading] = useState(false)
 
 
     useEffect(() => {
-        const saveState = async () => {
+        loadUser()
+    }, []);
 
-            try {
-                await SecureStore.setItemAsync(key, JSON.stringify(state))
 
-            } catch (error) {
-                Alert.alert("Failed to save state to SecureStore", error);
+    const saveUser = async (data) => {
+
+        const userInfo = {
+            id: data.user.id,
+            email: data.user.email,
+            access_token: data.access_token,
+            refresh_token: data.refresh_token
+        };
+
+        try {
+            await SecureStore.setItemAsync(key, JSON.stringify(userInfo))
+
+            setState(userInfo);
+
+        } catch (error) {
+            alert('Cannot save in storage!')
+        }
+    }
+
+    const loadUser = async () => {
+
+        try {
+            setLoading(true)
+            const user = await SecureStore.getItemAsync(key);
+
+            if (user !== null) {
+                return setState(JSON.parse(user))
             }
 
+            return null
+        } catch (err) {
+            Alert.alert(err.message)
+        } finally {
+            setLoading(false)
+
         }
+    }
 
-        saveState()
+    const removeUser = async () => {
 
-    }, [key, state]);
+        try {
+            await SecureStore.deleteItemAsync(key)
+            setState(null)
 
+        } catch (error) {
+            alert('Cannot save in storage!')
+        }
+    }
 
-    return [state, setState]
+    return [state, saveUser, removeUser]
 }
 
 

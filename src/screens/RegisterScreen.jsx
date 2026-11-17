@@ -6,6 +6,7 @@ import EyeIcon from '../components/EyeIcon.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { authApi, userApi } from '../api/index.js';
+import ActivityItem from '../components/ActivityItem.jsx';
 
 
 export default function RegisterScreen({ navigation }) {
@@ -20,15 +21,23 @@ export default function RegisterScreen({ navigation }) {
   })
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false)
   const { register } = useAuthContext()
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef(null);
   const secondInputRef = useRef(null)
   const thirdInputRef = useRef(null);
+  const emailInputRef = useRef(null);
+  const { user } = useAuthContext()
 
+  if (loading) {
+    return <ActivityItem action='Creating account...' />
+  }
 
   const submitHandler = async (data) => {
     Keyboard.dismiss();
+
+    setLoading(true)
 
     try {
       const userData = await authApi.register(data)
@@ -43,14 +52,20 @@ export default function RegisterScreen({ navigation }) {
         country_name: '',
         country_cca2: '',
         imageUrl: '',
-      })
+      });
 
       reset();
     } catch (err) {
+      console.log(err.message);
+
       Alert.alert(err.message)
+    } finally {
+      setLoading(false)
     }
 
+
   };
+
 
   const switchPasswordVisibility = (field) => {
 
@@ -60,23 +75,16 @@ export default function RegisterScreen({ navigation }) {
     }))
   }
 
-
-  const handleFirstFocus = (event) => { 
-    const input = event.target;
-
-    if (input === secondInputRef.current ||
-      input === thirdInputRef.current) {
-      return;
-    }
-
-    input.measureLayout(
+  const handleFirstFocus = () => {
+    emailInputRef.current?.measureLayout(
       scrollViewRef.current,
       (x, y) => {
         scrollViewRef.current?.scrollTo({
           y: y + 200,
           animated: true
         });
-      }
+      },
+      () => console.log('Measurement failed')
     );
   };
 
@@ -85,7 +93,10 @@ export default function RegisterScreen({ navigation }) {
     <View style={styles.screen}>
       <KeyboardAvoidingView behavior='padding' contentContainerStyle={{ flex: 1 }} >
 
-        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]} keyboardShouldPersistTaps="handled" ref={scrollViewRef}>
+        <ScrollView
+          contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]}
+          keyboardShouldPersistTaps="handled"
+          ref={scrollViewRef}>
 
           <View style={{ alignItems: 'center', marginBottom: 34 }}>
             <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
@@ -97,7 +108,6 @@ export default function RegisterScreen({ navigation }) {
           {/* <Text style={styles.subheading}>Start building your personal library</Text> */}
 
           <View onFocus={handleFirstFocus}>
-
 
             <Text style={styles.label}>Email address</Text>
 
@@ -113,9 +123,10 @@ export default function RegisterScreen({ navigation }) {
               }}
               render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
+                  ref={emailInputRef}
                   submitBehavior="submit"
                   style={styles.input}
-                  placeholder="Email address"
+                  placeholder="you@example.com"
                   placeholderTextColor={colors.muted}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -154,7 +165,6 @@ export default function RegisterScreen({ navigation }) {
               }}
               render={({ field: { onBlur, onChange, value } }) => (
                 <View style={styles.inputContainer}>
-
                   <TextInput
                     ref={secondInputRef}
                     submitBehavior="submit"
@@ -227,7 +237,7 @@ export default function RegisterScreen({ navigation }) {
             }
 
             <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
-              <Text style={styles.buttonText}>Create Account</Text>
+              <Text style={styles.buttonText}>{isSubmitting ? 'Creating account...' : 'Create Account'}</Text>
             </Pressable>
 
             {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>

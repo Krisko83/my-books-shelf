@@ -9,9 +9,8 @@ import { useFocusEffect } from '@react-navigation/native';
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
   const [refreshing, setRefreshing] = useState(false)
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState({}); 
   const userId = user.id;
-
 
   useFocusEffect(
 
@@ -74,8 +73,8 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.imageContainer}>
 
             <View style={styles.imageWrapper}>
-              {userInfo.imageUrl !== '' ?
-                <Image source={{ uri: userInfo.imageUrl }} style={styles.profileImage} />
+              {userInfo?.imageUrl !== '' ?
+                <Image source={{ uri: userInfo?.imageUrl }} style={styles.profileImage} />
                 :
                 <Text style={{ fontSize: 80, textAlign: 'center', alignContent: 'center' }}>👤</Text>
               }
