@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, StyleSheet, Image, RefreshControl, Alert, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, RefreshControl, Alert, Pressable, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import { Link, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { bookApi } from '../api';
 import convertDate from '../utils/convertDate.js';
 import ActivityItem from '../components/ActivityItem.jsx';
+import * as Haptics from 'expo-haptics';
 
 export default function BookDetailsScreen({ navigation, route }) {
   const [book, setBook] = useState({})
@@ -57,6 +58,8 @@ export default function BookDetailsScreen({ navigation, route }) {
   }
 
   const deleteHandler = async (bookId) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+
     Alert.alert(
       'Confirmation',
       'Are you sure you want to delete this book?',
@@ -64,11 +67,15 @@ export default function BookDetailsScreen({ navigation, route }) {
         {
           text: 'Cancel',
           style: 'cancel',
+          onPress: async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          }
         },
         {
           text: 'Yes',
           style: 'destructive',
           onPress: async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
             try {
               setLoading(true);
 
@@ -87,6 +94,11 @@ export default function BookDetailsScreen({ navigation, route }) {
 
   };
 
+  const editHandler = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+    navigation.navigate('Edit', { bookId })
+  }
+
 
   return (
     <View style={styles.screen}>
@@ -101,7 +113,7 @@ export default function BookDetailsScreen({ navigation, route }) {
         <View style={{ alignItems: 'center' }}>
 
           <View style={styles.imgContainer}>
-            <Image source={{ uri: book.imageUrl}} style={styles.img} />
+            <Image source={{ uri: book.imageUrl }} style={styles.img} />
           </View>
 
           <Text style={styles.title}>{book.title}</Text>
@@ -131,13 +143,13 @@ export default function BookDetailsScreen({ navigation, route }) {
 
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
 
-          <Link style={styles.button} screen='Edit' params={{ bookId }}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={editHandler} >
             <Text style={styles.buttonText}>✎  Edit</Text>
-          </Link>
+          </TouchableOpacity>
 
-          <Pressable style={[styles.button, { backgroundColor: colors.red }]} onPress={() => deleteHandler(bookId)}>
-            <Text style={{ color: colors.redText, fontWeight: '700' }}>▤  Delete</Text>
-          </Pressable>
+          <TouchableOpacity activeOpacity={0.8} style={[styles.button, { backgroundColor: colors.red }]} onPress={() => deleteHandler(bookId)}>
+            <Text style={[styles.buttonText, { color: colors.redText, fontWeight: '700' }]}>▤  Delete</Text>
+          </TouchableOpacity>
 
         </View>
       </ScrollView>
@@ -178,7 +190,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     fontSize: 15,
-    fontWeight: '700'
+    fontWeight: '700',
+    textAlign: 'center'
   },
   card: {
     backgroundColor: colors.surface,

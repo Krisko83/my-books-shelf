@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, Alert, Image, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Alert, Image, RefreshControl, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import ProfileButton from '../components/ProfileButton.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import { authApi, userApi } from '../api/index.js';
 import { useFocusEffect } from '@react-navigation/native';
 import ActivityItem from '../components/ActivityItem.jsx';
+import * as Haptics from 'expo-haptics';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
@@ -40,8 +41,15 @@ export default function ProfileScreen({ navigation }) {
     return <ActivityItem />
   }
 
-  const logoutHandler = async () => {
+  const pressHandler = async (screeName, user) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
+    navigation.navigate(screeName, user ? userInfo : {})
+  }
+
+  const logoutHandler = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    
     try {
       await authApi.logout();
       // logout();
@@ -96,20 +104,20 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <View style={[styles.card, { paddingVertical: 4 }]}>
-          <ProfileButton icon='▤' name='My Library' onPress={() => navigation.navigate('MainMyBooks')} />
+          <ProfileButton icon='▤' name='My Library' onPress={() => pressHandler('MainMyBooks')} />
 
-          <ProfileButton icon='▥' name='Edit Profile' onPress={() => navigation.navigate('EditProfile', userInfo)} />
+          <ProfileButton icon='▥' name='Edit Profile' onPress={() => pressHandler('EditProfile', userInfo)} />
 
-          <ProfileButton icon='⚙' name='Settings' onPress={() => navigation.navigate('Settings')} />
+          <ProfileButton icon='⚙' name='Settings' onPress={() => pressHandler('Settings')} />
 
-          <ProfileButton icon='?' name='Help & Support' onPress={() => navigation.navigate('MainMyBooks')} />
+          <ProfileButton icon='?' name='Help & Support' onPress={() => pressHandler('MainMyBooks')} />
 
-          <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => navigation.navigate('MainMyBooks')} />
+          <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('MainMyBooks')} />
         </View>
 
-        <Pressable style={styles.outlineButton} onPress={logoutHandler}>
+        <TouchableOpacity activeOpacity={0.8} style={styles.outlineButton} onPress={logoutHandler}>
           <Text style={styles.outlineButtonText}>⇥  Log Out</Text>
-        </Pressable>
+        </TouchableOpacity>
 
       </ScrollView>
 

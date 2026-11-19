@@ -1,4 +1,4 @@
-import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert, RefreshControl } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert, RefreshControl, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import { CountryPicker } from 'react-native-country-picker-modal';
 import { useForm, Controller } from 'react-hook-form';
@@ -9,7 +9,7 @@ import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { File } from 'expo-file-system';
 import ActivityItem from '../components/ActivityItem.jsx';
 import useImageUrl from '../hooks/useImageUrl.js';
-
+import * as Haptics from 'expo-haptics';
 
 export default function EditProfileScreen({ navigation, route }) {
     const { imageUri,imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
@@ -102,6 +102,7 @@ export default function EditProfileScreen({ navigation, route }) {
     // }
 
     const submitHandler = async (data) => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
         let imageUrl = userInfo.imageUrl;
         
         
@@ -184,10 +185,10 @@ export default function EditProfileScreen({ navigation, route }) {
 
                     </View>
                     <View style={{ marginTop: 10, alignItems: 'center' }} >
-                        <Pressable style={styles.imagePickerBtn} onPress={pickImage} >
+                        <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage} >
                             <Text style={{ color: 'white' }} >Upload from gallery</Text>
                             <Text>🖼️</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -359,10 +360,10 @@ export default function EditProfileScreen({ navigation, route }) {
                 </View>
 
 
-                <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
+                <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
                     <Text style={styles.buttonIcon}>✎</Text>
                     <Text style={styles.buttonText}>{isSubmitting ? 'Updating...' : 'Update Profile'}</Text>
-                </Pressable>
+                </TouchableOpacity>
 
             </ScrollView>
         </KeyboardAvoidingView>

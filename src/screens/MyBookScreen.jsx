@@ -1,5 +1,5 @@
 import { Link } from "@react-navigation/native";
-import { Alert, FlatList, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import BookItem from "../components/BookItem.jsx";
 import { useEffect, useState } from "react";
 import { bookApi } from "../api/index.js";
@@ -7,8 +7,9 @@ import { Controller, set, useForm } from "react-hook-form";
 import { colors } from "../../theme.js";
 import RadioButton from "../components/RadioButton.jsx";
 import ActivityItem from "../components/ActivityItem.jsx";
+import * as Haptics from 'expo-haptics';
 
-export default function MyBookScreen({ route }) {
+export default function MyBookScreen({ navigation, route }) {
     const { control, handleSubmit } = useForm({
         mode: 'onBlur',
         reValidateMode: 'onChange',
@@ -34,6 +35,12 @@ export default function MyBookScreen({ route }) {
 
     if (loading) {
         return <ActivityItem />
+    }
+
+    const pressHandler = async (bookId) => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+
+        navigation.navigate('Details', { bookId })
     }
 
     const refreshHandler = async () => {
@@ -87,7 +94,8 @@ export default function MyBookScreen({ route }) {
                             <RadioButton
                                 label='All'
                                 selected={value === 'all'}
-                                onPress={() => {
+                                onPress={ async () => {
+                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
                                     onChange('all')
                                     submitSortHandler({ sort: 'all' })
                                 }}
@@ -96,7 +104,8 @@ export default function MyBookScreen({ route }) {
                             <RadioButton
                                 label='Reading'
                                 selected={value === 'reading'}
-                                onPress={() => {
+                                onPress={ async () => {
+                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
                                     onChange('reading')
                                     submitSortHandler({ sort: 'reading' })
                                 }}
@@ -105,7 +114,8 @@ export default function MyBookScreen({ route }) {
                             <RadioButton
                                 label='Want to Read'
                                 selected={value === 'want-to-read'}
-                                onPress={() => {
+                                onPress={ async () => {
+                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
                                     onChange('want-to-read')
                                     submitSortHandler({ sort: 'want-to-read' })
                                 }}
@@ -114,7 +124,8 @@ export default function MyBookScreen({ route }) {
                             <RadioButton
                                 label='Read'
                                 selected={value === 'read'}
-                                onPress={() => {
+                                onPress={ async () => {
+                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
                                     onChange('read')
                                     submitSortHandler({ sort: 'read' })
                                 }}
@@ -137,9 +148,10 @@ export default function MyBookScreen({ route }) {
 
                         < View style={styles.container}>
 
-                            <Link screen='Details' params={{ bookId: item.id }}>
+                            <Pressable onPress={() => pressHandler(item.id)} screen='Details' >
                                 <BookItem {...item} />
-                            </Link>
+                            </Pressable>
+
                         </View>
                     )}
                 />
@@ -156,11 +168,11 @@ const styles = StyleSheet.create({
     container: {
         marginHorizontal: 'auto',
         marginTop: 15,
-        // marginBottom: 10,
+        marginBottom: 10,
         textAlign: 'center',
         backgroundColor: 'white',
         elevation: 15,
-        width: '90%'
+        width: '85%'
     },
     input: {
         minHeight: 50,

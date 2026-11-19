@@ -1,4 +1,4 @@
-import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable, Alert, Keyboard } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable, Alert, Keyboard, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import { Controller, useForm } from 'react-hook-form';
 import { useRef, useState } from 'react';
@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { authApi } from '../api/index.js';
 import ActivityItem from '../components/ActivityItem.jsx';
-
+import * as Haptics from 'expo-haptics';
 
 
 export default function LoginScreen() {
@@ -34,6 +34,7 @@ export default function LoginScreen() {
   }
 
   const submitHandler = async (data) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
     Keyboard.dismiss();
 
     setLoading(true);
@@ -203,12 +204,14 @@ export default function LoginScreen() {
             {errors.password &&
               <Text style={styles.error}>{errors.password.message}</Text>
             }
-            <Pressable
+
+            <TouchableOpacity 
+             activeOpacity={0.8}
               style={styles.button}
               onPress={handleSubmit(submitHandler)}
               disabled={isSubmitting}>
               <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
 

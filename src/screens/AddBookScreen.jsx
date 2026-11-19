@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView, Alert, Image, Button, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView, Alert, Image, Button, RefreshControl, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
 import RadioButton from '../components/RadioButton.jsx';
@@ -11,9 +11,10 @@ import ActivityItem from '../components/ActivityItem.jsx';
 import useImageUrl from '../hooks/useImageUrl.js';
 import { File } from 'expo-file-system';
 import { uuid } from 'expo'
+import * as Haptics from 'expo-haptics';
 
 export default function AddBookScreen({ navigation, route }) {
-  const { handleSubmit, control, setValues, reset, formState: { errors, isSubmitting } } = useForm({
+  const { handleSubmit, control, setValues, reset, clearErrors, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -27,10 +28,11 @@ export default function AddBookScreen({ navigation, route }) {
     }
   })
   const { imageUri, setImageUri, imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefershing] = useState(false);
-  const bookId = inputPath === 'Edit' && route.params.bookId;
   const inputPath = route.name;
+  const { bookId } = inputPath === 'Edit' && route.params;
+
 
   useEffect(() => {
     if (bookId) {
@@ -62,6 +64,7 @@ export default function AddBookScreen({ navigation, route }) {
     setRefershing(true);
 
     try {
+      clearErrors();
 
       if (inputPath === 'Edit') {
         const result = await bookApi.getBookById(bookId);
@@ -82,7 +85,7 @@ export default function AddBookScreen({ navigation, route }) {
 
 
   const submitHandler = async (data) => {
-
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
     try {
       setLoading(true);
 
@@ -165,18 +168,18 @@ export default function AddBookScreen({ navigation, route }) {
           </View>
           <View style={{ marginTop: 10, alignItems: 'center', paddingBottom: 15, flexDirection: 'row', gap: 10 }}>
 
-            <Pressable style={styles.imagePickerBtn} onPress={takePhoto}>
+            <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={takePhoto}>
               <Text style={{ color: 'white', fontSize: 11 }} >Take a photo</Text>
               <Text>📷</Text>
-            </Pressable>
+            </TouchableOpacity>
             {/* 
           </View>
           <View style={{  alignItems: 'center'  }}> */}
 
-            <Pressable style={styles.imagePickerBtn} onPress={pickImage}>
+            <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage}>
               <Text style={{ color: 'white', fontSize: 11 }} >Gallery</Text>
               <Text>🖼️</Text>
-            </Pressable>
+            </TouchableOpacity>
 
           </View>
 
@@ -300,19 +303,28 @@ export default function AddBookScreen({ navigation, route }) {
                 <RadioButton
                   label='Want to Read'
                   selected={value === 'want-to-read'}
-                  onPress={() => onChange('want-to-read')}
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+                    onChange('want-to-read')
+                  }}
                 />
 
                 <RadioButton
                   label='Reading'
                   selected={value === 'reading'}
-                  onPress={() => onChange('reading')}
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+                    onChange('reading')
+                  }}
                 />
 
                 <RadioButton
                   label='Read'
                   selected={value === 'read'}
-                  onPress={() => onChange('read')}
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+                    onChange('read')
+                  }}
                 />
               </View>
             )}
@@ -342,9 +354,9 @@ export default function AddBookScreen({ navigation, route }) {
             <Text style={styles.error}>{errors.rating.message}</Text>
           }
 
-          <Pressable style={styles.button} onPress={handleSubmit(submitHandler)} disabled={isSubmitting}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)} disabled={isSubmitting}>
             <Text style={styles.buttonText}>Save Book</Text>
-          </Pressable>
+          </TouchableOpacity>
 
         </ScrollView>
 

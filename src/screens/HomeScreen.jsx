@@ -1,12 +1,14 @@
-import { View, Text, ScrollView, StyleSheet, Alert, RefreshControl, FlatList } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert, RefreshControl, FlatList, Pressable } from 'react-native';
 import { colors } from '../../theme.js';
 import { Link, useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { bookApi } from '../api';
 import BookItem from '../components/BookItem.jsx';
 import ActivityItem from '../components/ActivityItem.jsx';
+import * as Haptics from 'expo-haptics';
 
-export default function HomeScreen() {
+
+export default function HomeScreen({ navigation }) {
 
   const [books, setBooks] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -35,6 +37,12 @@ export default function HomeScreen() {
 
   if (loading) {
     return <ActivityItem />
+  }
+
+  const pressHandler = async (bookId) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
+    navigation.navigate('Details', { bookId })
   }
 
   const refreshHandler = async () => {
@@ -139,9 +147,9 @@ export default function HomeScreen() {
             contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
             renderItem={({ item }) => (
               <View key={item.id} style={styles.cart}   >
-                <Link screen='Details' params={{ bookId: item.id }} >
+                <Pressable onPress={() => pressHandler(item.id)} >
                   <BookItem {...item} />
-                </Link>
+                </Pressable>
               </View>
             )}
           />
@@ -166,9 +174,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: 'white',
     elevation: 5,
-    flex: 1
+    flex: 1,
     // padding: 10
-
+    width: 140
   },
   screen: {
     flex: 1,

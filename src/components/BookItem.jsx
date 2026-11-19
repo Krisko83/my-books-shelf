@@ -1,14 +1,14 @@
 import { Image, StyleSheet, Text, View } from "react-native";
-import { colors } from "../../theme.js";
+import { colors } from "../../theme.js"; 
 
 
-export default function BookItem({
+export default function BookItem({ 
     title,
     author,
     status,
-    imageUrl
+    imageUrl,
 }) {
-
+ 
     return (
         <View style={styles.card} >
             <Image source={{ uri: imageUrl }} style={styles.image} />
@@ -24,12 +24,13 @@ export default function BookItem({
 
 const styles = StyleSheet.create({
     image: {
-        width: 120,
-        height: 150
+        width: '100%',
+        height: 160
     },
     card: {
         gap: 5,
-        padding: 15
+        padding: 15,
+        width: '100%'
     },
     statusCtn: {
         alignSelf: 'flex-start',

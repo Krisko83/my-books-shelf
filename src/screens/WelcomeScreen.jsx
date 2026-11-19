@@ -1,9 +1,15 @@
-import { View, Text, StatusBar, StyleSheet, Image, ScrollView, Pressable } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, Image, ScrollView, Pressable, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 
 export default function WelcomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
+
+  const submitHandler = async (screenName) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    navigation.navigate(screenName)
+  }
 
   return (
     <View style={styles.container}>
@@ -23,11 +29,11 @@ export default function WelcomeScreen({ navigation }) {
 
         <View style={{ width: '100%', paddingBottom: 60, justifyContent: 'center' }}>
 
-          <Pressable style={styles.button} onPress={() => navigation.navigate('Register')}>
+          <TouchableOpacity activeOpacity={0.95} style={styles.button} onPress={() => submitHandler('Register')}>
             <Text style={styles.buttonText}>Get Started</Text>
-          </Pressable>
+          </TouchableOpacity>
 
-          <Pressable onPress={() => navigation.navigate('Login')} style={{ marginTop: 15 }} >
+          <Pressable onPress={() => submitHandler('Login')} style={{ marginTop: 15 }} >
             <Text style={styles.signIn}>Already have an account?
               <Text style={{ color: colors.primary, fontWeight: '700' }}>Sign In</Text>
             </Text>

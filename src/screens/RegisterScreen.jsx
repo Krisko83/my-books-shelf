@@ -1,4 +1,4 @@
-import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable, Keyboard, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, KeyboardAvoidingView, Pressable, Keyboard, Alert, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import { useForm, Controller } from 'react-hook-form';
 import { useState, useRef } from 'react';
@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { authApi, userApi } from '../api/index.js';
 import ActivityItem from '../components/ActivityItem.jsx';
-
+import * as Haptics from 'expo-haptics';
 
 export default function RegisterScreen({ navigation }) {
   const { control, reset, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm({
@@ -36,7 +36,7 @@ export default function RegisterScreen({ navigation }) {
 
   const submitHandler = async (data) => {
     Keyboard.dismiss();
-
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
     setLoading(true)
 
     try {
@@ -236,9 +236,9 @@ export default function RegisterScreen({ navigation }) {
               <Text style={styles.error}>{errors.confirmPassword.message}</Text>
             }
 
-            <Pressable style={styles.button} onPress={handleSubmit(submitHandler)}>
+            <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
               <Text style={styles.buttonText}>{isSubmitting ? 'Creating account...' : 'Create Account'}</Text>
-            </Pressable>
+            </TouchableOpacity>
 
             {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
             <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>

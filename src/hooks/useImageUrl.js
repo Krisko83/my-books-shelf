@@ -1,12 +1,15 @@
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
+import * as Haptics from 'expo-haptics';
 
 export default function useImageUrl() {
     const [imageUri, setImageUri] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
 
     const pickImage = async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
         const permisionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
 
         if (!permisionResult.granted) {
             return (
@@ -31,7 +34,7 @@ export default function useImageUrl() {
     }
 
     const takePhoto = async () => {
-
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
         const permisionResult = await ImagePicker.requestCameraPermissionsAsync();
 
         if (!permisionResult.granted) {

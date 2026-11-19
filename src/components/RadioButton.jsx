@@ -1,12 +1,12 @@
-import { Pressable, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { colors } from "../../theme.js";
 
 export default function RadioButton({ label, onPress, selected}) {
 
     return (
-        <Pressable onPress={onPress} style={[styles.btn, { backgroundColor: selected ? colors.primary : '#ECEBF5', }]}>
+        <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={[styles.btn, { backgroundColor: selected ? colors.primary : '#ECEBF5', }]}>
             <Text style={[styles.btnText, { color: selected ? '#fff' : colors.muted }]}>{label}</Text>
-        </Pressable>
+        </TouchableOpacity>
     );
 }
 
