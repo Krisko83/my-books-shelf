@@ -24,16 +24,15 @@ export default function MyBookScreen({ route }) {
 
     useEffect(() => {
         setLoading(true)
-        setTimeout(() => {
 
-            bookApi.getAllBooks()
-                .then(setBooks)
-                .catch(err => Alert.alert(err))
-                .finally(() => setLoading(false))
-        }, 5000)
+        bookApi.getAllBooks()
+            .then(setBooks)
+            .catch(err => Alert.alert(err))
+            .finally(() => setLoading(false))
+
     }, []);
 
-    if(loading) {
+    if (loading) {
         return <ActivityItem />
     }
 

@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../utils/error.utils.js';
 import { api } from './api.js'
 
 export async function createBook(bookData) {
@@ -42,7 +43,7 @@ export async function getBookById(bookId) {
         return response.data;
     } catch (err) {
         throw new Error(getErrorMessage(err))
-
+        
     }
 }
 

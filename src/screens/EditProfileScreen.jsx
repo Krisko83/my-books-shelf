@@ -1,23 +1,24 @@
-import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert, Button, RefreshControl } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet, Pressable, KeyboardAvoidingView, Alert, RefreshControl } from 'react-native';
 import { colors } from '../../theme.js';
 import { CountryPicker } from 'react-native-country-picker-modal';
 import { useForm, Controller } from 'react-hook-form';
-import * as ImagePicker from 'expo-image-picker'
 import { useEffect, useState } from 'react';
 import { uuid } from 'expo';
 import { userApi } from '../api';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { File } from 'expo-file-system';
 import ActivityItem from '../components/ActivityItem.jsx';
+import useImageUrl from '../hooks/useImageUrl.js';
 
 
 export default function EditProfileScreen({ navigation, route }) {
-    const [imageUri, setImageUri] = useState(null);
-    const [photo, setPhoto] = useState('');
+    const { imageUri,imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
+    // const [imageUri, setImageUri] = useState(null);
+    // const [photo, setPhoto] = useState('');
     const [refreshing, setRefreshing] = useState(false);
     const { user } = useAuthContext()
-    const userInfo = route.params;
     const [loading, setLoading] = useState(false);
+    const userInfo = route.params;
 
     const { control, handleSubmit, setValues, formState: { isSubmitting } } = useForm({
         defaultValues: {
@@ -42,12 +43,9 @@ export default function EditProfileScreen({ navigation, route }) {
             name: userInfo.country_name
         },
         gender: userInfo.gender,
-        imageUrl: photo,
+        imageUrl,
     }
 
-    if (loading) {
-        return <ActivityItem />
-    }
 
     useEffect(() => {
         setRefreshing(true)
@@ -55,57 +53,61 @@ export default function EditProfileScreen({ navigation, route }) {
         setRefreshing(false)
     }, []);
 
-
-    const pickImage = async () => {
-        const permisionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (!permisionResult.granted) {
-            return (
-                <View>
-                    <Text>In order to use the camera you need to grant camera permission!</Text>
-                    <Button title='Grant Camera Permission' onPress={permisionResult} />
-                </View>
-            )
-        }
-
-        const result = await ImagePicker.launchImageLibraryAsync({
-            ediaTypes: ['images'],
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setImageUri(result.assets[0].uri)
-        }
-
+    if (loading) {
+        return <ActivityItem />
     }
 
-    const takePhoto = async () => {
-        const permisionResult = await ImagePicker.requestCameraPermissionsAsync();
+    // const pickImage = async () => {
+    //     const permisionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-        if (!permisionResult.granted) {
-            return;
-        }
+    //     if (!permisionResult.granted) {
+    //         return (
+    //             <View>
+    //                 <Text>In order to use the camera you need to grant camera permission!</Text>
+    //                 <Button title='Grant Camera Permission' onPress={permisionResult} />
+    //             </View>
+    //         )
+    //     }
 
-        const result = await ImagePicker.launchCameraAsync({
-            ediaTypes: ['images'],
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1
-        })
+    //     const result = await ImagePicker.launchImageLibraryAsync({
+    //         ediaTypes: ['images'],
+    //         allowsEditing: true,
+    //         aspect: [4, 3],
+    //         quality: 1,
+    //     });
 
-        if (!result.canceled) {
-            setImageUri(result.assets[0].uri)
-        }
-    }
+    //     if (!result.canceled) {
+    //         setImageUri(result.assets[0].uri)
+    //     }
+
+    // }
+
+    // const takePhoto = async () => {
+    //     const permisionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    //     if (!permisionResult.granted) {
+    //         return;
+    //     }
+
+    //     const result = await ImagePicker.launchCameraAsync({
+    //         ediaTypes: ['images'],
+    //         allowsEditing: true,
+    //         aspect: [4, 3],
+    //         quality: 0.5
+    //     })
+
+    //     if (!result.canceled) {
+    //         setImageUri(result.assets[0].uri)
+    //     }
+    // }
 
     const submitHandler = async (data) => {
         let imageUrl = userInfo.imageUrl;
-        // setLoading(true)
-
+        
+        
         if (imageUri) {
             try {
+                setLoading(true);
                 const file = new File(imageUri)
                 const arrayBuffer = await file.arrayBuffer()
 
@@ -114,11 +116,12 @@ export default function EditProfileScreen({ navigation, route }) {
 
                 imageUrl = `https://jekwxfohagnknpkqdgdo.supabase.co/storage/v1/object/public/avatars/${fileName}`;
 
-
-                setPhoto(imageUrl);
+                setImageUrl(imageUrl);
 
             } catch (err) {
                 Alert.alert(err.message)
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -141,7 +144,7 @@ export default function EditProfileScreen({ navigation, route }) {
 
         } catch (err) {
             Alert.alert(err.message)
-        }  
+        }
     };
 
     const refreshHandler = async () => {
@@ -162,27 +165,30 @@ export default function EditProfileScreen({ navigation, route }) {
             // showsVerticalScrollIndicator={false}
             >
 
+                <View style={{ paddingBottom: 30 }}>
 
-                {/* Profile Image */}
-                <View style={styles.imageContainer}>
-                    <View style={styles.imageWrapper}>
-                        <Image
-                            source={{
-                                uri: image
-                            }}
-                            style={styles.profileImage}
-                        />
+                    {/* Profile Image */}
+                    <View style={styles.imageContainer}>
+                        <View style={styles.imageWrapper}>
+                            <Image
+                                source={{
+                                    uri: image
+                                }}
+                                style={styles.profileImage}
+                            />
+                        </View>
+
+                        <Pressable style={styles.cameraButton} onPress={takePhoto}>
+                            <Text style={styles.cameraIcon}>📷</Text>
+                        </Pressable>
+
                     </View>
-
-                    <Pressable style={styles.cameraButton} onPress={takePhoto}>
-                        <Text style={styles.cameraIcon}>📷</Text>
-                    </Pressable>
-
-                </View>
-                <View style={{ marginTop: 20 }}>
-                    <Pressable onPress={pickImage}>
-                        <Text >Upload from gallery</Text>
-                    </Pressable>
+                    <View style={{ marginTop: 10, alignItems: 'center' }} >
+                        <Pressable style={styles.imagePickerBtn} onPress={pickImage} >
+                            <Text style={{ color: 'white' }} >Upload from gallery</Text>
+                            <Text>🖼️</Text>
+                        </Pressable>
+                    </View>
                 </View>
 
 
@@ -391,7 +397,7 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         alignItems: 'center',
-        marginBottom: 35,
+        marginBottom: 10,
         marginTop: 20
     },
     imageWrapper: {
@@ -540,4 +546,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '800',
     },
+    imagePickerBtn: {
+        flexDirection: 'row',
+        gap: 10,
+        borderWidth: 1,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: colors.primary,
+        borderRadius: 15
+    }
 });

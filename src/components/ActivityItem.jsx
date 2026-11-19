@@ -1,6 +1,5 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { colors } from "../../theme.js";
-import {Classic} from "@/components/loading-ui/classic"
+import { colors } from "../../theme.js"; 
 
 export default function ActivityItem({
     action = 'Loading...'
@@ -12,20 +11,7 @@ export default function ActivityItem({
             <Text>{action}</Text>
         </View>
     );
-}
-
-// export default function ActivityItem() {
-
-//     return (
-//         <View style={styles.activityIndicator}>
-//             <Classic size='Large' color={colors.primary} />
-//             <Text>{action}</Text>
-//         </View>
-//     )
-
-
-// }
-
+} 
 
 
 const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, StyleSheet, Image, RefreshControl, Alert, Pressable } from 'react-native';
 import { colors } from '../../theme.js';
-import { Link } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { Link, useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
 import { bookApi } from '../api';
 import convertDate from '../utils/convertDate.js';
 import ActivityItem from '../components/ActivityItem.jsx';
@@ -12,15 +12,27 @@ export default function BookDetailsScreen({ navigation, route }) {
   const [loading, setLoading] = useState(false);
   const bookId = route.params.bookId;
 
+  useFocusEffect(
+    useCallback(() => {
+      const getBookDetails = async () => {
+        setLoading(true)
 
-  useEffect(() => {
-    setLoading(true)
+        try {
+          const result = await bookApi.getBookById(bookId)
 
-    bookApi.getBookById(bookId)
-      .then(data => setBook(data[0]))
-      .catch(err => Alert.alert(err))
-      .finally(() => setLoading(false))
-  }, [bookId])
+          setBook(result[0])
+        } catch (err) {
+          Alert.alert(err)
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      getBookDetails();
+    }, [])
+  )
+
+
 
   if (loading) {
     return <ActivityItem />
@@ -45,21 +57,34 @@ export default function BookDetailsScreen({ navigation, route }) {
   }
 
   const deleteHandler = async (bookId) => {
-    const confirmation = confirm('Are you sure?')
+    Alert.alert(
+      'Confirmation',
+      'Are you sure you want to delete this book?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
 
-    if (!confirmation) return;
+              await bookApi.deleteBook(bookId)
 
-    try {
-      setLoading(true);
+              navigation.goBack()
+            } catch (err) {
+              Alert.alert(err.message)
+            } finally {
+              setLoading(false)
+            }
+          },
+        },
+      ]
+    );
 
-      await bookApi.deleteBook(bookId)
-
-      navigation.navigate('MainHome')
-    } catch (err) {
-      Alert.alert(err.message)
-    } finally {
-      setLoading(false)
-    }
   };
 
 
@@ -76,7 +101,7 @@ export default function BookDetailsScreen({ navigation, route }) {
         <View style={{ alignItems: 'center' }}>
 
           <View style={styles.imgContainer}>
-            <Image source={{ uri: book.imageUrl }} style={styles.img} />
+            <Image source={{ uri: book.imageUrl}} style={styles.img} />
           </View>
 
           <Text style={styles.title}>{book.title}</Text>

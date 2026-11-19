@@ -5,18 +5,21 @@ import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { useCallback, useState } from 'react';
 import { authApi, userApi } from '../api/index.js';
 import { useFocusEffect } from '@react-navigation/native';
+import ActivityItem from '../components/ActivityItem.jsx';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
   const [refreshing, setRefreshing] = useState(false)
-  const [userInfo, setUserInfo] = useState({}); 
+  const [userInfo, setUserInfo] = useState({});
+  const [loading, setLoading] = useState(false)
   const userId = user.id;
 
   useFocusEffect(
 
     useCallback(() => {
-
       const getUserInfo = async () => {
+
+        setLoading(true)
         try {
           const data = await userApi.getUserInfo(userId);
 
@@ -24,6 +27,8 @@ export default function ProfileScreen({ navigation }) {
 
         } catch (err) {
           Alert.alert(err.message)
+        } finally {
+          setLoading(false)
         }
       }
 
@@ -31,6 +36,9 @@ export default function ProfileScreen({ navigation }) {
     }, [])
   )
 
+  if (loading) {
+    return <ActivityItem />
+  }
 
   const logoutHandler = async () => {
 
@@ -82,9 +90,8 @@ export default function ProfileScreen({ navigation }) {
           </View>
 
           <Text style={styles.name}>Name: {userInfo?.fullName || 'Anonymous'}</Text>
-          <Text style={styles.username}>Username:{userInfo?.username || 'Anonymous'}</Text>
+          <Text style={styles.username}>Username: {userInfo?.username || 'Anonymous'}</Text>
           <Text style={styles.email}>Email: {user.email}</Text>
-          {/* <Text style={styles.email}>{user.country.name} {country.cca2}</Text> */}
 
         </View>
 

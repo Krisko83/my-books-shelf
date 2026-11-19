@@ -1,5 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView, Alert } from 'react-native';
-
+import { View, Text, ScrollView, StyleSheet, Pressable, KeyboardAvoidingView, Alert, Image, Button, RefreshControl } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
 import RadioButton from '../components/RadioButton.jsx';
@@ -7,8 +6,11 @@ import InputController from '../components/InputController.jsx';
 import StarRating from '../components/StarRating.jsx';
 import { colors } from '../../theme.js';
 import { useEffect, useState } from 'react';
-import { bookApi } from '../api';
+import { bookApi, userApi } from '../api';
 import ActivityItem from '../components/ActivityItem.jsx';
+import useImageUrl from '../hooks/useImageUrl.js';
+import { File } from 'expo-file-system';
+import { uuid } from 'expo'
 
 export default function AddBookScreen({ navigation, route }) {
   const { handleSubmit, control, setValues, reset, formState: { errors, isSubmitting } } = useForm({
@@ -21,23 +23,61 @@ export default function AddBookScreen({ navigation, route }) {
       genre: '',
       status: '',
       rating: 0,
-      image_url: ''
+      imageUrl: null
     }
   })
-  const [loading, setLoading] = useState(false);
-  const inputPath = route.name;
+  const { imageUri, setImageUri, imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
+  const [loading, setLoading] = useState(false); 
+  const [refreshing, setRefershing] = useState(false);
   const bookId = inputPath === 'Edit' && route.params.bookId;
+  const inputPath = route.name;
 
   useEffect(() => {
     if (bookId) {
       bookApi.getBookById(bookId)
-        .then(data => setValues(data[0]))
+        .then(data => {
+          setValues(data[0])
+          setImageUrl(data[0].imageUrl)
+        })
+        .catch(err => Alert.alert(err.message))
     }
-  }, [bookId])
+  }, [bookId]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      reset();
+      setImageUri(null)
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
 
   if (loading) {
     return <ActivityItem />
+  }
+
+
+  const refreshHandler = async () => {
+    setRefershing(true);
+
+    try {
+
+      if (inputPath === 'Edit') {
+        const result = await bookApi.getBookById(bookId);
+
+        setValues(result[0])
+        setImageUrl(result[0].imageUrl)
+      } else {
+        setImageUri(null)
+        reset()
+      }
+    } catch (err) {
+
+      Alert.alert(err.message)
+    } finally {
+      setRefershing(false)
+    }
   }
 
 
@@ -46,12 +86,37 @@ export default function AddBookScreen({ navigation, route }) {
     try {
       setLoading(true);
 
+      let photo = imageUrl;
+
+      if (imageUri) {
+        try {
+          const file = new File(imageUri)
+          const arrayBuffer = await file.arrayBuffer()
+
+          const fileName = `${uuid.v4()}.jpg`
+          await userApi.uploadBookImage(fileName, arrayBuffer);
+
+          photo = `https://jekwxfohagnknpkqdgdo.supabase.co/storage/v1/object/public/books/${fileName}`;
+
+
+          setImageUrl(photo);
+
+        } catch (err) {
+          Alert.alert(err.message)
+        }
+      }
+
+      const bookData = {
+        ...data,
+        imageUrl: photo
+      }
+
       if (inputPath === 'Edit') {
-        await bookApi.updateBook(bookId, data);
+        await bookApi.updateBook(bookId, bookData);
 
       } else {
 
-        await bookApi.createBook(data);
+        await bookApi.createBook(bookData);
       }
 
       navigation.goBack();
@@ -60,10 +125,18 @@ export default function AddBookScreen({ navigation, route }) {
     } catch (error) {
       Alert.alert(error)
     } finally {
+      setImageUri(null)
       setLoading(false)
     }
 
   }
+
+  const image = imageUrl
+    ? imageUrl
+    : imageUri
+      ? imageUri
+      : null;
+
 
   return (
     <View style={[styles.screen, { paddingBottom: inputPath === 'Edit' && 40 }]}>
@@ -72,13 +145,39 @@ export default function AddBookScreen({ navigation, route }) {
         <ScrollView
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
         >
 
-          {/* <Text style={{ color: colors.text, fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 25 }}>Add Book</Text> */}
+          <View style={styles.imageContainer}>
 
-          <View style={{ height: 125, width: 125, borderRadius: 18, backgroundColor: '#ECEBF5', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
-            <Text style={{ fontSize: 32, color: colors.primary }}>▧</Text>
-            <Text style={{ color: colors.muted, fontSize: 12, marginTop: 6 }}>Add Cover</Text>
+            {image ?
+              <View style={styles.imageWrapper}>
+                <Image
+                  source={{
+                    uri: image
+                  }}
+                  style={styles.profileImage}
+                />
+              </View>
+              : <Text style={styles.cameraButton}>📷</Text>
+            }
+
+          </View>
+          <View style={{ marginTop: 10, alignItems: 'center', paddingBottom: 15, flexDirection: 'row', gap: 10 }}>
+
+            <Pressable style={styles.imagePickerBtn} onPress={takePhoto}>
+              <Text style={{ color: 'white', fontSize: 11 }} >Take a photo</Text>
+              <Text>📷</Text>
+            </Pressable>
+            {/* 
+          </View>
+          <View style={{  alignItems: 'center'  }}> */}
+
+            <Pressable style={styles.imagePickerBtn} onPress={pickImage}>
+              <Text style={{ color: 'white', fontSize: 11 }} >Gallery</Text>
+              <Text>🖼️</Text>
+            </Pressable>
+
           </View>
 
 
@@ -264,6 +363,38 @@ const styles = StyleSheet.create({
     padding: 22,
     paddingBottom: 36,
   },
+  imageContainer: {
+    height: 200,
+    width: '100%',
+    borderRadius: 18,
+    backgroundColor: '#ECEBF5',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10
+  },
+  imageWrapper: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#5944D6',
+    padding: 4,
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+  },
+  cameraButton: {
+    position: 'absolute',
+    borderColor: colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 50
+  },
+  cameraIcon: {
+    fontSize: 30,
+  },
   label: {
     color: colors.text,
     fontSize: 13,
@@ -299,4 +430,16 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 12,
   },
+  imagePickerBtn: {
+    flexDirection: 'row',
+    gap: 10,
+    width: 150,
+    borderWidth: 1,
+    height: 45,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: colors.primary,
+    borderRadius: 15,
+    justifyContent: 'space-between'
+  }
 });
