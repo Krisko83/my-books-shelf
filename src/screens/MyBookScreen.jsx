@@ -1,13 +1,14 @@
-import { Link } from "@react-navigation/native";
-import { Alert, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import BookItem from "../components/BookItem.jsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { bookApi } from "../api/index.js";
 import { Controller, set, useForm } from "react-hook-form";
 import { colors } from "../../theme.js";
 import RadioButton from "../components/RadioButton.jsx";
 import ActivityItem from "../components/ActivityItem.jsx";
 import * as Haptics from 'expo-haptics';
+import UserHeader from "../components/UserHeader.jsx";
 
 export default function MyBookScreen({ navigation, route }) {
     const { control, handleSubmit } = useForm({
@@ -23,19 +24,30 @@ export default function MyBookScreen({ navigation, route }) {
     const [loading, setLoading] = useState(false);
     const inputPath = route.name;
 
-    useEffect(() => {
-        setLoading(true)
+    useFocusEffect(
+        useCallback(() => {
+            const getMybook = async () => {
 
-        bookApi.getAllBooks()
-            .then(setBooks)
-            .catch(err => Alert.alert(err))
-            .finally(() => setLoading(false))
+                try {
+                    setLoading(true)
+                    const allBooks = await bookApi.getAllBooks()
 
-    }, []);
+                    setBooks(allBooks)
+                } catch (err) {
+                    Alert.alert(err.message)
+                } finally {
+                    setLoading(false)
+                }
+            }
 
-    if (loading) {
-        return <ActivityItem />
-    }
+            getMybook()
+        }, [])
+    )
+
+
+    // if (loading) {
+    //     return <ActivityItem />
+    // }
 
     const pressHandler = async (bookId) => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -67,99 +79,106 @@ export default function MyBookScreen({ navigation, route }) {
     }
 
     return (
+        <>
 
-        <View style={{ marginBottom: 128 }} >
-            <View style={{ paddingHorizontal: 15 }} >
-                <Controller
-                    control={control}
-                    name='search'
-                    render={({ field: { onChange, value } }) => (
-                        <TextInput
-                            style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
-                            placeholder="⌕  Search books..."
-                            placeholderTextColor={colors.muted}
-                            onSubmitEditing={handleSubmit(submitSearchHandler)}
-                            onChangeText={onChange}
-                            value={value}
-                        />
-                    )}
-                />
-
-
-                <Controller
-                    control={control}
-                    name='sort'
-                    render={({ field: { onChange, value } }) => (
-                        <View style={{ flexDirection: 'row', gap: 5, marginBottom: 10 }}>
-                            <RadioButton
-                                label='All'
-                                selected={value === 'all'}
-                                onPress={ async () => {
-                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                                    onChange('all')
-                                    submitSortHandler({ sort: 'all' })
-                                }}
-                            />
-
-                            <RadioButton
-                                label='Reading'
-                                selected={value === 'reading'}
-                                onPress={ async () => {
-                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                                    onChange('reading')
-                                    submitSortHandler({ sort: 'reading' })
-                                }}
-                            />
-
-                            <RadioButton
-                                label='Want to Read'
-                                selected={value === 'want-to-read'}
-                                onPress={ async () => {
-                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                                    onChange('want-to-read')
-                                    submitSortHandler({ sort: 'want-to-read' })
-                                }}
-                            />
-
-                            <RadioButton
-                                label='Read'
-                                selected={value === 'read'}
-                                onPress={ async () => {
-                                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                                    onChange('read')
-                                    submitSortHandler({ sort: 'read' })
-                                }}
-                            />
-                        </View>
-                    )}
-                />
-
-            </View>
-
-            {books.length > 0 ?
-                <FlatList
-                    data={books}
-                    keyExtractor={(item) => item.id}
-                    numColumns={1}
-                    contentContainerStyle={{ paddingBottom: inputPath === 'MainMyBooks' ? 65 : 15 }}
-                    vertical
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
-                    renderItem={({ item }) => (
-
-                        < View style={styles.container}>
-
-                            <Pressable onPress={() => pressHandler(item.id)} screen='Details' >
-                                <BookItem {...item} />
-                            </Pressable>
-
-                        </View>
-                    )}
-                />
+            <UserHeader screenName='My Library' />
+            {loading ?
+                <ActivityItem />
                 :
-                <Text>Your Library is Empty!</Text>
-            }
-        </View>
+                <View style={{ marginBottom: 128 }} >
 
+                    <View style={{ paddingHorizontal: 15 }} >
+                        <Controller
+                            control={control}
+                            name='search'
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput
+                                    style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
+                                    placeholder="⌕  Search books..."
+                                    placeholderTextColor={colors.muted}
+                                    onSubmitEditing={handleSubmit(submitSearchHandler)}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                            )}
+                        />
+
+
+                        <Controller
+                            control={control}
+                            name='sort'
+                            render={({ field: { onChange, value } }) => (
+                                <View style={{ flexDirection: 'row', gap: 5, marginBottom: 10 }}>
+                                    <RadioButton
+                                        label='All'
+                                        selected={value === 'all'}
+                                        onPress={async () => {
+                                            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+                                            onChange('all')
+                                            submitSortHandler({ sort: 'all' })
+                                        }}
+                                    />
+
+                                    <RadioButton
+                                        label='Reading'
+                                        selected={value === 'reading'}
+                                        onPress={async () => {
+                                            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+                                            onChange('reading')
+                                            submitSortHandler({ sort: 'reading' })
+                                        }}
+                                    />
+
+                                    <RadioButton
+                                        label='Want to Read'
+                                        selected={value === 'want-to-read'}
+                                        onPress={async () => {
+                                            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+                                            onChange('want-to-read')
+                                            submitSortHandler({ sort: 'want-to-read' })
+                                        }}
+                                    />
+
+                                    <RadioButton
+                                        label='Read'
+                                        selected={value === 'read'}
+                                        onPress={async () => {
+                                            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+                                            onChange('read')
+                                            submitSortHandler({ sort: 'read' })
+                                        }}
+                                    />
+                                </View>
+                            )}
+                        />
+
+                    </View>
+
+                    {books.length > 0 ?
+                        <FlatList
+                            data={books}
+                            keyExtractor={(item) => item.id}
+                            numColumns={1}
+                            contentContainerStyle={{ paddingBottom: inputPath === 'MainMyBooks' ? 65 : 15 }}
+                            vertical
+                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+                            renderItem={({ item }) => (
+
+                                < View style={styles.container}>
+
+                                    <Pressable onPress={() => pressHandler(item.id)} screen='Details' >
+                                        <BookItem {...item} inputPath='myBooks' />
+                                    </Pressable>
+
+                                </View>
+                            )}
+                        />
+                        :
+                        <Text>Your Library is Empty!</Text>
+                    }
+                </View>
+            }
+        </>
 
     );
 }

@@ -7,6 +7,7 @@ import { authApi, userApi } from '../api/index.js';
 import { useFocusEffect } from '@react-navigation/native';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
+import UserHeader from '../components/UserHeader.jsx';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
@@ -37,9 +38,9 @@ export default function ProfileScreen({ navigation }) {
     }, [])
   )
 
-  if (loading) {
-    return <ActivityItem />
-  }
+  // if (loading) {
+  //   return <ActivityItem />
+  // }
 
   const pressHandler = async (screeName, user) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -49,7 +50,7 @@ export default function ProfileScreen({ navigation }) {
 
   const logoutHandler = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    
+
     try {
       await authApi.logout();
       // logout();
@@ -77,51 +78,57 @@ export default function ProfileScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.screen}>
+    <>
+      <UserHeader screenName='Profile' />
+      {loading ?
+        <ActivityItem />
+        :
+        <View style={styles.screen}>
+          <ScrollView
+            contentContainerStyle={styles.content}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+          >
 
-      <ScrollView
-        contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
-      >
+            <View style={styles.imageContainer}>
 
-        <View style={styles.imageContainer}>
+              <View style={styles.imageContainer}>
 
-          <View style={styles.imageContainer}>
+                <View style={styles.imageWrapper}>
+                  {userInfo?.imageUrl !== '' ?
+                    <Image source={{ uri: userInfo?.imageUrl }} style={styles.profileImage} />
+                    :
+                    <Text style={{ fontSize: 80, textAlign: 'center', alignContent: 'center' }}>👤</Text>
+                  }
+                </View>
+              </View>
 
-            <View style={styles.imageWrapper}>
-              {userInfo?.imageUrl !== '' ?
-                <Image source={{ uri: userInfo?.imageUrl }} style={styles.profileImage} />
-                :
-                <Text style={{ fontSize: 80, textAlign: 'center', alignContent: 'center' }}>👤</Text>
-              }
+              <Text style={styles.name}>Name: {userInfo?.fullName || 'Anonymous'}</Text>
+              <Text style={styles.username}>Username: {userInfo?.username || 'Anonymous'}</Text>
+              <Text style={styles.email}>Email: {user.email}</Text>
+
             </View>
-          </View>
 
-          <Text style={styles.name}>Name: {userInfo?.fullName || 'Anonymous'}</Text>
-          <Text style={styles.username}>Username: {userInfo?.username || 'Anonymous'}</Text>
-          <Text style={styles.email}>Email: {user.email}</Text>
+            <View style={[styles.card, { paddingVertical: 4 }]}>
+              <ProfileButton icon='🏛️' name='My Library' onPress={() => pressHandler('MainMyBooks')} />
+
+              <ProfileButton icon='📝' name='Edit Profile' onPress={() => pressHandler('EditProfile', userInfo)} />
+
+              <ProfileButton icon='🛠' name='Settings' onPress={() => pressHandler('Settings')} />
+
+              <ProfileButton icon='❓' name='Help & Support' onPress={() => pressHandler('MainMyBooks')} />
+
+              <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('MainMyBooks')} />
+            </View>
+
+            <TouchableOpacity activeOpacity={0.8} style={styles.outlineButton} onPress={logoutHandler}>
+              <Text style={styles.outlineButtonText}>➜]  Logout</Text>
+            </TouchableOpacity>
+
+          </ScrollView>
 
         </View>
-
-        <View style={[styles.card, { paddingVertical: 4 }]}>
-          <ProfileButton icon='▤' name='My Library' onPress={() => pressHandler('MainMyBooks')} />
-
-          <ProfileButton icon='▥' name='Edit Profile' onPress={() => pressHandler('EditProfile', userInfo)} />
-
-          <ProfileButton icon='⚙' name='Settings' onPress={() => pressHandler('Settings')} />
-
-          <ProfileButton icon='?' name='Help & Support' onPress={() => pressHandler('MainMyBooks')} />
-
-          <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('MainMyBooks')} />
-        </View>
-
-        <TouchableOpacity activeOpacity={0.8} style={styles.outlineButton} onPress={logoutHandler}>
-          <Text style={styles.outlineButtonText}>⇥  Log Out</Text>
-        </TouchableOpacity>
-
-      </ScrollView>
-
-    </View>
+      }
+    </>
   );
 }
 
@@ -203,11 +210,6 @@ const styles = StyleSheet.create({
     marginBottom: 35,
     marginTop: 20
   },
-  // imageContainer: {
-  //   alignItems: 'center',
-  //   marginTop: 25,
-  //   marginBottom: 28
-  // },
   imageWrapper: {
     width: 155,
     height: 155,

@@ -9,10 +9,22 @@ import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { File } from 'expo-file-system';
 import ActivityItem from '../components/ActivityItem.jsx';
 import useImageUrl from '../hooks/useImageUrl.js';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from 'expo-haptics'; 
+
+const defaultValues = {
+    fullName: '',
+    username: '',
+    age: '',
+    gender: '',
+    country: {
+        cca2: '',
+        name: ''
+    },
+    imageUrl: ''
+}
 
 export default function EditProfileScreen({ navigation, route }) {
-    const { imageUri,imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
+    const { imageUri, imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
     // const [imageUri, setImageUri] = useState(null);
     // const [photo, setPhoto] = useState('');
     const [refreshing, setRefreshing] = useState(false);
@@ -20,19 +32,7 @@ export default function EditProfileScreen({ navigation, route }) {
     const [loading, setLoading] = useState(false);
     const userInfo = route.params;
 
-    const { control, handleSubmit, setValues, formState: { isSubmitting } } = useForm({
-        defaultValues: {
-            fullName: '',
-            username: '',
-            age: '',
-            gender: '',
-            country: {
-                cca2: '',
-                name: ''
-            },
-            imageUrl: ''
-        }
-    });
+    const { control, handleSubmit, setValues, formState: { isSubmitting } } = useForm({ defaultValues });
 
     const userData = {
         fullName: userInfo.fullName,
@@ -57,55 +57,11 @@ export default function EditProfileScreen({ navigation, route }) {
         return <ActivityItem />
     }
 
-    // const pickImage = async () => {
-    //     const permisionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    //     if (!permisionResult.granted) {
-    //         return (
-    //             <View>
-    //                 <Text>In order to use the camera you need to grant camera permission!</Text>
-    //                 <Button title='Grant Camera Permission' onPress={permisionResult} />
-    //             </View>
-    //         )
-    //     }
-
-    //     const result = await ImagePicker.launchImageLibraryAsync({
-    //         ediaTypes: ['images'],
-    //         allowsEditing: true,
-    //         aspect: [4, 3],
-    //         quality: 1,
-    //     });
-
-    //     if (!result.canceled) {
-    //         setImageUri(result.assets[0].uri)
-    //     }
-
-    // }
-
-    // const takePhoto = async () => {
-    //     const permisionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    //     if (!permisionResult.granted) {
-    //         return;
-    //     }
-
-    //     const result = await ImagePicker.launchCameraAsync({
-    //         ediaTypes: ['images'],
-    //         allowsEditing: true,
-    //         aspect: [4, 3],
-    //         quality: 0.5
-    //     })
-
-    //     if (!result.canceled) {
-    //         setImageUri(result.assets[0].uri)
-    //     }
-    // }
-
     const submitHandler = async (data) => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
         let imageUrl = userInfo.imageUrl;
-        
-        
+
+
         if (imageUri) {
             try {
                 setLoading(true);

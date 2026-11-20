@@ -1,22 +1,37 @@
 import { Image, StyleSheet, Text, View } from "react-native";
-import { colors } from "../../theme.js"; 
+import { colors } from "../../theme.js";
+
+const statusMap = {
+    'want-to-read': 'Want to Read',
+    'read': 'Read',
+    'reading': 'Reading'
+}
 
 
-export default function BookItem({ 
+export default function BookItem({
+    inputPath,
     title,
     author,
     status,
     imageUrl,
+    rating
 }) {
- 
+
+    const stars = '⭐'.repeat(rating);
+
+
     return (
         <View style={styles.card} >
             <Image source={{ uri: imageUrl }} style={styles.image} />
 
-            <Text numberOfLines={1} style={styles.title}>{title}</Text>
+            <Text style={{ fontSize: inputPath === 'myBooks' ? 14 : 10 }}>{stars}</Text>
+
+            <Text numberOfLines={1} style={[styles.title, { fontSize: inputPath === 'myBooks' ? 16 : 9 }]}>{title}</Text>
+
+
             <Text style={styles.author}>{author}</Text>
-            <View style={[styles.statusCtn, { backgroundColor: status === 'Want to Read' ? colors.softPurple : colors.green }]}>
-                <Text style={[styles.status, { color: status === 'Want to Read' ? colors.primary : colors.greenText}]}>{status}</Text>
+            <View style={[styles.statusCtn, { backgroundColor: statusMap[status] === 'Want to Read' ? colors.softPurple : colors.green }]}>
+                <Text style={[styles.status, { color: statusMap[status] === 'Want to Read' ? colors.primary : colors.greenText }]}>{statusMap[status]}</Text>
             </View>
         </View>
     );
@@ -52,8 +67,14 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     },
     status: {
-        fontSize: 10, 
-        fontWeight: '700' }
+        fontSize: 10,
+        fontWeight: '700'
+    },
+    titleStarsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    }
 }
+
 )
 

@@ -6,6 +6,7 @@ import { bookApi } from '../api';
 import convertDate from '../utils/convertDate.js';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
+import UserHeader from '../components/UserHeader.jsx';
 
 export default function BookDetailsScreen({ navigation, route }) {
   const [book, setBook] = useState({})
@@ -102,7 +103,7 @@ export default function BookDetailsScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-
+      <UserHeader screenName='Details' />
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}

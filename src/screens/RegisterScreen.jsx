@@ -27,8 +27,7 @@ export default function RegisterScreen({ navigation }) {
   const scrollViewRef = useRef(null);
   const secondInputRef = useRef(null)
   const thirdInputRef = useRef(null);
-  const emailInputRef = useRef(null);
-  const { user } = useAuthContext()
+  const emailInputRef = useRef(null); 
 
   if (loading) {
     return <ActivityItem action='Creating account...' />
