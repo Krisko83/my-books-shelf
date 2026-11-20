@@ -1,25 +1,34 @@
 import { Image, Platform, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '../../theme.js';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 
-export default function UserHeader({
-
+export default function Header({
     username,
     onLogout,
     imageUrl,
-    screenName
+    screenName,
 }) {
+    const navigation = useNavigation();
+ 
+    const goBack = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+        navigation.goBack()
+    }
 
-    const navigation = useNavigation()
+    const goToProfile = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+        navigation.navigate('ProfileTab')
+    }
 
     return (
         <View style={styles.header}>
             {username
                 ?
                 <View style={styles.userRow}>
-                    <View style={styles.imageContainer}>
+                    <Pressable style={styles.imageContainer} onPress={() => goToProfile()}>
                         <Image source={{ uri: imageUrl }} style={styles.image} />
-                    </View>
+                    </Pressable>
 
                     <View style={styles.userInfo}>
                         <Text style={styles.greeting}>Welcome back,</Text>
@@ -34,9 +43,12 @@ export default function UserHeader({
                 :
                 <View style={{ flexDirection: 'row' }}>
 
-                    <Pressable onPress={() => navigation.goBack()}>
-                        <Text style={{ color: 'white', fontSize: 50 }}>↩</Text>
-                    </Pressable>
+                    {screenName !== 'Welcome' &&
+                        <Pressable onPress={() => goBack()}>
+                            <Text style={{ color: 'white', fontSize: 50 }}>↩</Text>
+                        </Pressable>
+                    }
+
                     <Text style={{ color: 'white', fontSize: 25, paddingLeft: 30 }}>{screenName}</Text>
 
                 </View>
@@ -57,7 +69,7 @@ const styles = StyleSheet.create({
     },
     userRow: {
         flexDirection: 'row',
-        alignItems: 'center', 
+        alignItems: 'center',
     },
     avatar: {
         width: 30,

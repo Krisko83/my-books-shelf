@@ -1,48 +1,50 @@
-import { View, Text, StatusBar, StyleSheet, Image, ScrollView, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import Header from '../components/Header.jsx';
 
 export default function WelcomeScreen({ navigation }) {
-  const insets = useSafeAreaInsets();
 
   const submitHandler = async (screenName) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    navigation.navigate(screenName)
+    navigation.navigate(screenName, {inputPath: 'Welcome'})
   }
 
   return (
-    <View style={styles.container}>
+    <>
+      <Header screenName='Welcome' />
+      <View style={styles.container}>
 
-      <Image source={require('../assets/books.jpg')} style={styles.image} />
+        <Image source={require('../assets/books.jpg')} style={styles.image} />
 
-      <View style={styles.overlay}>
+        <View style={styles.overlay}>
 
-        <View style={styles.logo}>
-          <Text style={styles.logo}>&#128214;</Text>
+          <View style={styles.logo}>
+            <Text style={styles.logo}>&#128214;</Text>
+          </View>
+
+          <View style={styles.brand}>
+            <Text style={styles.title}>My BookShelf</Text>
+            <Text style={styles.subtitle}>Your personal library,{"\n"}always with you.</Text>
+          </View>
+
+          <View style={{ width: '100%', paddingBottom: 60, justifyContent: 'center' }}>
+
+            <TouchableOpacity activeOpacity={0.95} style={styles.button} onPress={() => submitHandler('Register')}>
+              <Text style={styles.buttonText}>Get Started</Text>
+            </TouchableOpacity>
+
+            <Pressable onPress={() => submitHandler('Login')} style={{ marginTop: 15 }} >
+              <Text style={styles.signIn}>Already have an account?
+                <Text style={{ color: colors.primary, fontWeight: '700' }}>Sign In</Text>
+              </Text>
+            </Pressable>
+
+          </View>
+
         </View>
-
-        <View style={styles.brand}>
-          <Text style={styles.title}>My BookShelf</Text>
-          <Text style={styles.subtitle}>Your personal library,{"\n"}always with you.</Text>
-        </View>
-
-        <View style={{ width: '100%', paddingBottom: 60, justifyContent: 'center' }}>
-
-          <TouchableOpacity activeOpacity={0.95} style={styles.button} onPress={() => submitHandler('Register')}>
-            <Text style={styles.buttonText}>Get Started</Text>
-          </TouchableOpacity>
-
-          <Pressable onPress={() => submitHandler('Login')} style={{ marginTop: 15 }} >
-            <Text style={styles.signIn}>Already have an account?
-              <Text style={{ color: colors.primary, fontWeight: '700' }}>Sign In</Text>
-            </Text>
-          </Pressable>
-
-        </View>
-
       </View>
-    </View>
+    </>
   );
 }
 

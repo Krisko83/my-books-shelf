@@ -6,7 +6,7 @@ import { bookApi } from '../api';
 import convertDate from '../utils/convertDate.js';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
-import UserHeader from '../components/UserHeader.jsx';
+import Header from '../components/Header.jsx';
 
 export default function BookDetailsScreen({ navigation, route }) {
   const [book, setBook] = useState({})
@@ -97,13 +97,13 @@ export default function BookDetailsScreen({ navigation, route }) {
 
   const editHandler = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-    navigation.navigate('Edit', { bookId })
+    navigation.navigate('AddEdit', { bookId, inputPath: 'Edit' })
   }
 
 
   return (
     <View style={styles.screen}>
-      <UserHeader screenName='Details' />
+      <Header screenName='Details' />
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}

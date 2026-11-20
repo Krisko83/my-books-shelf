@@ -8,8 +8,9 @@ import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { authApi, userApi } from '../api/index.js';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
+import Header from '../components/Header.jsx';
 
-export default function RegisterScreen({ navigation }) {
+export default function RegisterScreen({ navigation, route }) {
   const { control, reset, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -27,7 +28,10 @@ export default function RegisterScreen({ navigation }) {
   const scrollViewRef = useRef(null);
   const secondInputRef = useRef(null)
   const thirdInputRef = useRef(null);
-  const emailInputRef = useRef(null); 
+  const emailInputRef = useRef(null);
+
+  const inputPath = route?.params.inputPath;
+
 
   if (loading) {
     return <ActivityItem action='Creating account...' />
@@ -61,9 +65,19 @@ export default function RegisterScreen({ navigation }) {
     } finally {
       setLoading(false)
     }
-
-
   };
+
+  const goToLoginHandler = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
+    if (inputPath !== 'Welcome') {
+      navigation.goBack()
+
+    } else {
+      navigation.navigate('Login' , {inputPath: 'Login'})
+    }
+
+  }
 
 
   const switchPasswordVisibility = (field) => {
@@ -89,167 +103,170 @@ export default function RegisterScreen({ navigation }) {
 
 
   return (
-    <View style={styles.screen}>
-      <KeyboardAvoidingView behavior='padding' contentContainerStyle={{ flex: 1 }} >
+    <>
+      <Header screenName='Register' />
+      <View style={styles.screen}>
+        <KeyboardAvoidingView behavior='padding' contentContainerStyle={{ flex: 1 }} >
 
-        <ScrollView
-          contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]}
-          keyboardShouldPersistTaps="handled"
-          ref={scrollViewRef}>
+          <ScrollView
+            contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]}
+            keyboardShouldPersistTaps="handled"
+            ref={scrollViewRef}>
 
-          <View style={{ alignItems: 'center', marginBottom: 34 }}>
-            <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
-            <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
-          </View>
+            <View style={{ alignItems: 'center', marginBottom: 34 }}>
+              <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
+              <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
+            </View>
 
-          <Text style={styles.heading}>Create Account</Text>
+            <Text style={styles.heading}>Create Account</Text>
 
-          {/* <Text style={styles.subheading}>Start building your personal library</Text> */}
+            {/* <Text style={styles.subheading}>Start building your personal library</Text> */}
 
-          <View onFocus={handleFirstFocus}>
+            <View onFocus={handleFirstFocus}>
 
-            <Text style={styles.label}>Email address</Text>
+              <Text style={styles.label}>Email address</Text>
 
-            <Controller
-              control={control}
-              name='email'
-              rules={{
-                required: 'Email is required!',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: 'Invalid email address'
-                }
-              }}
-              render={({ field: { onBlur, onChange, value } }) => (
-                <TextInput
-                  ref={emailInputRef}
-                  submitBehavior="submit"
-                  style={styles.input}
-                  placeholder="you@example.com"
-                  placeholderTextColor={colors.muted}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  onSubmitEditing={() => secondInputRef.current?.focus()}
-                  keyboardType="email-address"
-                  returnKeyType="next"
-                  autoCapitalize="none"
-                />
-              )}
-            />
-
-            {errors.email &&
-              <Text style={styles.error}>{errors.email.message}</Text>
-            }
-
-            <Text style={styles.label}>Password</Text>
-
-            <Controller
-              control={control}
-              name='password'
-              rules={{
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password should be at least 6 characters long!'
-                },
-                maxLength: {
-                  value: 20,
-                  message: 'Password should be no more then 20 characters long!'
-                },
-                pattern: {
-                  value: /^(?=.*[A-Z])(?=.*[!@#$%^&*])/,
-                  message: 'Password must contain at least one uppercase letter and one special character!'
-                },
-              }}
-              render={({ field: { onBlur, onChange, value } }) => (
-                <View style={styles.inputContainer}>
+              <Controller
+                control={control}
+                name='email'
+                rules={{
+                  required: 'Email is required!',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Invalid email address'
+                  }
+                }}
+                render={({ field: { onBlur, onChange, value } }) => (
                   <TextInput
-                    ref={secondInputRef}
+                    ref={emailInputRef}
                     submitBehavior="submit"
                     style={styles.input}
-                    value={value}
+                    placeholder="you@example.com"
+                    placeholderTextColor={colors.muted}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    onSubmitEditing={() => thirdInputRef.current?.focus()}
-                    placeholder="Create a password"
-                    placeholderTextColor={colors.muted}
+                    value={value}
+                    onSubmitEditing={() => secondInputRef.current?.focus()}
+                    keyboardType="email-address"
                     returnKeyType="next"
-                    secureTextEntry={!isPasswordVisible['password']}
                     autoCapitalize="none"
                   />
+                )}
+              />
 
-                  <Pressable
-                    onPress={() => switchPasswordVisibility('password')}
-                    style={styles.eyeIcon}
-                  >
-                    <EyeIcon isVisible={isPasswordVisible['password']} />
-                  </Pressable>
+              {errors.email &&
+                <Text style={styles.error}>{errors.email.message}</Text>
+              }
 
-                </View>
-              )}
-            />
+              <Text style={styles.label}>Password</Text>
 
-            {errors.password &&
-              <Text style={styles.error}>{errors.password.message}</Text>
-            }
+              <Controller
+                control={control}
+                name='password'
+                rules={{
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password should be at least 6 characters long!'
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: 'Password should be no more then 20 characters long!'
+                  },
+                  pattern: {
+                    value: /^(?=.*[A-Z])(?=.*[!@#$%^&*])/,
+                    message: 'Password must contain at least one uppercase letter and one special character!'
+                  },
+                }}
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      ref={secondInputRef}
+                      submitBehavior="submit"
+                      style={styles.input}
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      onSubmitEditing={() => thirdInputRef.current?.focus()}
+                      placeholder="Create a password"
+                      placeholderTextColor={colors.muted}
+                      returnKeyType="next"
+                      secureTextEntry={!isPasswordVisible['password']}
+                      autoCapitalize="none"
+                    />
 
-            <Text style={styles.label}>Confirm password</Text>
+                    <Pressable
+                      onPress={() => switchPasswordVisibility('password')}
+                      style={styles.eyeIcon}
+                    >
+                      <EyeIcon isVisible={isPasswordVisible['password']} />
+                    </Pressable>
 
-            <Controller
-              control={control}
-              name='confirmPassword'
-              rules={{
-                required: 'Confirm password is required!',
-                validate: value => value === getValues('password') || "Passwords don't match!"
-              }}
-              render={({ field: { onBlur, onChange, value } }) => (
-                <View style={styles.inputContainer}>
+                  </View>
+                )}
+              />
 
-                  <TextInput
-                    ref={thirdInputRef}
-                    submitBehavior="submit"
-                    style={styles.input}
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    onSubmitEditing={handleSubmit(submitHandler)}
-                    placeholder="Repeat your password"
-                    placeholderTextColor={colors.muted}
-                    secureTextEntry={!isPasswordVisible['confirmPassword']}
-                    autoCapitalize="none"
-                    returnKeyType="done"
-                  />
+              {errors.password &&
+                <Text style={styles.error}>{errors.password.message}</Text>
+              }
 
-                  <Pressable
-                    onPress={() => switchPasswordVisibility('confirmPassword')}
-                    style={styles.eyeIcon}
-                  >
-                    <EyeIcon isVisible={isPasswordVisible['confirmPassword']} />
-                  </Pressable>
-                </View>
-              )}
-            />
+              <Text style={styles.label}>Confirm password</Text>
 
-            {errors.confirmPassword &&
-              <Text style={styles.error}>{errors.confirmPassword.message}</Text>
-            }
+              <Controller
+                control={control}
+                name='confirmPassword'
+                rules={{
+                  required: 'Confirm password is required!',
+                  validate: value => value === getValues('password') || "Passwords don't match!"
+                }}
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <View style={styles.inputContainer}>
 
-            <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
-              <Text style={styles.buttonText}>{isSubmitting ? 'Creating account...' : 'Create Account'}</Text>
-            </TouchableOpacity>
+                    <TextInput
+                      ref={thirdInputRef}
+                      submitBehavior="submit"
+                      style={styles.input}
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      onSubmitEditing={handleSubmit(submitHandler)}
+                      placeholder="Repeat your password"
+                      placeholderTextColor={colors.muted}
+                      secureTextEntry={!isPasswordVisible['confirmPassword']}
+                      autoCapitalize="none"
+                      returnKeyType="done"
+                    />
 
-            {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
-            <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>
-            <Pressable onPress={() => navigation.navigate('Login')}>
-            <Text style={{ color: colors.primary, fontWeight: '700' }}>Login</Text>
-            </Pressable>
-            </View> */}
+                    <Pressable
+                      onPress={() => switchPasswordVisibility('confirmPassword')}
+                      style={styles.eyeIcon}
+                    >
+                      <EyeIcon isVisible={isPasswordVisible['confirmPassword']} />
+                    </Pressable>
+                  </View>
+                )}
+              />
 
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </View>
+              {errors.confirmPassword &&
+                <Text style={styles.error}>{errors.confirmPassword.message}</Text>
+              }
+
+              <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
+                <Text style={styles.buttonText}>{isSubmitting ? 'Creating account...' : 'Create Account'}</Text>
+              </TouchableOpacity>
+
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
+                <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>
+                <Pressable onPress={() => goToLoginHandler()}>
+                  <Text style={{ color: colors.primary, fontWeight: '700' }}>Login</Text>
+                </Pressable>
+              </View>
+
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    </>
   );
 }
 

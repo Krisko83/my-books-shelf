@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import { bookApi, userApi } from '../api';
 import BookItem from '../components/BookItem.jsx';
 import ActivityItem from '../components/ActivityItem.jsx';
-import UserHeader from '../components/UserHeader.jsx';
+import Header from '../components/Header.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import * as Haptics from 'expo-haptics';
 
@@ -75,7 +75,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <>
-      <UserHeader {...user} {...userInfo} onLogout={logout} />
+      <Header {...user} {...userInfo} onLogout={logout} />
       {loading ?
         <ActivityItem />
         :

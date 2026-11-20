@@ -8,7 +8,7 @@ import { colors } from "../../theme.js";
 import RadioButton from "../components/RadioButton.jsx";
 import ActivityItem from "../components/ActivityItem.jsx";
 import * as Haptics from 'expo-haptics';
-import UserHeader from "../components/UserHeader.jsx";
+import Header from "../components/Header.jsx";
 
 export default function MyBookScreen({ navigation, route }) {
     const { control, handleSubmit } = useForm({
@@ -45,10 +45,6 @@ export default function MyBookScreen({ navigation, route }) {
     )
 
 
-    // if (loading) {
-    //     return <ActivityItem />
-    // }
-
     const pressHandler = async (bookId) => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
 
@@ -80,12 +76,11 @@ export default function MyBookScreen({ navigation, route }) {
 
     return (
         <>
-
-            <UserHeader screenName='My Library' />
+            <Header screenName='My Library' />
             {loading ?
                 <ActivityItem />
                 :
-                <View style={{ marginBottom: 128 }} >
+                <View style={{ marginBottom: 128, paddingBottom: 150 }} >
 
                     <View style={{ paddingHorizontal: 15 }} >
                         <Controller

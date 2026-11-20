@@ -7,7 +7,7 @@ import { authApi, userApi } from '../api/index.js';
 import { useFocusEffect } from '@react-navigation/native';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
-import UserHeader from '../components/UserHeader.jsx';
+import Header from '../components/Header.jsx';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
@@ -79,7 +79,7 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <>
-      <UserHeader screenName='Profile' />
+      <Header screenName='Profile' />
       {loading ?
         <ActivityItem />
         :

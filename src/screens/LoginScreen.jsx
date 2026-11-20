@@ -8,9 +8,10 @@ import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { authApi } from '../api/index.js';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
+import Header from '../components/Header.jsx';
 
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation, route }) {
   const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -26,6 +27,8 @@ export default function LoginScreen() {
   const secondInputRef = useRef(null);
   const emailInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const inputPath = route?.params.inputPath;
+
 
   if (loading) {
     return (
@@ -61,23 +64,6 @@ export default function LoginScreen() {
     }))
   }
 
-  // const handleFirstFocus = (event) => {
-  //   const input = event.target;
-
-  //   if (input === secondInputRef.current) {
-  //     return;
-  //   }
-
-  //   input.measureLayout(
-  //     scrollViewRef.current,
-  //     (x, y) => {
-  //       scrollViewRef.current?.scrollTo({
-  //         y: y + 200,
-  //         animated: true
-  //       });
-  //     }
-  //   );
-  // };
 
   const handleFirstFocus = () => {
     emailInputRef.current?.measureLayout(
@@ -92,142 +78,139 @@ export default function LoginScreen() {
     );
   };
 
+  const goToRegisterHandler = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+
+    if (inputPath !== 'Welcome') {
+      navigation.navigate('Register', {inputPath: 'Register'})
+    } else {
+      navigation.goBack()
+    }
+  }
+
   return (
-    <View style={styles.screen}>
-      <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
 
-        <ScrollView
-          contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]}
-          keyboardShouldPersistTaps="handled"
-          ref={scrollViewRef} >
+    <>
+      <Header screenName='Login' />
+      <View style={styles.screen}>
+        <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
 
-          <View style={{ alignItems: 'center', marginBottom: 34 }}>
-            <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
-            <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
-          </View>
+          <ScrollView
+            contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]}
+            keyboardShouldPersistTaps="handled"
+            ref={scrollViewRef} >
 
-          <Text style={styles.heading}>Welcome Back</Text>
+            <View style={{ alignItems: 'center', marginBottom: 34 }}>
+              <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>
+              <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
+            </View>
 
-          <Text style={styles.subheading}>Sign in to your account</Text>
+            <Text style={styles.heading}>Welcome Back</Text>
 
+            <Text style={styles.subheading}>Sign in to your account</Text>
 
-          {/* <InputController
-            control={control}
-            name='email'
-            rules={{
-              required: 'Email is required',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Invalid email address'
-              }
-            }}
-            placeholder="you@example.com"
-            handleSubmit={handleSubmit(submitHandler)}
-            keyboardType="email-address"
-            capitalize="none"
-            /> */}
+            <View onFocus={handleFirstFocus}>
 
-          <View onFocus={handleFirstFocus}>
+              <Text style={styles.label}>Email address</Text>
 
-            <Text style={styles.label}>Email address</Text>
-
-            <Controller
-              control={control}
-              name='email'
-              rules={{
-                required: 'Email is required',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: 'Invalid email address'
-                }
-              }}
-              render={({ field: { onBlur, onChange, value } }) => (
-                <TextInput
-                  ref={emailInputRef}
-                  submitBehavior="submit"
-                  style={styles.input}
-                  placeholder="you@example.com"
-                  placeholderTextColor={colors.muted}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  onSubmitEditing={() => secondInputRef.current?.focus()}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  returnKeyType="next"
-                />
-              )}
-            />
-
-            {errors.email &&
-              <Text style={styles.error}>{errors.email.message}</Text>
-            }
-
-            <Text style={styles.label}>Password</Text>
-
-            <Controller
-              control={control}
-              name='password'
-              rules={{
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password should be at least 6 characters long!'
-                }
-              }}
-              render={({ field: { onBlur, onChange, value } }) => (
-                <View style={styles.inputContainer}>
+              <Controller
+                control={control}
+                name='email'
+                rules={{
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Invalid email address'
+                  }
+                }}
+                render={({ field: { onBlur, onChange, value } }) => (
                   <TextInput
-                    ref={secondInputRef}
+                    ref={emailInputRef}
                     submitBehavior="submit"
-                    style={[styles.input, { flex: 1 }]}
-                    value={value}
+                    style={styles.input}
+                    placeholder="you@example.com"
+                    placeholderTextColor={colors.muted}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    onSubmitEditing={handleSubmit(submitHandler)}
-                    placeholder="Enter your password"
-                    placeholderTextColor={colors.muted}
-                    secureTextEntry={!isPasswordVisible['password']}
+                    value={value}
+                    onSubmitEditing={() => secondInputRef.current?.focus()}
+                    keyboardType="email-address"
                     autoCapitalize="none"
+                    returnKeyType="next"
                   />
+                )}
+              />
 
-                  <Pressable
-                    onPress={() => switchPasswordVisibility('password')}
-                    style={styles.eyeIcon}
-                  >
-                    <EyeIcon isVisible={isPasswordVisible['password']} />
-                  </Pressable>
-                </View>
-              )}
-            />
+              {errors.email &&
+                <Text style={styles.error}>{errors.email.message}</Text>
+              }
 
-            {errors.password &&
-              <Text style={styles.error}>{errors.password.message}</Text>
-            }
+              <Text style={styles.label}>Password</Text>
 
-            <TouchableOpacity 
-             activeOpacity={0.8}
-              style={styles.button}
-              onPress={handleSubmit(submitHandler)}
-              disabled={isSubmitting}>
-              <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
-            </TouchableOpacity>
-          </View>
+              <Controller
+                control={control}
+                name='password'
+                rules={{
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password should be at least 6 characters long!'
+                  }
+                }}
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      ref={secondInputRef}
+                      submitBehavior="submit"
+                      style={[styles.input, { flex: 1 }]}
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      onSubmitEditing={handleSubmit(submitHandler)}
+                      placeholder="Enter your password"
+                      placeholderTextColor={colors.muted}
+                      secureTextEntry={!isPasswordVisible['password']}
+                      autoCapitalize="none"
+                    />
+
+                    <Pressable
+                      onPress={() => switchPasswordVisibility('password')}
+                      style={styles.eyeIcon}
+                    >
+                      <EyeIcon isVisible={isPasswordVisible['password']} />
+                    </Pressable>
+                  </View>
+                )}
+              />
+
+              {errors.password &&
+                <Text style={styles.error}>{errors.password.message}</Text>
+              }
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.button}
+                onPress={handleSubmit(submitHandler)}
+                disabled={isSubmitting}>
+                <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
+              </TouchableOpacity>
+            </View>
 
 
 
-          {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
-            <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>
-            <Pressable onPress={() => navigation.navigate('Register')}>
-              <Text style={{ color: colors.primary, fontWeight: '700' }}>Register</Text>
-            </Pressable>
-          </View> */}
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
+              <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>
+              <Pressable onPress={() => goToRegisterHandler()}>
+                <Text style={{ color: colors.primary, fontWeight: '700' }}>Register</Text>
+              </Pressable>
+            </View>
 
 
-        </ScrollView>
+          </ScrollView>
 
-      </KeyboardAvoidingView>
-    </View>
+        </KeyboardAvoidingView>
+      </View>
+    </>
   );
 }
 

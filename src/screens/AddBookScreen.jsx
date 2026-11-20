@@ -12,7 +12,7 @@ import useImageUrl from '../hooks/useImageUrl.js';
 import { File } from 'expo-file-system';
 import { uuid } from 'expo'
 import * as Haptics from 'expo-haptics';
-import UserHeader from '../components/UserHeader.jsx';
+import Header from '../components/Header.jsx';
 
 export default function AddBookScreen({ navigation, route }) {
   const { handleSubmit, control, setValues, reset, clearErrors, formState: { errors, isSubmitting } } = useForm({
@@ -31,10 +31,11 @@ export default function AddBookScreen({ navigation, route }) {
   const { imageUri, setImageUri, imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefershing] = useState(false);
-  const inputPath = route.name;
+  const inputPath = route.params?.inputPath;
   const { bookId } = inputPath === 'Edit' && route.params;
 
-
+  console.log('1',route.name);
+  
   useEffect(() => {
     if (bookId) {
       bookApi.getBookById(bookId)
@@ -145,7 +146,7 @@ export default function AddBookScreen({ navigation, route }) {
   return (
     <View style={[styles.screen, { paddingBottom: inputPath === 'Edit' && 40 }]}>
       <KeyboardAvoidingView behavior='padding'>
-      <UserHeader screenName='Add Book' />
+        <Header screenName={inputPath === 'Edit' ? 'Edit Book' : 'Add Book'} />
 
         <ScrollView
           contentContainerStyle={styles.content}
@@ -357,7 +358,7 @@ export default function AddBookScreen({ navigation, route }) {
           }
 
           <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)} disabled={isSubmitting}>
-            <Text style={styles.buttonText}>Save Book</Text>
+            <Text style={styles.buttonText}>{inputPath === 'Edit' ? 'Edit' : 'Save'} Book</Text>
           </TouchableOpacity>
 
         </ScrollView>
