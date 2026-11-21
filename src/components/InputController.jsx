@@ -2,7 +2,7 @@ import { Controller } from "react-hook-form";
 import { StyleSheet, TextInput } from "react-native";
 import { colors } from "../../theme.js";
 
-export default function InputController({control, name, rules, placeholder, handleSubmit, capitalize='sentences', keyboardType = 'default'}) {
+export default function InputController({ control, name, rules, placeholder, handleSubmit, capitalize = 'sentences', keyboardType = 'default', returnKeyType = "next", ref }) {
 
     return (
         <Controller
@@ -11,15 +11,18 @@ export default function InputController({control, name, rules, placeholder, hand
             rules={rules}
             render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
+                    ref={ref}
                     style={styles.input}
                     placeholder={placeholder}
                     placeholderTextColor={colors.muted}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
+                    submitBehavior="submit"
                     onSubmitEditing={handleSubmit}
                     keyboardType={keyboardType}
                     autoCapitalize={capitalize}
+                    returnKeyType={returnKeyType}
                 />
             )}
         />

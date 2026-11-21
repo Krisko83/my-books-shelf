@@ -12,7 +12,7 @@ export default function WelcomeScreen({ navigation }) {
 
   return (
     <>
-      <Header screenName='Welcome' />
+      {/* <Header screenName='Welcome' /> */}
       <View style={styles.container}>
 
         <Image source={require('../assets/books.jpg')} style={styles.image} />

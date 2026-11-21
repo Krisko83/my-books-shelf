@@ -177,15 +177,14 @@ export const styles = StyleSheet.create({
     height: 55,
     width: '50%',
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
     borderColor: '#E5DDD4',
+    borderWidth: 0,
   },
 
   picker: {
-    height: 55,
+    height: 60,
     width: '100%',
     color: '#3E3026',
-    marginTop: -3,
+    marginTop: -2,
   },
 });

@@ -1,11 +1,10 @@
-import { Link } from "@react-navigation/native";
-import { Pressable, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { colors } from "../../theme.js";
 
-export default function ProfileButton({ icon, name, onPress }) {
-
+export default function ProfileButton({ icon, name, onPress, noBorder }) {
+     
     return (
-        <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={onPress} >
+        <TouchableOpacity activeOpacity={0.8} style={[styles.button, { borderBottomWidth: noBorder ? 0 : 1 }]} onPress={onPress} >
             <Text style={styles.icon}>{icon}</Text>
             <Text style={styles.text}>{name}</Text>
             <Text style={styles.arrow}>›</Text>

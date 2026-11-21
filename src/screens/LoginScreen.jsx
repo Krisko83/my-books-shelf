@@ -21,12 +21,12 @@ export default function LoginScreen({ navigation, route }) {
     }
   })
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const insets = useSafeAreaInsets();
   const { login } = useAuthContext();
+  const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
   const scrollViewRef = useRef(null);
   const secondInputRef = useRef(null);
   const emailInputRef = useRef(null);
-  const [loading, setLoading] = useState(false);
   const inputPath = route?.params.inputPath;
 
 
@@ -82,9 +82,9 @@ export default function LoginScreen({ navigation, route }) {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
 
     if (inputPath !== 'Welcome') {
-      navigation.navigate('Register', {inputPath: 'Register'})
-    } else {
       navigation.goBack()
+    } else {
+      navigation.navigate('Register', { inputPath: 'Register' })
     }
   }
 
@@ -98,7 +98,8 @@ export default function LoginScreen({ navigation, route }) {
           <ScrollView
             contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 65 }]}
             keyboardShouldPersistTaps="handled"
-            ref={scrollViewRef} >
+            ref={scrollViewRef}
+          >
 
             <View style={{ alignItems: 'center', marginBottom: 34 }}>
               <Text style={{ fontSize: 80, color: colors.primary }}>&#128214;</Text>

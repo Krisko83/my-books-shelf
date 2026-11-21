@@ -90,7 +90,7 @@ export default function ProfileScreen({ navigation }) {
 
             <View style={styles.imageContainer}>
 
-              <View style={styles.imageContainer}>
+              <View>
 
                 <View style={styles.imageWrapper}>
                   {userInfo?.imageUrl !== '' ?
@@ -114,7 +114,7 @@ export default function ProfileScreen({ navigation }) {
 
               <ProfileButton icon='🛠' name='Settings' onPress={() => pressHandler('Settings')} />
 
-              <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('AboutApp')} />
+              <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('AboutApp')} noBorder={true} />
             </View>
 
             <TouchableOpacity activeOpacity={0.8} style={styles.outlineButton} onPress={logoutHandler}>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   content: {
-    padding: 22,
+    paddingHorizontal: 16,
     paddingBottom: 36
   },
   button: {

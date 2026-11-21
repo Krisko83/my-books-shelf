@@ -42,7 +42,7 @@ export default function Header({
                     </TouchableOpacity>
                 </View>
                 :
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', alignItems:'center' }}>
 
                     {screenName !== 'Welcome' &&
                         <Pressable onPress={() => goBack()}>
@@ -50,7 +50,7 @@ export default function Header({
                         </Pressable>
                     }
 
-                    <Text style={{ color: 'white', fontSize: 25, paddingLeft: 30 }}>{screenName}</Text>
+                    <Text style={{ color: 'white', fontSize: 25, paddingLeft: 15}}>{screenName}</Text>
 
                 </View>
             }
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderBottomLeftRadius: 24,
         borderBottomRightRadius: 24,
-        height: 150
+        height: 140
     },
     userRow: {
         flexDirection: 'row',
