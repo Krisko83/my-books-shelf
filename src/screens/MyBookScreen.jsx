@@ -1,7 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
-import { Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import BookItem from "../components/BookItem.jsx";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { bookApi } from "../api/index.js";
 import { Controller, set, useForm } from "react-hook-form";
 import { colors } from "../../theme.js";
@@ -10,9 +10,10 @@ import ActivityItem from "../components/ActivityItem.jsx";
 import * as Haptics from 'expo-haptics';
 import Header from "../components/Header.jsx";
 import { useTranslation } from "react-i18next";
+import { AuthContext } from "../contexts/auth/AuthContext.js";
 
 export default function MyBookScreen({ navigation, route }) {
-    const { control, handleSubmit } = useForm({
+    const { getValues, control, reset, setValue, handleSubmit } = useForm({
         mode: 'onBlur',
         reValidateMode: 'onChange',
         defaultValues: {
@@ -20,16 +21,20 @@ export default function MyBookScreen({ navigation, route }) {
             sort: 'all'
         }
     });
+    
     const [books, setBooks] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
     const inputPath = route.name;
+    const { user } = use(AuthContext);
+    const [isSearched, setIsSearched] = useState(false);
+
 
     useFocusEffect(
         useCallback(() => {
             const getMybook = async () => {
-
+                reset()
                 try {
                     setLoading(true)
                     const allBooks = await bookApi.getAllBooks()
@@ -49,12 +54,12 @@ export default function MyBookScreen({ navigation, route }) {
 
     const pressHandler = async (bookId) => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-
         navigation.navigate('Details', { bookId })
     }
 
     const refreshHandler = async () => {
         setRefreshing(true);
+        reset();
 
         try {
             const data = await bookApi.getAllBooks()
@@ -66,16 +71,44 @@ export default function MyBookScreen({ navigation, route }) {
         }
     }
 
-    const submitSortHandler = (data) => {
-        console.log(data.sort);
+    const submitSortHandler = async (data) => {
+        const sortStatus = data.sort;
+
+        if(getValues().sort === 'all') {
+            return refreshHandler()
+        }
+
+        if (getValues().search !== '') {
+            setValue('search', '')
+        }
+        try {
+            setIsSearched(true)
+            const data = await bookApi.sortBooks(user.id, sortStatus);
+
+            setBooks(data)
+        } catch (err) {
+            Alert.alert(err.message)
+        }
 
     }
 
-    const submitSearchHandler = (data) => {
-        console.log(data.search);
+    const submitSearchHandler = async (data) => {
+        const searchWord = data.search;
+
+        if (getValues().sort !== '') {
+            setValue('sort', 'all')
+        }
+        try {
+            setIsSearched(true)
+            const data = await bookApi.searchBook(user.id, searchWord)
+
+            setBooks(data)
+        } catch (err) {
+            Alert.alert(err.message)
+        }
 
     }
- 
+
     return (
         <>
             <Header screenName={t('myLibrary')} />
@@ -151,7 +184,8 @@ export default function MyBookScreen({ navigation, route }) {
 
                     </View>
 
-                    {books.length > 0 ?
+                    {books.length > 0
+                        ?
                         <FlatList
                             data={books}
                             keyExtractor={(item) => item.id}
@@ -170,9 +204,16 @@ export default function MyBookScreen({ navigation, route }) {
                                 </View>
                             )}
                         />
+
                         :
-                        <Text>Your Library is Empty!</Text>
+                        <ScrollView
+                            contentContainerStyle={{ height: 300, justifyContent: 'center', alignItems: 'center' }}
+                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+                        >
+                            <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{isSearched ? 'No results found!' : 'Your Library is Empty!'}</Text>
+                        </ScrollView>
                     }
+
                 </View>
             }
         </>

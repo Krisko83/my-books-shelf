@@ -27,7 +27,7 @@ export async function getAllBooks() {
 
 export async function getLastFourBooks() {
     try {
-        const response = await api.get('/books?order=created_at.desc&limit=4')
+        const response = await api.get('/books?order=created_at.desc&limit=5')
 
         return response.data;
     } catch (err) {
@@ -43,7 +43,7 @@ export async function getBookById(bookId) {
         return response.data;
     } catch (err) {
         throw new Error(getErrorMessage(err))
-        
+
     }
 }
 
@@ -61,6 +61,28 @@ export async function updateBook(bookId, bookData) {
 export async function deleteBook(bookId) {
     try {
         const response = await api.delete(`/books?id=eq.${bookId}`)
+
+        return response.data;
+    } catch (err) {
+        throw new Error(getErrorMessage(err))
+
+    }
+}
+
+export async function searchBook(user_id, bookName) {
+    try {
+        const response = await api.get(`/books?user_id=eq.${user_id}&title=ilike.*${bookName}&order=created_at.desc`)
+
+        return response.data;
+    } catch (err) {
+        throw new Error(getErrorMessage(err))
+
+    }
+}
+
+export async function sortBooks(user_id, sortStatus) {
+    try {
+        const response = await api.get(`/books?user_id=eq.${user_id}&status=ilike.*${sortStatus}&order=created_at.desc`)
 
         return response.data;
     } catch (err) {

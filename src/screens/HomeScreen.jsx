@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, Alert, RefreshControl, FlatList, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert, RefreshControl, FlatList, Pressable, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
@@ -18,7 +18,7 @@ export default function HomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false)
   const { user, logout } = useAuthContext();
   const [userInfo, setUserInfo] = useState('User');
-const {t} = useTranslation();
+  const { t } = useTranslation();
 
   useFocusEffect(
 
@@ -46,9 +46,6 @@ const {t} = useTranslation();
 
   )
 
-  // if (loading) {
-  //   return <ActivityItem />
-  // }
 
   const pressHandler = async (bookId) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -75,6 +72,10 @@ const {t} = useTranslation();
     navigation.navigate('MainMyBooks')
   }
 
+  const goToOtherUsersBookHandler = () => {
+
+  }
+
   return (
     <>
       <Header {...user} {...userInfo} onLogout={logout} />
@@ -93,33 +94,42 @@ const {t} = useTranslation();
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
               <Text style={{ color: colors.text, fontSize: 19, fontWeight: '800' }}>{t('myLibrary')}</Text>
 
-              <Pressable onPress={seeAllHandler} >
-                <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>{t('seeAll')}</Text>
-              </Pressable>
+              {books.length > 4 &&
+                <Pressable onPress={seeAllHandler} >
+                  <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>{t('seeAll')}</Text>
+                </Pressable>
+              }
+
             </View>
 
             <View style={styles.libContainer}>
               <FlatList
-                data={books}
+                data={books.slice(0, 4)}
                 keyExtractor={item => item.id}
                 horizontal
                 contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
                 renderItem={({ item }) => (
-                  <View key={item.id} style={styles.cart}   >
+                  <View key={item.id} style={styles.cart}>
                     <Pressable onPress={() => pressHandler(item.id)} >
                       <BookItem {...item} />
                     </Pressable>
                   </View>
                 )}
               />
-              {/* {books.map(book => (
-            <View key={book.id} style={styles.cart} >
-            <Link screen='Details' params={{ bookId: book.id }} >
-            <BookItem {...book} />
-            </Link>
+
             </View>
-          ))} */}
+
+            <View>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.button}
+                onPress={goToOtherUsersBookHandler}
+              // disabled={isSubmitting}
+              >
+                <Text style={styles.buttonText}>Find out what other users read.</Text>
+              </TouchableOpacity>
             </View>
+
           </ScrollView>
 
         </View>
@@ -153,5 +163,20 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 14,
     marginBottom: 17,
+  },
+  button: {
+    minHeight: 52,
+    borderRadius: 16,
+    backgroundColor:
+      colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700'
+
   },
 })

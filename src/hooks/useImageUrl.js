@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 
 export default function useImageUrl() {
     const [imageUri, setImageUri] = useState(null);
-    const [imageUrl, setImageUrl] = useState('');
+    const [imageUrl, setImageUrl] = useState(null);
 
     const pickImage = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)

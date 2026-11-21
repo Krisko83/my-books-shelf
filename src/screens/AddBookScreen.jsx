@@ -37,9 +37,8 @@ export default function AddBookScreen({ navigation, route }) {
   const scrollViewRef = useRef(null);
   const titleInputRef = useRef(null);
   const authorInputRef = useRef(null);
-  const descriptionInputRef = useRef(null);
-  const genreInputRef = useRef(null);
-
+  const descriptionInputRef = useRef(null); 
+ 
   useEffect(() => {
     if (bookId) {
       bookApi.getBookById(bookId)
@@ -128,11 +127,12 @@ export default function AddBookScreen({ navigation, route }) {
 
       navigation.goBack();
 
+      setImageUri(null)
+      setImageUrl(null)
       reset()
     } catch (error) {
       Alert.alert(error)
     } finally {
-      setImageUri(null)
       setLoading(false)
     }
 
@@ -152,12 +152,13 @@ export default function AddBookScreen({ navigation, route }) {
     );
   };
 
-  const image = imageUrl
-    ? imageUrl
-    : imageUri
-      ? imageUri
+  const image = imageUri
+    ? imageUri
+    : imageUrl
+      ? imageUrl
       : null;
 
+ 
 
   return (
     <View style={[styles.screen, { paddingBottom: inputPath === 'Edit' && 40 }]}>
