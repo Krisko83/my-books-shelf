@@ -9,7 +9,8 @@ import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import { File } from 'expo-file-system';
 import ActivityItem from '../components/ActivityItem.jsx';
 import useImageUrl from '../hooks/useImageUrl.js';
-import * as Haptics from 'expo-haptics'; 
+import * as Haptics from 'expo-haptics';
+import Header from '../components/Header.jsx';
 
 const defaultValues = {
     fullName: '',
@@ -25,8 +26,6 @@ const defaultValues = {
 
 export default function EditProfileScreen({ navigation, route }) {
     const { imageUri, imageUrl, setImageUrl, takePhoto, pickImage } = useImageUrl();
-    // const [imageUri, setImageUri] = useState(null);
-    // const [photo, setPhoto] = useState('');
     const [refreshing, setRefreshing] = useState(false);
     const { user } = useAuthContext()
     const [loading, setLoading] = useState(false);
@@ -115,214 +114,217 @@ export default function EditProfileScreen({ navigation, route }) {
             : null;
 
     return (
-        <KeyboardAvoidingView style={styles.screen} behavior='padding'>
-            <ScrollView
-                contentContainerStyle={styles.content}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
-            // showsVerticalScrollIndicator={false}
-            >
+        <>
+            <Header screenName='Edit Profile' />
+            <KeyboardAvoidingView style={styles.screen} behavior='padding'>
+                <ScrollView
+                    contentContainerStyle={styles.content}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+                // showsVerticalScrollIndicator={false}
+                >
 
-                <View style={{ paddingBottom: 30 }}>
+                    <View style={{ paddingBottom: 30 }}>
 
-                    {/* Profile Image */}
-                    <View style={styles.imageContainer}>
-                        <View style={styles.imageWrapper}>
-                            <Image
-                                source={{
-                                    uri: image
-                                }}
-                                style={styles.profileImage}
-                            />
-                        </View>
-
-                        <Pressable style={styles.cameraButton} onPress={takePhoto}>
-                            <Text style={styles.cameraIcon}>📷</Text>
-                        </Pressable>
-
-                    </View>
-                    <View style={{ marginTop: 10, alignItems: 'center' }} >
-                        <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage} >
-                            <Text style={{ color: 'white' }} >Upload from gallery</Text>
-                            <Text>🖼️</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-
-                <View style={[styles.field, styles.disabledField]}>
-                    <Text style={styles.fieldIcon}>✉</Text>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={user.email}
-                            editable={false}
-                        />
-                    </View>
-
-                    <Text style={styles.lockIcon}>🔒</Text>
-                </View>
-
-
-                <View style={styles.field}>
-                    <Text style={styles.fieldIcon}>♟</Text>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Full Name</Text>
-                        <Controller
-                            control={control}
-                            name='fullName'
-                            render={({ field: { value, onChange } }) => (
-                                <TextInput
-                                    value={value}
-                                    onChangeText={onChange}
-                                    style={styles.input}
-                                    placeholder='Full Name'
-                                    keyboardType="default"
+                        {/* Profile Image */}
+                        <View style={styles.imageContainer}>
+                            <View style={styles.imageWrapper}>
+                                <Image
+                                    source={{
+                                        uri: image
+                                    }}
+                                    style={styles.profileImage}
                                 />
-                            )}
-                        />
-
-                    </View>
-                </View>
-
-                <View style={styles.field}>
-                    <Text style={styles.fieldIcon}>♟</Text>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Username</Text>
-                        <Controller
-                            control={control}
-                            name='username'
-                            render={({ field: { value, onChange } }) => (
-                                <TextInput
-                                    value={value}
-                                    onChangeText={onChange}
-                                    style={styles.input}
-                                    placeholder='Username'
-                                    keyboardType="default"
-                                />
-                            )}
-                        />
-
-                    </View>
-                </View>
-
-
-                <View style={styles.field}>
-                    <Text style={styles.fieldIcon}>▦</Text>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Age</Text>
-                        <Controller
-                            control={control}
-                            name='age'
-                            render={({ field: { value, onChange } }) => (
-                                <TextInput
-                                    value={value}
-                                    onChangeText={onChange}
-                                    style={styles.input}
-                                    placeholder="Enter your age"
-                                    keyboardType="numeric"
-                                />
-
-                            )}
-                        />
-                    </View>
-                </View>
-
-
-                <Controller
-                    control={control}
-                    name='country'
-                    render={({ field: { value, onChange } }) => (
-
-                        <View style={styles.field} >
-                            <Text style={styles.fieldIcon}>◎</Text>
-
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Country</Text>
-                                <Text style={styles.input}>{value.name}</Text>
                             </View>
 
-                            <CountryPicker
-                                countryCode={value.cca2}
-                                withFilter
-                                withFlag
-                                onSelect={(selectedCountry) => {
-                                    onChange({
-                                        cca2: selectedCountry.cca2,
-                                        name: selectedCountry.name
-                                    })
+                            <Pressable style={styles.cameraButton} onPress={takePhoto}>
+                                <Text style={styles.cameraIcon}>📷</Text>
+                            </Pressable>
 
-                                }}
-
-                            />
-                            <Text style={styles.arrow}>⌄</Text>
                         </View>
-                    )}
-                />
+                        <View style={{ marginTop: 10, alignItems: 'center' }} >
+                            <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage} >
+                                <Text style={{ color: 'white' }} >Upload from gallery</Text>
+                                <Text>🖼️</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
 
 
+                    <View style={[styles.field, styles.disabledField]}>
+                        <Text style={styles.fieldIcon}>✉</Text>
 
-                <View style={styles.genderField}>
-                    <Text style={styles.fieldIcon}>⚥</Text>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Email</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={user.email}
+                                editable={false}
+                            />
+                        </View>
 
-                    <View style={styles.genderContainer}>
-                        <Text style={styles.genderLabel}>Gender</Text>
+                        <Text style={styles.lockIcon}>🔒</Text>
+                    </View>
 
 
-                        <View style={styles.genderOptions}>
+                    <View style={styles.field}>
+                        <Text style={styles.fieldIcon}>♟</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Full Name</Text>
                             <Controller
                                 control={control}
-                                name='gender'
+                                name='fullName'
                                 render={({ field: { value, onChange } }) => (
-                                    <View style={styles.radioOption}>
-                                        <Text style={styles.radioText}>Male</Text>
-                                        <Pressable
-                                            name='male'
-                                            style={[styles.radioSelected, { backgroundColor: value === 'male' ? colors.primary : '#ECEBF5', }]}
-                                            value={value}
-                                            onPress={() => onChange('male')}
-                                        >
-                                        </Pressable>
-
-                                        <Text style={styles.radioText}>female</Text>
-                                        <Pressable
-                                            name='female'
-                                            style={[styles.radioSelected, { backgroundColor: value === 'female' ? colors.primary : '#ECEBF5', }]}
-                                            value={value}
-                                            onPress={() => onChange('female')}
-                                        >
-                                        </Pressable>
-
-                                        <Text style={styles.radioText}>Other</Text>
-                                        <Pressable
-                                            name='other'
-                                            style={[styles.radioSelected, { backgroundColor: value === 'other' ? colors.primary : '#ECEBF5', }]}
-                                            value={value}
-                                            onPress={() => onChange('other')}
-                                        >
-                                        </Pressable>
-                                    </View>
+                                    <TextInput
+                                        value={value}
+                                        onChangeText={onChange}
+                                        style={styles.input}
+                                        placeholder='Full Name'
+                                        keyboardType="default"
+                                    />
                                 )}
                             />
 
+                        </View>
+                    </View>
+
+                    <View style={styles.field}>
+                        <Text style={styles.fieldIcon}>♟</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Username</Text>
+                            <Controller
+                                control={control}
+                                name='username'
+                                render={({ field: { value, onChange } }) => (
+                                    <TextInput
+                                        value={value}
+                                        onChangeText={onChange}
+                                        style={styles.input}
+                                        placeholder='Username'
+                                        keyboardType="default"
+                                    />
+                                )}
+                            />
 
                         </View>
-
                     </View>
-                </View>
 
 
-                <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
-                    <Text style={styles.buttonIcon}>✎</Text>
-                    <Text style={styles.buttonText}>{isSubmitting ? 'Updating...' : 'Update Profile'}</Text>
-                </TouchableOpacity>
+                    <View style={styles.field}>
+                        <Text style={styles.fieldIcon}>▦</Text>
 
-            </ScrollView>
-        </KeyboardAvoidingView>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Age</Text>
+                            <Controller
+                                control={control}
+                                name='age'
+                                render={({ field: { value, onChange } }) => (
+                                    <TextInput
+                                        value={value}
+                                        onChangeText={onChange}
+                                        style={styles.input}
+                                        placeholder="Enter your age"
+                                        keyboardType="numeric"
+                                    />
+
+                                )}
+                            />
+                        </View>
+                    </View>
+
+
+                    <Controller
+                        control={control}
+                        name='country'
+                        render={({ field: { value, onChange } }) => (
+
+                            <View style={styles.field} >
+                                <Text style={styles.fieldIcon}>◎</Text>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.label}>Country</Text>
+                                    <Text style={styles.input}>{value.name}</Text>
+                                </View>
+
+                                <CountryPicker
+                                    countryCode={value.cca2}
+                                    withFilter
+                                    withFlag
+                                    onSelect={(selectedCountry) => {
+                                        onChange({
+                                            cca2: selectedCountry.cca2,
+                                            name: selectedCountry.name
+                                        })
+
+                                    }}
+
+                                />
+                                <Text style={styles.arrow}>⌄</Text>
+                            </View>
+                        )}
+                    />
+
+
+
+                    <View style={styles.genderField}>
+                        <Text style={styles.fieldIcon}>⚥</Text>
+
+                        <View style={styles.genderContainer}>
+                            <Text style={styles.genderLabel}>Gender</Text>
+
+
+                            <View style={styles.genderOptions}>
+                                <Controller
+                                    control={control}
+                                    name='gender'
+                                    render={({ field: { value, onChange } }) => (
+                                        <View style={styles.radioOption}>
+                                            <Text style={styles.radioText}>Male</Text>
+                                            <Pressable
+                                                name='male'
+                                                style={[styles.radioSelected, { backgroundColor: value === 'male' ? colors.primary : '#ECEBF5', }]}
+                                                value={value}
+                                                onPress={() => onChange('male')}
+                                            >
+                                            </Pressable>
+
+                                            <Text style={styles.radioText}>female</Text>
+                                            <Pressable
+                                                name='female'
+                                                style={[styles.radioSelected, { backgroundColor: value === 'female' ? colors.primary : '#ECEBF5', }]}
+                                                value={value}
+                                                onPress={() => onChange('female')}
+                                            >
+                                            </Pressable>
+
+                                            <Text style={styles.radioText}>Other</Text>
+                                            <Pressable
+                                                name='other'
+                                                style={[styles.radioSelected, { backgroundColor: value === 'other' ? colors.primary : '#ECEBF5', }]}
+                                                value={value}
+                                                onPress={() => onChange('other')}
+                                            >
+                                            </Pressable>
+                                        </View>
+                                    )}
+                                />
+
+
+                            </View>
+
+                        </View>
+                    </View>
+
+
+                    <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
+                        <Text style={styles.buttonIcon}>✎</Text>
+                        <Text style={styles.buttonText}>{isSubmitting ? 'Updating...' : 'Update Profile'}</Text>
+                    </TouchableOpacity>
+
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </>
     );
 }
 

@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
 import Header from '../components/Header.jsx';
+import { useTranslation } from 'react-i18next';
 
 export default function ProfileScreen({ navigation }) {
   const { logout, user } = useAuthContext();
@@ -17,8 +18,8 @@ export default function ProfileScreen({ navigation }) {
   const userId = user.id;
 
   useFocusEffect(
-
     useCallback(() => {
+
       const getUserInfo = async () => {
 
         setLoading(true)
@@ -38,9 +39,7 @@ export default function ProfileScreen({ navigation }) {
     }, [])
   )
 
-  // if (loading) {
-  //   return <ActivityItem />
-  // }
+  const { t } = useTranslation()
 
   const pressHandler = async (screeName, user) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -115,13 +114,11 @@ export default function ProfileScreen({ navigation }) {
 
               <ProfileButton icon='🛠' name='Settings' onPress={() => pressHandler('Settings')} />
 
-              <ProfileButton icon='❓' name='Help & Support' onPress={() => pressHandler('MainMyBooks')} />
-
-              <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('MainMyBooks')} />
+              <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('AboutApp')} />
             </View>
 
             <TouchableOpacity activeOpacity={0.8} style={styles.outlineButton} onPress={logoutHandler}>
-              <Text style={styles.outlineButtonText}>➜]  Logout</Text>
+              <Text style={styles.outlineButtonText}>➜]  {t('logout')}</Text>
             </TouchableOpacity>
 
           </ScrollView>

@@ -74,7 +74,7 @@ export default function RegisterScreen({ navigation, route }) {
       navigation.goBack()
 
     } else {
-      navigation.navigate('Login' , {inputPath: 'Login'})
+      navigation.navigate('Login', { inputPath: 'Login' })
     }
 
   }
@@ -97,7 +97,7 @@ export default function RegisterScreen({ navigation, route }) {
           animated: true
         });
       },
-      () => console.log('Measurement failed')
+      // () => console.log('Measurement failed')
     );
   };
 

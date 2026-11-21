@@ -9,6 +9,7 @@ import RadioButton from "../components/RadioButton.jsx";
 import ActivityItem from "../components/ActivityItem.jsx";
 import * as Haptics from 'expo-haptics';
 import Header from "../components/Header.jsx";
+import { useTranslation } from "react-i18next";
 
 export default function MyBookScreen({ navigation, route }) {
     const { control, handleSubmit } = useForm({
@@ -22,6 +23,7 @@ export default function MyBookScreen({ navigation, route }) {
     const [books, setBooks] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { t } = useTranslation();
     const inputPath = route.name;
 
     useFocusEffect(
@@ -73,10 +75,10 @@ export default function MyBookScreen({ navigation, route }) {
         console.log(data.search);
 
     }
-
+ 
     return (
         <>
-            <Header screenName='My Library' />
+            <Header screenName={t('myLibrary')} />
             {loading ?
                 <ActivityItem />
                 :
@@ -89,7 +91,7 @@ export default function MyBookScreen({ navigation, route }) {
                             render={({ field: { onChange, value } }) => (
                                 <TextInput
                                     style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
-                                    placeholder="⌕  Search books..."
+                                    placeholder={`⌕ ${t('searchBooks')}...`}
                                     placeholderTextColor={colors.muted}
                                     onSubmitEditing={handleSubmit(submitSearchHandler)}
                                     onChangeText={onChange}
@@ -105,7 +107,7 @@ export default function MyBookScreen({ navigation, route }) {
                             render={({ field: { onChange, value } }) => (
                                 <View style={{ flexDirection: 'row', gap: 5, marginBottom: 10 }}>
                                     <RadioButton
-                                        label='All'
+                                        label={t('all')}
                                         selected={value === 'all'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -115,7 +117,7 @@ export default function MyBookScreen({ navigation, route }) {
                                     />
 
                                     <RadioButton
-                                        label='Reading'
+                                        label={t('reading')}
                                         selected={value === 'reading'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -125,7 +127,7 @@ export default function MyBookScreen({ navigation, route }) {
                                     />
 
                                     <RadioButton
-                                        label='Want to Read'
+                                        label={t('wantToRead')}
                                         selected={value === 'want-to-read'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -135,7 +137,7 @@ export default function MyBookScreen({ navigation, route }) {
                                     />
 
                                     <RadioButton
-                                        label='Read'
+                                        label={t('read')}
                                         selected={value === 'read'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)

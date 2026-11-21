@@ -8,6 +8,7 @@ import ActivityItem from '../components/ActivityItem.jsx';
 import Header from '../components/Header.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 
 export default function HomeScreen({ navigation }) {
@@ -17,6 +18,7 @@ export default function HomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false)
   const { user, logout } = useAuthContext();
   const [userInfo, setUserInfo] = useState('User');
+const {t} = useTranslation();
 
   useFocusEffect(
 
@@ -89,10 +91,10 @@ export default function HomeScreen({ navigation }) {
 
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
-              <Text style={{ color: colors.text, fontSize: 19, fontWeight: '800' }}>Your Library</Text>
+              <Text style={{ color: colors.text, fontSize: 19, fontWeight: '800' }}>{t('myLibrary')}</Text>
 
               <Pressable onPress={seeAllHandler} >
-                <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>See all</Text>
+                <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>{t('seeAll')}</Text>
               </Pressable>
             </View>
 

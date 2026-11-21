@@ -19,7 +19,7 @@ export default function WelcomeScreen({ navigation }) {
 
         <View style={styles.overlay}>
 
-          <View style={styles.logo}>
+          <View>
             <Text style={styles.logo}>&#128214;</Text>
           </View>
 

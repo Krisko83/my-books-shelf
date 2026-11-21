@@ -47,9 +47,7 @@ export async function uploadImage(fileName, arrayBuffer) {
         });
 
         return response.data;
-    } catch (err) {
-        //      console.log('Status:', err.response?.status);
-        // console.log('Supabase error:', err.response?.data);
+    } catch (err) { 
         throw new Error(getErrorMessage(err))
     }
 }
@@ -64,9 +62,7 @@ export async function uploadBookImage(fileName, arrayBuffer) {
         });
 
         return response.data;
-    } catch (err) {
-        //      console.log('Status:', err.response?.status);
-        // console.log('Supabase error:', err.response?.data);
+    } catch (err) { 
         throw new Error(getErrorMessage(err))
     }
 }

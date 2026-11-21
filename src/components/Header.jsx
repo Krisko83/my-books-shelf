@@ -2,6 +2,7 @@ import { Image, Platform, Pressable, StatusBar, StyleSheet, Text, TouchableOpaci
 import { colors } from '../../theme.js';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 export default function Header({
     username,
@@ -10,7 +11,7 @@ export default function Header({
     screenName,
 }) {
     const navigation = useNavigation();
- 
+    const {t} = useTranslation();
     const goBack = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
         navigation.goBack()
@@ -31,13 +32,13 @@ export default function Header({
                     </Pressable>
 
                     <View style={styles.userInfo}>
-                        <Text style={styles.greeting}>Welcome back,</Text>
-                        <Text style={styles.name} numberOfLines={1}>{username}</Text>
+                        <Text style={styles.greeting}>{t('welcomeBack')},</Text>
+                        <Text style={styles.username} numberOfLines={1}>{username}</Text>
                     </View>
 
                     <TouchableOpacity style={styles.logoutButton} activeOpacity={0.7} onPress={onLogout}>
                         <Text style={styles.logoutIcon}>⎋</Text>
-                        <Text style={styles.logoutText}>Logout</Text>
+                        <Text style={styles.logoutText}>{t('logout')}</Text>
                     </TouchableOpacity>
                 </View>
                 :
@@ -93,8 +94,8 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: 'white',
     },
-    name: {
-        fontSize: 18,
+    username: {
+        fontSize: 14,
         fontWeight: '700',
         // color: 'rgba(255, 255, 255, 0.75)',
         color: 'white'

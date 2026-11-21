@@ -90,7 +90,7 @@ const refreshTokenInterceptor = (instance) => {
                 );
 
             } catch (refreshError) {
-                console.log('Refresh failed:', refreshError.response?.data || refreshError.message);
+        
 
                 await SecureStore.deleteItemAsync('auth');
 

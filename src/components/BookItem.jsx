@@ -1,11 +1,7 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../theme.js";
+import { useTranslation } from "react-i18next";
 
-const statusMap = {
-    'want-to-read': 'Want to Read',
-    'read': 'Read',
-    'reading': 'Reading'
-}
 
 
 export default function BookItem({
@@ -15,13 +11,19 @@ export default function BookItem({
     status,
     imageUrl,
     rating
-}) {
-
+}) { 
     const stars = '⭐'.repeat(rating);
+    const {t, i18n} = useTranslation()
+    
+    const statusMap = {
+        'want-to-read': `${t('wantToRead')}`,
+        'read': `${t('read')}`,
+        'reading': `${t('reading')}`
+    }
 
 
     return (
-        <View style={styles.card} >
+        <View style={[styles.card, {paddingBottom: i18n.language === 'bg' && 30}]} >
             <Image source={{ uri: imageUrl }} style={styles.image} />
 
             <Text style={{ fontSize: inputPath === 'myBooks' ? 14 : 10 }}>{stars}</Text>

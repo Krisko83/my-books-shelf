@@ -28,16 +28,12 @@ export async function login(userData) {
 }
 
 export async function logout() {
-    // const userData = await AsyncStorage.getItem('auth');
-    // const user = userData ? JSON.parse(userData) : null
-
+ 
     try {
         await authenticationApi.post('logout')
 
     } catch (error) {
-        // console.log('Status:', error.response?.status);
-        // console.log('Data:', error.response?.data);
-
+ 
         throw new Error(getErrorMessage(err))
     }
 }

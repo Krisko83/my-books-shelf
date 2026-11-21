@@ -74,7 +74,7 @@ export default function LoginScreen({ navigation, route }) {
           animated: true
         });
       },
-      () => console.log('Measurement failed')
+      // () => console.log('Measurement failed')
     );
   };
 

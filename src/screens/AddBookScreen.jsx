@@ -33,9 +33,7 @@ export default function AddBookScreen({ navigation, route }) {
   const [refreshing, setRefershing] = useState(false);
   const inputPath = route.params?.inputPath;
   const { bookId } = inputPath === 'Edit' && route.params;
-
-  console.log('1',route.name);
-  
+ 
   useEffect(() => {
     if (bookId) {
       bookApi.getBookById(bookId)
@@ -172,16 +170,16 @@ export default function AddBookScreen({ navigation, route }) {
           <View style={{ marginTop: 10, alignItems: 'center', paddingBottom: 15, flexDirection: 'row', gap: 10 }}>
 
             <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={takePhoto}>
-              <Text style={{ color: 'white', fontSize: 11 }} >Take a photo</Text>
               <Text>📷</Text>
+              <Text style={{ color: 'white', fontSize: 10 }} >Take a photo</Text>
             </TouchableOpacity>
             {/* 
           </View>
           <View style={{  alignItems: 'center'  }}> */}
 
             <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage}>
-              <Text style={{ color: 'white', fontSize: 11 }} >Gallery</Text>
               <Text>🖼️</Text>
+              <Text style={{ color: 'white', fontSize: 10 }} >Gallery</Text>
             </TouchableOpacity>
 
           </View>
@@ -450,11 +448,11 @@ const styles = StyleSheet.create({
   imagePickerBtn: {
     flexDirection: 'row',
     gap: 10,
-    width: 150,
+    width: '48%',
     borderWidth: 1,
     height: 45,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 9,
     backgroundColor: colors.primary,
     borderRadius: 15,
     justifyContent: 'space-between'

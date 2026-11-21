@@ -14,8 +14,10 @@ const styles = StyleSheet.create({
     btn: {
         flex: 1,
         paddingVertical: 10,
+        paddingHorizontal:10,
         borderRadius: 11,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     btnText: {
         fontSize: 9,

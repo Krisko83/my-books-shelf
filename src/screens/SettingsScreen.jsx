@@ -1,37 +1,127 @@
-import { View, Text, ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StatusBar, StyleSheet, Switch } from 'react-native';
 import { colors } from '../../theme.js';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../components/Header.jsx';
+import { useTranslation } from 'react-i18next';
+import { use, useEffect, useState } from 'react';
+import { UserSettingsContext } from '../contexts/auth/UserSettingsContext.js';
+import { Picker } from '@react-native-picker/picker';
 
 
-const settings = [
-  ['♧', 'Notifications', 'On'],
-  ['▧', 'Dark Mode', 'Off'],
-  ['◎', 'Language', 'English   ›'],
-  ['ⓘ', 'About App', '›'],
-];
 
 export default function SettingsScreen() {
-  return (
-    <View style={styles.screen}>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.heading, { textAlign: 'center', marginBottom: 25 }]}>Settings</Text>
-        <View style={[styles.card, { paddingVertical: 3 }]}>
-          {settings.map(([icon, label, value], i) => (
-            <View key={label} style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', borderBottomWidth: i === settings.length - 1 ? 0 : 1, borderBottomColor: colors.border }}>
-              <Text style={{ width: 38, fontSize: 20, color: colors.primary }}>{icon}</Text>
-              <Text style={{ color: colors.text, fontSize: 14, fontWeight: '600', flex: 1 }}>{label}</Text>
-              {i < 2 ? (
-                <View style={{ width: 43, height: 25, borderRadius: 15, backgroundColor: value === 'On' ? colors.primary : '#DADAE5', justifyContent: 'center', padding: 3, alignItems: value === 'On' ? 'flex-end' : 'flex-start' }}>
-                  <View style={{ width: 19, height: 19, borderRadius: 10, backgroundColor: '#FFF' }} />
-                </View>
-              ) : <Text style={{ color: colors.muted, fontSize: 13 }}>{value}</Text>}
+  const { t } = useTranslation();
+  const { settings, saveSettings } = use(UserSettingsContext);
+
+
+  const [userSettings, setUserSettings] = useState(settings);
+
+
+  const toggleSwitch = (name) => {
+
+    const updatedData = {
+      ...userSettings,
+      [name]: !userSettings[name]
+    }
+    setUserSettings(updatedData)
+    saveSettings(updatedData)
+  }
+
+ 
+  const changeLanguageHandler = (value) => {    
+    const updatedData = {
+      ...userSettings,
+      language: value
+    }
+
+    setUserSettings(updatedData)
+    saveSettings(updatedData)
+  }
+ 
+
+  return (
+    <>
+      <Header screenName={`${t('settings')}`} />
+      <View style={styles.screen}>
+
+        <ScrollView contentContainerStyle={styles.content}>
+
+          <View style={styles.card}>
+            <View style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.border }}>
+
+              <Text style={{ width: 38, fontSize: 20, color: colors.primary }}>🕭</Text>
+              <Text style={{ color: colors.text, fontSize: 18, fontWeight: '600', flex: 1 }}>{t('notifications')}</Text>
+
+              <Switch
+                trackColor={{ false: '#767577', true: colors.primary }}
+                thumbColor={userSettings ? 'white' : '#f1ecf1'}
+                onValueChange={() => toggleSwitch('notifications')}
+                value={userSettings.notifications}
+              />
+
             </View>
-          ))}
-        </View>
-        <View style={[styles.button, { marginTop: 28 }]}><Text style={styles.buttonText}>Save Settings</Text></View>
-      </ScrollView>
-    </View>
+
+          </View>
+
+          <View style={styles.card}>
+            <View style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.border }}>
+
+              <Text style={{ width: 38, fontSize: 20, color: colors.primary }}>⚫</Text>
+              <Text style={{ color: colors.text, fontSize: 18, fontWeight: '600', flex: 1 }}>{t('darkMode')}</Text>
+
+              <Switch
+                trackColor={{ false: '#767577', true: colors.primary }}
+                thumbColor={userSettings ? 'white' : '#f1ecf1'}
+                onValueChange={() => toggleSwitch('darkMode')}
+                value={userSettings.darkMode}
+              />
+
+            </View>
+
+          </View>
+
+
+          <View style={styles.card}>
+            <View style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.border }}>
+
+              <Text style={{ width: 38, fontSize: 20, color: colors.primary }}>🗣</Text>
+              <Text style={{ color: colors.text, fontSize: 18, fontWeight: '600', flex: 1 }}>{t('language')}</Text>
+
+              <View style={styles.pickerContainer}>
+
+                <Picker
+                  selectedValue={userSettings.language}
+                  onValueChange={(value) => changeLanguageHandler(value)}
+                  style={styles.picker}
+                >
+
+                  <Picker.Item label='English' value='en' />
+                  <Picker.Item label='Български' value='bg' />
+                </Picker>
+              </View>
+
+            </View>
+
+          </View>
+
+          {/* <View style={[styles.card, { paddingVertical: 3 }]}>
+            {settings.map(([icon, label, value], i) => (
+              <View key={label} style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', borderBottomWidth: i === settings.length - 1 ? 0 : 1, borderBottomColor: colors.border }}>
+                <Text style={{ width: 38, fontSize: 20, color: colors.primary }}>{icon}</Text>
+                <Text style={{ color: colors.text, fontSize: 14, fontWeight: '600', flex: 1 }}>{label}</Text>
+                {i < 2 ? (
+                  <View style={{ width: 43, height: 25, borderRadius: 15, backgroundColor: value === 'On' ? colors.primary : '#DADAE5', justifyContent: 'center', padding: 3, alignItems: value === 'On' ? 'flex-end' : 'flex-start' }}>
+                    <View style={{ width: 19, height: 19, borderRadius: 10, backgroundColor: '#FFF' }} />
+                  </View>
+                ) : <Text style={{ color: colors.muted, fontSize: 13 }}>{value}</Text>}
+              </View>
+            ))}
+          </View> */}
+
+          {/* <View style={[styles.button, { marginTop: 28 }]}><Text style={styles.buttonText}>Save Settings</Text></View> */}
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
@@ -43,7 +133,8 @@ export const styles = StyleSheet.create({
   },
   content: {
     padding: 22,
-    paddingBottom: 36
+    paddingBottom: 36,
+    gap: 10
   },
   heading: {
     color: colors.text,
@@ -75,10 +166,26 @@ export const styles = StyleSheet.create({
     fontWeight: '700'
   },
   card: {
+    height: 60,
     backgroundColor: colors.surface,
     borderRadius: 18,
-    padding: 16,
+    paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: '#EFEEF6',
+  },
+  pickerContainer: {
+    height: 55,
+    width: '50%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5DDD4',
+  },
+
+  picker: {
+    height: 55,
+    width: '100%',
+    color: '#3E3026',
+    marginTop: -3,
   },
 });
