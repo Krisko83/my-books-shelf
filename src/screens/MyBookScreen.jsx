@@ -37,7 +37,7 @@ export default function MyBookScreen({ navigation, route }) {
                 reset()
                 try {
                     setLoading(true)
-                    const allBooks = await bookApi.getAllBooks()
+                    const allBooks = await bookApi.getAllBooks(user.id)
 
                     setBooks(allBooks)
                 } catch (err) {
@@ -124,7 +124,7 @@ export default function MyBookScreen({ navigation, route }) {
                             render={({ field: { onChange, value } }) => (
                                 <TextInput
                                     style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
-                                    placeholder={`⌕ ${t('searchBooks')}...`}
+                                    placeholder={`⌕ ${t('searchBooks')} by title...`}
                                     placeholderTextColor={colors.muted}
                                     onSubmitEditing={handleSubmit(submitSearchHandler)}
                                     onChangeText={onChange}

@@ -7,10 +7,10 @@ import { Controller, set, useForm } from "react-hook-form";
 import { colors } from "../../theme.js";
 import RadioButton from "../components/RadioButton.jsx";
 import ActivityItem from "../components/ActivityItem.jsx";
-import * as Haptics from 'expo-haptics';
 import Header from "../components/Header.jsx";
 import { useTranslation } from "react-i18next";
 import { AuthContext } from "../contexts/auth/AuthContext.js";
+import * as Haptics from 'expo-haptics';
 
 export default function OtherUserBookScreen({ navigation, route }) {
     const { getValues, control, reset, setValue, handleSubmit } = useForm({
@@ -37,7 +37,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
                 reset()
                 try {
                     setLoading(true)
-                    const allBooks = await bookApi.getAllBooks()
+                    const allBooks = await bookApi.getAllUsersBooks(user.id)
 
                     setBooks(allBooks)
                 } catch (err) {
@@ -111,7 +111,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
 
     return (
         <>
-            <Header screenName={t('myLibrary')} />
+            <Header screenName={t('allUsersBooks')} />
             {loading ?
                 <ActivityItem />
                 :
@@ -124,7 +124,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
                             render={({ field: { onChange, value } }) => (
                                 <TextInput
                                     style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
-                                    placeholder={`⌕ ${t('searchBooks')}...`}
+                                    placeholder={`⌕ ${t('searchBooks')} by genre...`}
                                     placeholderTextColor={colors.muted}
                                     onSubmitEditing={handleSubmit(submitSearchHandler)}
                                     onChangeText={onChange}

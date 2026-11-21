@@ -31,7 +31,7 @@ export default function EditProfileScreen({ navigation, route }) {
     const [loading, setLoading] = useState(false);
     const userInfo = route.params;
 
-    const { control, handleSubmit, setValues, formState: { isSubmitting } } = useForm({ defaultValues });
+    const { control, handleSubmit, setValues, formState: { isSubmitting, errors } } = useForm({ defaultValues });
 
     const userData = {
         fullName: userInfo.fullName,
@@ -196,6 +196,12 @@ export default function EditProfileScreen({ navigation, route }) {
                             <Controller
                                 control={control}
                                 name='username'
+                                rules={{
+                                    maxLength: {
+                                        value: 15,
+                                        message: 'Username must be no more then 15 characters long!'
+                                    }
+                                }}
                                 render={({ field: { value, onChange } }) => (
                                     <TextInput
                                         value={value}
@@ -207,8 +213,12 @@ export default function EditProfileScreen({ navigation, route }) {
                                 )}
                             />
 
+
                         </View>
                     </View>
+                    {errors.username &&
+                        <Text style={styles.error}>{errors.username.message}</Text>
+                    }
 
 
                     <View style={styles.field}>
@@ -513,5 +523,9 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         backgroundColor: colors.primary,
         borderRadius: 15
-    }
+    },
+    error: {
+        color: 'red',
+        marginBottom: 12,
+    },
 });

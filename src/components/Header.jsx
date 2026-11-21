@@ -11,7 +11,7 @@ export default function Header({
     screenName,
 }) {
     const navigation = useNavigation();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const goBack = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
         navigation.goBack()
@@ -24,16 +24,19 @@ export default function Header({
 
     return (
         <View style={styles.header}>
-            {username
+            {screenName === 'Home'
                 ?
                 <View style={styles.userRow}>
-                    <Pressable style={styles.imageContainer} onPress={() => goToProfile()}>
-                        <Image source={{ uri: imageUrl }} style={styles.image} />
+                    <Pressable onPress={() => goToProfile()}>
+                        <View style={styles.imageContainer}>
+                            <Image source={{ uri: imageUrl || null }} style={styles.image} />
+
+                        </View>
                     </Pressable>
 
                     <View style={styles.userInfo}>
                         <Text style={styles.greeting}>{t('welcomeBack')},</Text>
-                        <Text style={styles.username} numberOfLines={1}>{username}</Text>
+                        <Text style={styles.username} numberOfLines={1}>{username || 'User'}</Text>
                     </View>
 
                     <TouchableOpacity style={styles.logoutButton} activeOpacity={0.7} onPress={onLogout}>
@@ -42,7 +45,7 @@ export default function Header({
                     </TouchableOpacity>
                 </View>
                 :
-                <View style={{ flexDirection: 'row', alignItems:'center' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
                     {screenName !== 'Welcome' &&
                         <Pressable onPress={() => goBack()}>
@@ -50,7 +53,7 @@ export default function Header({
                         </Pressable>
                     }
 
-                    <Text style={{ color: 'white', fontSize: 25, paddingLeft: 15}}>{screenName}</Text>
+                    <Text style={{ color: 'white', fontSize: 23, paddingLeft: 15 }}>{screenName}</Text>
 
                 </View>
             }
@@ -95,7 +98,7 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     username: {
-        fontSize: 14,
+        fontSize: 18,
         fontWeight: '700',
         // color: 'rgba(255, 255, 255, 0.75)',
         color: 'white'
@@ -120,9 +123,12 @@ const styles = StyleSheet.create({
         color: colors.white,
     },
     imageContainer: {
-        width: 50,
-        height: 50,
-        marginRight: 14
+        width: 60,
+        height: 60,
+        marginRight: 14,
+        borderWidth: 1,
+          borderRadius: 100,
+          borderColor: colors.primaryDark
     },
     image: {
         width: '100%',

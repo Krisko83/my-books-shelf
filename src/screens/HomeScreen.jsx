@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation }) {
       const getBooks = async () => {
         setLoading(true)
         try {
-          const data = await bookApi.getLastFourBooks();
+          const data = await bookApi.getLastFourBooks(user.id);
           setBooks(data);
 
           const userInfo = await userApi.getUserInfo(user.id)
@@ -57,7 +57,7 @@ export default function HomeScreen({ navigation }) {
     setRefreshing(true);
 
     try {
-      const data = await bookApi.getLastFourBooks();
+      const data = await bookApi.getLastFourBooks(user.id);
       setBooks(data)
     } catch (err) {
       Alert.alert(err)
@@ -73,12 +73,12 @@ export default function HomeScreen({ navigation }) {
   }
 
   const goToOtherUsersBookHandler = () => {
-
+    navigation.navigate('UsersBooks')
   }
 
   return (
     <>
-      <Header {...user} {...userInfo} onLogout={logout} />
+      <Header {...user} {...userInfo} onLogout={logout} screenName='Home' />
       {loading ?
         <ActivityItem />
         :
@@ -102,29 +102,38 @@ export default function HomeScreen({ navigation }) {
 
             </View>
 
-            <View style={styles.libContainer}>
-              <FlatList
-                data={books.slice(0, 4)}
-                keyExtractor={item => item.id}
-                horizontal
-                contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
-                renderItem={({ item }) => (
-                  <View key={item.id} style={styles.cart}>
-                    <Pressable onPress={() => pressHandler(item.id)} >
-                      <BookItem {...item} />
-                    </Pressable>
-                  </View>
-                )}
-              />
+            {books.length
+              ?
 
-            </View>
+              <View style={styles.libContainer}>
+                <FlatList
+                  data={books.slice(0, 4)}
+                  keyExtractor={item => item.id}
+                  horizontal
+                  contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
+                  renderItem={({ item }) => (
+                    <View key={item.id} style={styles.cart}>
+                      <Pressable onPress={() => pressHandler(item.id)} >
+                        <BookItem {...item} />
+                      </Pressable>
+                    </View>
+                  )}
+                />
 
+              </View>
+              :
+              <ScrollView
+                contentContainerStyle={{ height: 300, justifyContent: 'center', alignItems: 'center' }}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+              >
+                <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Your Library is Empty!</Text>
+              </ScrollView>
+            }
             <View>
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.button}
                 onPress={goToOtherUsersBookHandler}
-              // disabled={isSubmitting}
               >
                 <Text style={styles.buttonText}>Find out what other users read.</Text>
               </TouchableOpacity>
@@ -146,7 +155,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     elevation: 5,
     flex: 1,
-    // padding: 10
     width: 140
   },
   screen: {

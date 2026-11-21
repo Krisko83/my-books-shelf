@@ -14,9 +14,9 @@ export async function createBook(bookData) {
     }
 }
 
-export async function getAllBooks() {
+export async function getAllBooks(user_id) {
     try {
-        const response = await api.get('/books?order=created_at.desc')
+        const response = await api.get(`/books?user_id=eq.${user_id}&order=created_at.desc`)
 
         return response.data;
     } catch (err) {
@@ -25,9 +25,9 @@ export async function getAllBooks() {
     }
 }
 
-export async function getLastFourBooks() {
+export async function getLastFourBooks(user_id) {
     try {
-        const response = await api.get('/books?order=created_at.desc&limit=5')
+        const response = await api.get(`/books?user_id=eq.${user_id}&order=created_at.desc&limit=5`)
 
         return response.data;
     } catch (err) {
@@ -83,6 +83,18 @@ export async function searchBook(user_id, bookName) {
 export async function sortBooks(user_id, sortStatus) {
     try {
         const response = await api.get(`/books?user_id=eq.${user_id}&status=ilike.*${sortStatus}&order=created_at.desc`)
+
+        return response.data;
+    } catch (err) {
+        throw new Error(getErrorMessage(err))
+
+    }
+}
+
+
+export async function getAllUsersBooks(user_id) {
+    try {
+        const response = await api.get(`/books?user_id=neq.${user_id}&order=created_at.desc`)
 
         return response.data;
     } catch (err) {
