@@ -1,18 +1,22 @@
 import { View, Text, ScrollView, StyleSheet, Image, RefreshControl, Alert, Pressable, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme.js';
 import { Link, useFocusEffect } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import { bookApi } from '../api';
 import convertDate from '../utils/convertDate.js';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
 import Header from '../components/Header.jsx';
+import { AuthContext } from '../contexts/auth/AuthContext.js';
 
 export default function BookDetailsScreen({ navigation, route }) {
   const [book, setBook] = useState({})
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const bookId = route.params.bookId;
+  const { user } = use(AuthContext);
+
+  const isOwner = book.user_id === user.id;
 
   useFocusEffect(
     useCallback(() => {
@@ -117,9 +121,12 @@ export default function BookDetailsScreen({ navigation, route }) {
             <Image source={{ uri: book.imageUrl }} style={styles.img} />
           </View>
 
-          <Text style={styles.title}>{book.title}</Text>
-          <Text style={styles.author}>{book.author}</Text>
-          <Text style={styles.stars}>{ratingStars}</Text>
+          <Text>Title: <Text style={styles.title}>{book.title}</Text></Text>
+
+          <Text>Author: <Text style={styles.author}>{book.author}</Text></Text>
+
+          <Text>Rating: <Text style={styles.stars}>{ratingStars}</Text></Text>
+
 
           <View style={styles.statusContainer}>
             <Text style={styles.status}>✓ {book.status}</Text>
@@ -129,7 +136,7 @@ export default function BookDetailsScreen({ navigation, route }) {
 
         <View style={styles.card}>
 
-          <Text style={styles.about}>About this book</Text>
+          <Text style={styles.about}>Description: </Text>
           <Text style={styles.description}>{book.description}</Text>
 
           <View style={styles.genreContainer}>
@@ -144,13 +151,17 @@ export default function BookDetailsScreen({ navigation, route }) {
 
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
 
-          <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={editHandler} >
-            <Text style={styles.buttonText}>✎  Edit</Text>
-          </TouchableOpacity>
+          {isOwner &&
+            <>
+              <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={editHandler} >
+                <Text style={styles.buttonText}>✎  Edit</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.8} style={[styles.button, { backgroundColor: colors.red }]} onPress={() => deleteHandler(bookId)}>
-            <Text style={[styles.buttonText, { color: colors.redText, fontWeight: '700' }]}>▤  Delete</Text>
-          </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.8} style={[styles.button, { backgroundColor: colors.red }]} onPress={() => deleteHandler(bookId)}>
+                <Text style={[styles.buttonText, { color: colors.redText, fontWeight: '700' }]}>▤  Delete</Text>
+              </TouchableOpacity>
+            </>
+          }
 
         </View>
       </ScrollView>
@@ -257,11 +268,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20
   },
-  genre: {
+  genreText: {
     color: colors.muted,
     fontSize: 12
   },
-  genreText: {
+  genre: {
     color: colors.text,
     fontWeight: '700',
     fontSize: 12
@@ -271,11 +282,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 12
   },
-  date: {
+  dateText: {
     color: colors.muted,
     fontSize: 12
   },
-  dateText: {
+  date: {
     color: colors.text,
     fontWeight: '700',
     fontSize: 12

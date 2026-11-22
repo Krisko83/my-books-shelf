@@ -62,10 +62,10 @@ export default function MyBookScreen({ navigation, route }) {
         reset();
 
         try {
-            const data = await bookApi.getAllBooks()
+            const data = await bookApi.getAllBooks(user.id)
             setBooks(data)
         } catch (err) {
-            Alert.alert(err)
+            Alert.alert(err.message)
         } finally {
             setRefreshing(false)
         }
@@ -73,6 +73,7 @@ export default function MyBookScreen({ navigation, route }) {
 
     const submitSortHandler = async (data) => {
         const sortStatus = data.sort;
+ 
 
         if(getValues().sort === 'all') {
             return refreshHandler()
@@ -124,7 +125,7 @@ export default function MyBookScreen({ navigation, route }) {
                             render={({ field: { onChange, value } }) => (
                                 <TextInput
                                     style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
-                                    placeholder={`⌕ ${t('searchBooks')} by title...`}
+                                    placeholder={`⌕ ${t('searchBooks')}...`}
                                     placeholderTextColor={colors.muted}
                                     onSubmitEditing={handleSubmit(submitSearchHandler)}
                                     onChangeText={onChange}

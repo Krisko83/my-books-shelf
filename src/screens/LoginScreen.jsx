@@ -73,8 +73,7 @@ export default function LoginScreen({ navigation, route }) {
           y: y + 200,
           animated: true
         });
-      },
-      // () => console.log('Measurement failed')
+      }, 
     );
   };
 

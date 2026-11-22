@@ -11,10 +11,10 @@ export default function BookItem({
     status,
     imageUrl,
     rating
-}) { 
+}) {
     const stars = '⭐'.repeat(rating);
-    const {t, i18n} = useTranslation()
-    
+    const { t, i18n } = useTranslation()
+
     const statusMap = {
         'want-to-read': `${t('wantToRead')}`,
         'read': `${t('read')}`,
@@ -23,15 +23,17 @@ export default function BookItem({
 
 
     return (
-        <View style={[styles.card, {paddingBottom: i18n.language === 'bg' && 30}]} >
+        <View style={[styles.card, { paddingBottom: i18n.language === 'bg' && 30 }]} >
             <Image source={{ uri: imageUrl }} style={styles.image} />
 
-            <Text style={{ fontSize: inputPath === 'myBooks' ? 14 : 10 }}>{stars}</Text>
 
-            <Text numberOfLines={1} style={[styles.title, { fontSize: inputPath === 'myBooks' ? 16 : 9 }]}>{title}</Text>
+            <Text numberOfLines={1} style={[styles.title, { fontSize: inputPath === 'myBooks' ? 15 : 10 }]}>{title}</Text>
+            {/* <Text style={{ fontSize: inputPath === 'myBooks' ? 13 : 10 }}>{t('title')}: <Text numberOfLines={1} style={[styles.title, { fontSize: inputPath === 'myBooks' ? 15 : 9 }]}>{title}</Text></Text> */}
 
+            <Text style={{ fontSize: inputPath === 'myBooks' ? 13 : 9}}>{t('author')}: <Text style={[styles.author, { fontSize: inputPath === 'myBooks' ? 15 : 9 }]}>{author}</Text></Text>
 
-            <Text style={styles.author}>{author}</Text>
+            <Text style={{ fontSize: inputPath === 'myBooks' ? 13 : 10 }}>{t('rating')}: <Text style={{ fontSize: 13 }}>{stars}</Text></Text>
+
             <View style={[styles.statusCtn, { backgroundColor: statusMap[status] === 'Want to Read' ? colors.softPurple : colors.green }]}>
                 <Text style={[styles.status, { color: statusMap[status] === 'Want to Read' ? colors.primary : colors.greenText }]}>{statusMap[status]}</Text>
             </View>
@@ -45,7 +47,7 @@ const styles = StyleSheet.create({
         height: 160
     },
     card: {
-        gap: 5,
+        gap: 12,
         padding: 15,
         width: '100%'
     },
@@ -57,8 +59,8 @@ const styles = StyleSheet.create({
         marginTop: 9
     },
     author: {
-        color: colors.muted,
-        fontSize: 8,
+        color: colors.text,
+        fontSize: 10,
         marginTop: 3
     },
     title: {
@@ -66,7 +68,8 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         fontSize: 8,
         marginTop: 10,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        textAlign: 'center'
     },
     status: {
         fontSize: 10,
@@ -75,7 +78,8 @@ const styles = StyleSheet.create({
     titleStarsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between'
-    }
+    },
+
 }
 
 )

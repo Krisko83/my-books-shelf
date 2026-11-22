@@ -96,8 +96,7 @@ export default function RegisterScreen({ navigation, route }) {
           y: y + 200,
           animated: true
         });
-      },
-      // () => console.log('Measurement failed')
+      }, 
     );
   };
 

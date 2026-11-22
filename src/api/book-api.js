@@ -69,9 +69,9 @@ export async function deleteBook(bookId) {
     }
 }
 
-export async function searchBook(user_id, bookName) {
+export async function searchBook(user_id, word) {
     try {
-        const response = await api.get(`/books?user_id=eq.${user_id}&title=ilike.*${bookName}&order=created_at.desc`)
+        const response = await api.get(`/books?user_id=eq.${user_id}&or=(title.ilike.*${word}*,author.ilike.*${word}*,genre.ilike.*${word}*)&order=created_at.desc`)
 
         return response.data;
     } catch (err) {
@@ -82,7 +82,7 @@ export async function searchBook(user_id, bookName) {
 
 export async function sortBooks(user_id, sortStatus) {
     try {
-        const response = await api.get(`/books?user_id=eq.${user_id}&status=ilike.*${sortStatus}&order=created_at.desc`)
+        const response = await api.get(`/books?user_id=eq.${user_id}&status=ilike.${sortStatus}&order=created_at.desc`)
 
         return response.data;
     } catch (err) {
@@ -102,3 +102,22 @@ export async function getAllUsersBooks(user_id) {
 
     }
 }
+
+export async function searchUsersBook(user_id, word, sortBy) {
+    let order = 'desc';
+
+    if (sortBy === 'author') {
+        order = 'asc'
+    }
+
+    try {
+        const response = await api.get(`/books?user_id=neq.${user_id}&or=(title.ilike.*${word}*,author.ilike.*${word}*,genre.ilike.*${word}*)${sortBy !== '' ? `&order=${sortBy}.${order}` : null}`)
+
+        return response.data;
+    } catch (err) {
+        throw new Error(getErrorMessage(err))
+
+    }
+}
+
+

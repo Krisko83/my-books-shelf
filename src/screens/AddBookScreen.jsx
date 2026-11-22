@@ -12,7 +12,8 @@ import useImageUrl from '../hooks/useImageUrl.js';
 import { File } from 'expo-file-system';
 import { uuid } from 'expo'
 import * as Haptics from 'expo-haptics';
-import Header from '../components/Header.jsx'; 
+import Header from '../components/Header.jsx';
+import { useTranslation } from 'react-i18next';
 
 export default function AddBookScreen({ navigation, route }) {
   const { handleSubmit, control, setValues, reset, clearErrors, formState: { errors, isSubmitting } } = useForm({
@@ -36,8 +37,9 @@ export default function AddBookScreen({ navigation, route }) {
   const scrollViewRef = useRef(null);
   const titleInputRef = useRef(null);
   const authorInputRef = useRef(null);
-  const descriptionInputRef = useRef(null); 
- 
+  const descriptionInputRef = useRef(null);
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (bookId) {
       bookApi.getBookById(bookId)
@@ -147,7 +149,6 @@ export default function AddBookScreen({ navigation, route }) {
           animated: true
         });
       },
-      // () => console.log('Measurement failed')
     );
   };
 
@@ -157,7 +158,7 @@ export default function AddBookScreen({ navigation, route }) {
       ? imageUrl
       : null;
 
- 
+
 
   return (
     <View style={[styles.screen, { paddingBottom: inputPath === 'Edit' && 40 }]}>
@@ -193,37 +194,35 @@ export default function AddBookScreen({ navigation, route }) {
 
                 <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={takePhoto}>
                   <Text>📷</Text>
-                  <Text style={{ color: 'white', fontSize: 10 }} >Take a photo</Text>
+                  <Text style={{ color: 'white', fontSize: 10 }} >{t('takeAPhoto')}</Text>
                 </TouchableOpacity>
-                {/* 
-          </View>
-          <View style={{  alignItems: 'center'  }}> */}
+
 
                 <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage}>
                   <Text>🖼️</Text>
-                  <Text style={{ color: 'white', fontSize: 10 }} >Gallery</Text>
+                  <Text style={{ color: 'white', fontSize: 10 }} >{t('gallery')}</Text>
                 </TouchableOpacity>
 
               </View>
 
 
-              <Text style={styles.label}>Title</Text>
+              <Text style={styles.label}>{t('title')}</Text>
               <InputController
                 ref={titleInputRef}
                 name='title'
                 control={control}
                 rules={{
-                  required: 'Title is required!',
+                  required: `${t('titleIsRequired')}!`,
                   minLength: {
                     value: 3,
-                    message: 'Title should at least 3 characters long!'
+                    message: `${t('titleShouldAtLeast3charactersLong')}!`
                   },
                   maxLength: {
                     value: 20,
-                    message: 'Title should be less then or equal to 20 characters long!'
+                    message: `${t('titleShouldBeLessThenOrEqualTo20Characterslong')}!`
                   }
                 }}
-                placeholder="Title"
+                placeholder={t('title')}
                 handleSubmit={() => authorInputRef.current?.focus()}
               />
 
@@ -232,23 +231,23 @@ export default function AddBookScreen({ navigation, route }) {
               }
 
 
-              <Text style={styles.label}>Author</Text>
+              <Text style={styles.label}>{t('author')}</Text>
               <InputController
                 ref={authorInputRef}
                 name='author'
                 control={control}
                 rules={{
-                  required: 'Author name is required!',
+                  required: `${t('authorNameIsRequired')}!`,
                   minLength: {
                     value: 5,
-                    message: 'Author name should be at least 5 characters long!'
+                    message: `${t('authorNameShouldBeAtLeast5Characterslong')}!`
                   },
                   maxLength: {
                     value: 20,
-                    message: 'Author name should be less then or equal to 20 charactera!'
+                    message: `${t('authorNameShouldBeLessThenOrEqualTo20Charactera')}!`
                   }
                 }}
-                placeholder='Enter author name'
+                placeholder={t('enterAuthorName')}
                 handleSubmit={() => descriptionInputRef.current?.focus()}
               />
 
@@ -257,7 +256,7 @@ export default function AddBookScreen({ navigation, route }) {
               }
 
 
-              <Text style={styles.label}>Description</Text>
+              <Text style={styles.label}>{t('description')}</Text>
               <InputController
                 ref={descriptionInputRef}
                 control={control}
@@ -273,7 +272,7 @@ export default function AddBookScreen({ navigation, route }) {
                     message: 'Description should be no more then 50 characters long!'
                   }
                 }}
-                placeholder='Write a short description'
+                placeholder={t('writeAShortDescription')}
                 handleSubmit={() => Keyboard.dismiss()}
               />
 
@@ -282,12 +281,12 @@ export default function AddBookScreen({ navigation, route }) {
               }
 
               <View>
-                <Text style={styles.label}>Genre</Text>
+                <Text style={styles.label}>{t('genre')}</Text>
                 <Controller
                   control={control}
                   name='genre'
-                  rules={{
-                    required: 'Genre is required!'
+                  rules={{ 
+                    validate: value => value !== '' || `${t('genreIsRequired')}!`
                   }}
                   render={({ field: { onChange, value } }) => (
                     <View>
@@ -298,17 +297,17 @@ export default function AddBookScreen({ navigation, route }) {
                         selectedValue={value}
                         submitBehavior="submit"
                       >
-                        <Picker.Item label='Choose genre...' value='' />
-                        <Picker.Item label='Action' value='action' />
-                        <Picker.Item label='Comedy' value='comedy' />
-                        <Picker.Item label='Drama' value='drama' />
-                        <Picker.Item label='Horror' value='horror' />
-                        <Picker.Item label='Romance' value='romance' />
-                        <Picker.Item label='Fantasy' value='fantasy' />
-                        <Picker.Item label='Science Fiction' value='science-fiction' />
-                        <Picker.Item label='Mystery' value='mystery' />
-                        <Picker.Item label='Crime' value='crime' />
-                        <Picker.Item label='Other' value='other' />
+                        <Picker.Item label={`${t('chooseGenre')}...`} value='' />
+                        <Picker.Item label={`${t('action')}`} value='action' />
+                        <Picker.Item label={`${t('comedy')}`} value='comedy' />
+                        <Picker.Item label={`${t('drama')}`} value='drama' />
+                        <Picker.Item label={`${t('horror')}`} value='horror' />
+                        <Picker.Item label={`${t('romance')}`} value='romance' />
+                        <Picker.Item label={`${t('fantasy')}`} value='fantasy' />
+                        <Picker.Item label={`${t('scienceFiction')}`} value='science-fiction' />
+                        <Picker.Item label={`${t('mystery')}`} value='mystery' />
+                        <Picker.Item label={`${t('crime')}`} value='crime' />
+                        <Picker.Item label={`${t('other')}`} value='other' />
                       </Picker>
                     </View>
 
@@ -322,7 +321,7 @@ export default function AddBookScreen({ navigation, route }) {
               </View>
 
 
-              <Text style={styles.label}>Reading status</Text>
+              <Text style={styles.label}>{t('readingStatus')}</Text>
 
               <Controller
                 control={control}
@@ -333,7 +332,7 @@ export default function AddBookScreen({ navigation, route }) {
                 render={({ field: { onChange, value } }) => (
                   <View style={{ flexDirection: 'row', gap: 7, marginBottom: 20 }}>
                     <RadioButton
-                      label='Want to Read'
+                      label={t('wantToRead')}
                       selected={value === 'want-to-read'}
                       onPress={async () => {
                         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -342,7 +341,7 @@ export default function AddBookScreen({ navigation, route }) {
                     />
 
                     <RadioButton
-                      label='Reading'
+                      label={t('reading')}
                       selected={value === 'reading'}
                       onPress={async () => {
                         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -351,7 +350,7 @@ export default function AddBookScreen({ navigation, route }) {
                     />
 
                     <RadioButton
-                      label='Read'
+                      label={t('read')}
                       selected={value === 'read'}
                       onPress={async () => {
                         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -366,7 +365,7 @@ export default function AddBookScreen({ navigation, route }) {
                 <Text style={styles.error}>{errors.status.message}</Text>
               }
 
-              <Text style={styles.label}>Your rating</Text>
+              <Text style={styles.label}>{t('yourRating')}</Text>
 
               <Controller
                 control={control}
@@ -387,7 +386,7 @@ export default function AddBookScreen({ navigation, route }) {
               }
 
               <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)} disabled={isSubmitting}>
-                <Text style={styles.buttonText}>{inputPath === 'Edit' ? 'Edit' : 'Save'} Book</Text>
+                <Text style={styles.buttonText}>{inputPath === 'Edit' ? `${t('edit')}` : `${t('save')}`} {t('book')}</Text>
               </TouchableOpacity>
 
             </ScrollView>
@@ -400,7 +399,7 @@ export default function AddBookScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  
+
   screen: {
     flex: 1,
     backgroundColor: colors.background,

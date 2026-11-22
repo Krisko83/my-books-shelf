@@ -3,7 +3,7 @@ import { Alert, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Tex
 import BookItem from "../components/BookItem.jsx";
 import { use, useCallback, useEffect, useState } from "react";
 import { bookApi } from "../api/index.js";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, get, set, useForm } from "react-hook-form";
 import { colors } from "../../theme.js";
 import RadioButton from "../components/RadioButton.jsx";
 import ActivityItem from "../components/ActivityItem.jsx";
@@ -21,7 +21,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
             sort: 'all'
         }
     });
-    
+
     const [books, setBooks] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
         reset();
 
         try {
-            const data = await bookApi.getAllBooks()
+            const data = await bookApi.getAllUsersBooks(user.id)
             setBooks(data)
         } catch (err) {
             Alert.alert(err)
@@ -72,18 +72,17 @@ export default function OtherUserBookScreen({ navigation, route }) {
     }
 
     const submitSortHandler = async (data) => {
-        const sortStatus = data.sort;
+        let sortStatus = data.sort;
+        const searchWord = getValues().search;  
+ 
 
-        if(getValues().sort === 'all') {
-            return refreshHandler()
+        if(sortStatus === 'all') {
+            sortStatus = '';
         }
-
-        if (getValues().search !== '') {
-            setValue('search', '')
-        }
+  
         try {
             setIsSearched(true)
-            const data = await bookApi.sortBooks(user.id, sortStatus);
+            const data = await bookApi.searchUsersBook(user.id, searchWord, sortStatus);
 
             setBooks(data)
         } catch (err) {
@@ -94,13 +93,15 @@ export default function OtherUserBookScreen({ navigation, route }) {
 
     const submitSearchHandler = async (data) => {
         const searchWord = data.search;
-
+        const sortParam = data.sort;
+        console.log(searchWord, ',', sortParam);
+        console.log('data', data);
         if (getValues().sort !== '') {
             setValue('sort', 'all')
         }
         try {
             setIsSearched(true)
-            const data = await bookApi.searchBook(user.id, searchWord)
+            const data = await bookApi.searchUsersBook(user.id, searchWord, '')
 
             setBooks(data)
         } catch (err) {
@@ -124,7 +125,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
                             render={({ field: { onChange, value } }) => (
                                 <TextInput
                                     style={[styles.input, { marginTop: 18, marginBottom: 15 }]}
-                                    placeholder={`⌕ ${t('searchBooks')} by genre...`}
+                                    placeholder={`⌕ ${t('searchBooks')}...`}
                                     placeholderTextColor={colors.muted}
                                     onSubmitEditing={handleSubmit(submitSearchHandler)}
                                     onChangeText={onChange}
@@ -134,12 +135,13 @@ export default function OtherUserBookScreen({ navigation, route }) {
                         />
 
 
+                        <Text>Sort by:</Text>
                         <Controller
                             control={control}
                             name='sort'
                             render={({ field: { onChange, value } }) => (
                                 <View style={{ flexDirection: 'row', gap: 5, marginBottom: 10 }}>
-                                    <RadioButton
+                                    {/* <RadioButton
                                         label={t('all')}
                                         selected={value === 'all'}
                                         onPress={async () => {
@@ -147,40 +149,41 @@ export default function OtherUserBookScreen({ navigation, route }) {
                                             onChange('all')
                                             submitSortHandler({ sort: 'all' })
                                         }}
-                                    />
+                                    /> */}
 
                                     <RadioButton
-                                        label={t('reading')}
-                                        selected={value === 'reading'}
+                                        label='Rating'
+                                        selected={value === 'rating'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                                            onChange('reading')
-                                            submitSortHandler({ sort: 'reading' })
+                                            onChange('rating')
+                                            submitSortHandler({ sort: 'rating' })
                                         }}
                                     />
 
                                     <RadioButton
-                                        label={t('wantToRead')}
-                                        selected={value === 'want-to-read'}
+                                        label='Author'
+                                        selected={value === 'author'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                                            onChange('want-to-read')
-                                            submitSortHandler({ sort: 'want-to-read' })
+                                            onChange('author')
+                                            submitSortHandler({ sort: 'author' })
                                         }}
                                     />
 
                                     <RadioButton
-                                        label={t('read')}
-                                        selected={value === 'read'}
+                                        label='Date'
+                                        selected={value === 'created_at'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                                            onChange('read')
-                                            submitSortHandler({ sort: 'read' })
+                                            onChange('created_at')
+                                            submitSortHandler({ sort: 'created_at' })
                                         }}
                                     />
                                 </View>
                             )}
                         />
+
 
                     </View>
 

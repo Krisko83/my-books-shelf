@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet, Pressable, Alert, Image, RefreshCon
 import { colors } from '../../theme.js';
 import ProfileButton from '../components/ProfileButton.jsx';
 import { useAuthContext } from '../contexts/auth/AuthContext.js';
-import { useCallback, useState } from 'react';
+import { useCallback,  useState } from 'react';
 import { authApi, userApi } from '../api/index.js';
 import { useFocusEffect } from '@react-navigation/native';
 import ActivityItem from '../components/ActivityItem.jsx';
@@ -16,6 +16,7 @@ export default function ProfileScreen({ navigation }) {
   const [userInfo, setUserInfo] = useState({});
   const [loading, setLoading] = useState(false)
   const userId = user.id;
+
 
   useFocusEffect(
     useCallback(() => {

@@ -126,7 +126,7 @@ export default function HomeScreen({ navigation }) {
                 contentContainerStyle={{ height: 300, justifyContent: 'center', alignItems: 'center' }}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
               >
-                <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Your Library is Empty!</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{t('yourLibraryIsEmpty')}!</Text>
               </ScrollView>
             }
             <View>
@@ -135,7 +135,7 @@ export default function HomeScreen({ navigation }) {
                 style={styles.button}
                 onPress={goToOtherUsersBookHandler}
               >
-                <Text style={styles.buttonText}>Find out what other users read.</Text>
+                <Text style={styles.buttonText}>{t('findOutWhatOtherUsersRead')}.</Text>
               </TouchableOpacity>
             </View>
 
@@ -151,11 +151,12 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   cart: {
     marginBottom: 10,
+    // paddingBottom: 10,
     textAlign: 'center',
     backgroundColor: 'white',
     elevation: 5,
     flex: 1,
-    width: 140
+    width: 187
   },
   screen: {
     flex: 1,
