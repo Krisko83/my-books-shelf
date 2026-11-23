@@ -79,7 +79,7 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <>
-      <Header screenName='Profile' />
+      <Header screenName={t('profile')} />
       {loading ?
         <ActivityItem />
         :
@@ -102,20 +102,20 @@ export default function ProfileScreen({ navigation }) {
                 </View>
               </View>
 
-              <Text style={styles.name}>Name: {userInfo?.fullName || 'Anonymous'}</Text>
-              <Text style={styles.username}>Username: {userInfo?.username || 'Anonymous'}</Text>
-              <Text style={styles.email}>Email: {user.email}</Text>
+              <Text style={styles.name}>{t('name')}: {userInfo?.fullName || 'user'}</Text>
+              <Text style={styles.username}>{t('username')}: {userInfo?.username || 'user'}</Text>
+              <Text style={styles.email}>{t('email')}: {user.email}</Text>
 
             </View>
 
             <View style={[styles.card, { paddingVertical: 4 }]}>
-              <ProfileButton icon='🏛️' name='My Library' onPress={() => pressHandler('MainMyBooks')} />
+              <ProfileButton icon='🏛️' name={t('myLibrary')} onPress={() => pressHandler('MainMyBooks')} />
 
-              <ProfileButton icon='📝' name='Edit Profile' onPress={() => pressHandler('EditProfile', userInfo)} />
+              <ProfileButton icon='📝' name={t('editProfile')} onPress={() => pressHandler('EditProfile', userInfo)} />
 
-              <ProfileButton icon='🛠' name='Settings' onPress={() => pressHandler('Settings')} />
+              <ProfileButton icon='🛠' name={t('settings')} onPress={() => pressHandler('Settings')} />
 
-              <ProfileButton icon='ⓘ' name='About My BookShelf' onPress={() => pressHandler('AboutApp')} noBorder={true} />
+              <ProfileButton icon='ⓘ' name={t('aboutMyBookShelf')} onPress={() => pressHandler('AboutApp')} noBorder={true} />
             </View>
 
             <TouchableOpacity activeOpacity={0.8} style={styles.outlineButton} onPress={logoutHandler}>

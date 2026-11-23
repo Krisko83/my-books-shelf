@@ -135,7 +135,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
                         />
 
 
-                        <Text>Sort by:</Text>
+                        <Text style={{marginBottom: 10, fontSize: 12}} >{t('sortBy')}:</Text>
                         <Controller
                             control={control}
                             name='sort'
@@ -152,7 +152,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
                                     /> */}
 
                                     <RadioButton
-                                        label='Rating'
+                                        label={t('rating')}
                                         selected={value === 'rating'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -162,7 +162,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
                                     />
 
                                     <RadioButton
-                                        label='Author'
+                                        label={t('author')}
                                         selected={value === 'author'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -172,7 +172,7 @@ export default function OtherUserBookScreen({ navigation, route }) {
                                     />
 
                                     <RadioButton
-                                        label='Date'
+                                        label={t('date')}
                                         selected={value === 'created_at'}
                                         onPress={async () => {
                                             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)

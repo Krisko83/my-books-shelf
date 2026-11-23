@@ -163,7 +163,7 @@ export default function AddBookScreen({ navigation, route }) {
   return (
     <View style={[styles.screen, { paddingBottom: inputPath === 'Edit' && 40 }]}>
       <KeyboardAvoidingView behavior='padding'>
-        <Header screenName={inputPath === 'Edit' ? 'Edit Book' : 'Add Book'} />
+        <Header screenName={inputPath === 'Edit' ? `${t('editBook')}` : `${t('addBook')}`} />
         {loading
           ? <ActivityItem />
           :
@@ -194,13 +194,13 @@ export default function AddBookScreen({ navigation, route }) {
 
                 <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={takePhoto}>
                   <Text>📷</Text>
-                  <Text style={{ color: 'white', fontSize: 10 }} >{t('takeAPhoto')}</Text>
+                  <Text style={{ color: 'white', fontSize: 12 }} >{t('takeAPhoto')}</Text>
                 </TouchableOpacity>
 
 
                 <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage}>
                   <Text>🖼️</Text>
-                  <Text style={{ color: 'white', fontSize: 10 }} >{t('gallery')}</Text>
+                  <Text style={{ color: 'white', fontSize: 12 }} >{t('gallery')}</Text>
                 </TouchableOpacity>
 
               </View>
@@ -262,14 +262,14 @@ export default function AddBookScreen({ navigation, route }) {
                 control={control}
                 name='description'
                 rules={{
-                  required: 'Description is required!',
+                  required: `${t('descriptionIsRequired')}!`,
                   minLength: {
                     value: 10,
-                    message: 'Description should be at least 10 characters long!'
+                    message: `${t('descriptionShouldBeAtLeast10CharactersLong')}!`
                   },
                   maxLength: {
                     value: 50,
-                    message: 'Description should be no more then 50 characters long!'
+                    message: `${t('descriptionShouldBeNoMoreThen50CharactersLong')}!`
                   }
                 }}
                 placeholder={t('writeAShortDescription')}
@@ -285,7 +285,7 @@ export default function AddBookScreen({ navigation, route }) {
                 <Controller
                   control={control}
                   name='genre'
-                  rules={{ 
+                  rules={{
                     validate: value => value !== '' || `${t('genreIsRequired')}!`
                   }}
                   render={({ field: { onChange, value } }) => (
@@ -327,7 +327,7 @@ export default function AddBookScreen({ navigation, route }) {
                 control={control}
                 name='status'
                 rules={{
-                  required: 'Reading status is required!'
+                  required: `${t('readingStatusIsRequired')}!`,
                 }}
                 render={({ field: { onChange, value } }) => (
                   <View style={{ flexDirection: 'row', gap: 7, marginBottom: 20 }}>
@@ -371,7 +371,7 @@ export default function AddBookScreen({ navigation, route }) {
                 control={control}
                 name='rating'
                 rules={{
-                  validate: value => value > 0 || 'Please select a rating!'
+                  validate: value => value > 0 || `${t('pleaseSelectARating')}!`
                 }}
                 render={({ field: { value, onChange } }) => (
                   <StarRating
@@ -406,8 +406,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   content: {
-    padding: 22,
-    // paddingBottom: 36,
+    padding: 22, 
     paddingBottom: 300,
 
   },

@@ -11,6 +11,7 @@ import ActivityItem from '../components/ActivityItem.jsx';
 import useImageUrl from '../hooks/useImageUrl.js';
 import * as Haptics from 'expo-haptics';
 import Header from '../components/Header.jsx';
+import { useTranslation } from 'react-i18next';
 
 const defaultValues = {
     fullName: '',
@@ -35,6 +36,7 @@ export default function EditProfileScreen({ navigation, route }) {
     const ageInputRef = useRef(null);
     const scrollViewRef = useRef(null);
     const { control, handleSubmit, setValues, formState: { isSubmitting, errors } } = useForm({ defaultValues });
+    const { t } = useTranslation();
 
     const userData = {
         fullName: userInfo.fullName,
@@ -119,7 +121,7 @@ export default function EditProfileScreen({ navigation, route }) {
                     y: y - 30,
                     animated: true
                 });
-            }, 
+            },
         );
     };
 
@@ -131,19 +133,18 @@ export default function EditProfileScreen({ navigation, route }) {
 
     return (
         <>
-            <Header screenName='Edit Profile' />
+            <Header screenName={t('editProfile')} />
             <KeyboardAvoidingView style={styles.screen} behavior='padding'>
                 <View onFocus={handleFirstFocus}>
                     <ScrollView
                         ref={scrollViewRef}
                         contentContainerStyle={styles.content}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
-                    // showsVerticalScrollIndicator={false}
                     >
 
                         <View style={{ paddingBottom: 30 }}>
 
-                            {/* Profile Image */}
+
                             <View style={styles.imageContainer}>
                                 <View style={styles.imageWrapper}>
                                     <Image
@@ -161,7 +162,7 @@ export default function EditProfileScreen({ navigation, route }) {
                             </View>
                             <View style={{ marginTop: 10, alignItems: 'center' }} >
                                 <TouchableOpacity activeOpacity={0.8} style={styles.imagePickerBtn} onPress={pickImage} >
-                                    <Text style={{ color: 'white' }} >Upload from gallery</Text>
+                                    <Text style={{ color: 'white' }} >{t('uploadFromGallery')}</Text>
                                     <Text>🖼️</Text>
                                 </TouchableOpacity>
                             </View>
@@ -172,7 +173,7 @@ export default function EditProfileScreen({ navigation, route }) {
                             <Text style={styles.fieldIcon}>✉</Text>
 
                             <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Email</Text>
+                                <Text style={styles.label}>{t('email')}</Text>
                                 <TextInput
                                     style={styles.input}
                                     value={user.email}
@@ -188,7 +189,7 @@ export default function EditProfileScreen({ navigation, route }) {
                             <Text style={styles.fieldIcon}>♟</Text>
 
                             <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Full Name</Text>
+                                <Text style={styles.label}>{t('fullName')}</Text>
                                 <Controller
                                     control={control}
                                     name='fullName'
@@ -214,14 +215,14 @@ export default function EditProfileScreen({ navigation, route }) {
                             <Text style={styles.fieldIcon}>♟</Text>
 
                             <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Username</Text>
+                                <Text style={styles.label}>{t('username')}</Text>
                                 <Controller
                                     control={control}
                                     name='username'
                                     rules={{
                                         maxLength: {
                                             value: 15,
-                                            message: 'Username must be no more then 15 characters long!'
+                                            message: `${t('usernameMustBeNoMoreThen15CharactersLong!')}`
                                         }
                                     }}
                                     render={({ field: { value, onChange } }) => (
@@ -250,7 +251,7 @@ export default function EditProfileScreen({ navigation, route }) {
                             <Text style={styles.fieldIcon}>▦</Text>
 
                             <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Age</Text>
+                                <Text style={styles.label}>{t('age')}</Text>
                                 <Controller
                                     control={control}
                                     name='age'
@@ -281,7 +282,7 @@ export default function EditProfileScreen({ navigation, route }) {
                                     <Text style={styles.fieldIcon}>◎</Text>
 
                                     <View style={styles.inputContainer}>
-                                        <Text style={styles.label}>Country</Text>
+                                        <Text style={styles.label}>{t('country')}</Text>
                                         <Text style={styles.input}>{value.name}</Text>
                                     </View>
 
@@ -309,7 +310,7 @@ export default function EditProfileScreen({ navigation, route }) {
                             <Text style={styles.fieldIcon}>⚥</Text>
 
                             <View style={styles.genderContainer}>
-                                <Text style={styles.genderLabel}>Gender</Text>
+                                <Text style={styles.genderLabel}>{t('gender')}</Text>
 
 
                                 <View style={styles.genderOptions}>
@@ -318,27 +319,27 @@ export default function EditProfileScreen({ navigation, route }) {
                                         name='gender'
                                         render={({ field: { value, onChange } }) => (
                                             <View style={styles.radioOption}>
-                                                <Text style={styles.radioText}>Male</Text>
+                                                <Text style={styles.radioText}>{t('male')}</Text>
                                                 <Pressable
-                                                    name='male'
+                                                    name='Male'
                                                     style={[styles.radioSelected, { backgroundColor: value === 'male' ? colors.primary : '#ECEBF5', }]}
                                                     value={value}
                                                     onPress={() => onChange('male')}
                                                 >
                                                 </Pressable>
 
-                                                <Text style={styles.radioText}>female</Text>
+                                                <Text style={styles.radioText}>{t('female')}</Text>
                                                 <Pressable
-                                                    name='female'
+                                                    name='Female'
                                                     style={[styles.radioSelected, { backgroundColor: value === 'female' ? colors.primary : '#ECEBF5', }]}
                                                     value={value}
                                                     onPress={() => onChange('female')}
                                                 >
                                                 </Pressable>
 
-                                                <Text style={styles.radioText}>Other</Text>
+                                                <Text style={styles.radioText}>{t('other')}</Text>
                                                 <Pressable
-                                                    name='other'
+                                                    name='Other'
                                                     style={[styles.radioSelected, { backgroundColor: value === 'other' ? colors.primary : '#ECEBF5', }]}
                                                     value={value}
                                                     onPress={() => onChange('other')}
@@ -357,7 +358,7 @@ export default function EditProfileScreen({ navigation, route }) {
 
                         <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
                             <Text style={styles.buttonIcon}>✎</Text>
-                            <Text style={styles.buttonText}>{isSubmitting ? 'Updating...' : 'Update Profile'}</Text>
+                            <Text style={styles.buttonText}>{isSubmitting ? `${t('updating')}...` :  `${t('updateProfile')}` }</Text>
                         </TouchableOpacity>
 
                     </ScrollView>

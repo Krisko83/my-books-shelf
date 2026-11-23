@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { use, useEffect, useState } from 'react';
 import { UserSettingsContext } from '../contexts/auth/UserSettingsContext.js';
 import { Picker } from '@react-native-picker/picker';
-
+import * as Haptics from 'expo-haptics';
 
 
 export default function SettingsScreen() {
@@ -17,7 +17,8 @@ export default function SettingsScreen() {
   const [userSettings, setUserSettings] = useState(settings);
 
 
-  const toggleSwitch = (name) => {
+  const toggleSwitch = async (name) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
 
     const updatedData = {
       ...userSettings,
@@ -27,8 +28,10 @@ export default function SettingsScreen() {
     saveSettings(updatedData)
   }
 
- 
-  const changeLanguageHandler = (value) => {    
+
+  const changeLanguageHandler = async (value) => {
+     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+     
     const updatedData = {
       ...userSettings,
       language: value
@@ -37,7 +40,7 @@ export default function SettingsScreen() {
     setUserSettings(updatedData)
     saveSettings(updatedData)
   }
- 
+
 
   return (
     <>

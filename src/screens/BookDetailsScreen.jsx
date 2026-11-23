@@ -8,6 +8,7 @@ import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
 import Header from '../components/Header.jsx';
 import { AuthContext } from '../contexts/auth/AuthContext.js';
+import { useTranslation } from 'react-i18next';
 
 export default function BookDetailsScreen({ navigation, route }) {
   const [book, setBook] = useState({})
@@ -15,6 +16,7 @@ export default function BookDetailsScreen({ navigation, route }) {
   const [loading, setLoading] = useState(false);
   const bookId = route.params.bookId;
   const { user } = use(AuthContext);
+const {t} = useTranslation();
 
   const isOwner = book.user_id === user.id;
 
@@ -66,18 +68,18 @@ export default function BookDetailsScreen({ navigation, route }) {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
 
     Alert.alert(
-      'Confirmation',
-      'Are you sure you want to delete this book?',
+      `${t('confirmation')}`,
+      `${t('areYouSureYouWantToDeleteThisBook')}?`,
       [
         {
-          text: 'Cancel',
+          text: `${t('cancel')}`,
           style: 'cancel',
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
           }
         },
         {
-          text: 'Yes',
+          text: `${t('yes')}`,
           style: 'destructive',
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
@@ -107,7 +109,7 @@ export default function BookDetailsScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-      <Header screenName='Details' />
+      <Header screenName={t('details')} />
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
@@ -121,11 +123,11 @@ export default function BookDetailsScreen({ navigation, route }) {
             <Image source={{ uri: book.imageUrl }} style={styles.img} />
           </View>
 
-          <Text>Title: <Text style={styles.title}>{book.title}</Text></Text>
+           <Text style={styles.title}>{book.title}</Text> 
 
-          <Text>Author: <Text style={styles.author}>{book.author}</Text></Text>
+          <Text>{t('author')}: <Text style={styles.author}>{book.author}</Text></Text>
 
-          <Text>Rating: <Text style={styles.stars}>{ratingStars}</Text></Text>
+          <Text>{t('rating')}: <Text style={styles.stars}>{ratingStars}</Text></Text>
 
 
           <View style={styles.statusContainer}>
@@ -136,15 +138,15 @@ export default function BookDetailsScreen({ navigation, route }) {
 
         <View style={styles.card}>
 
-          <Text style={styles.about}>Description: </Text>
+          <Text style={styles.about}>{t('description')}: </Text>
           <Text style={styles.description}>{book.description}</Text>
 
           <View style={styles.genreContainer}>
-            <Text style={styles.genre}>Genre</Text><Text style={styles.genreText}>{book.genre}</Text>
+            <Text style={styles.genre}>{t('genre')}</Text><Text style={styles.genreText}>{book.genre}</Text>
           </View>
 
           <View style={styles.dateContainer}>
-            <Text style={styles.date}>Date added</Text><Text style={styles.dateText}>{convertDate(book.created_at)}</Text>
+            <Text style={styles.date}>{t('dateAdded')}</Text><Text style={styles.dateText}>{convertDate(book.created_at)}</Text>
           </View>
 
         </View>
@@ -154,11 +156,11 @@ export default function BookDetailsScreen({ navigation, route }) {
           {isOwner &&
             <>
               <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={editHandler} >
-                <Text style={styles.buttonText}>✎  Edit</Text>
+                <Text style={styles.buttonText}>✎  {t('edit')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity activeOpacity={0.8} style={[styles.button, { backgroundColor: colors.red }]} onPress={() => deleteHandler(bookId)}>
-                <Text style={[styles.buttonText, { color: colors.redText, fontWeight: '700' }]}>▤  Delete</Text>
+                <Text style={[styles.buttonText, { color: colors.redText, fontWeight: '700' }]}>▤  {t('delete')}</Text>
               </TouchableOpacity>
             </>
           }
@@ -230,7 +232,8 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 25,
     fontWeight: '900',
-    marginTop: 22
+    marginTop: 22,
+    justifyContent: 'center'
   },
   author: {
     color: colors.muted,
