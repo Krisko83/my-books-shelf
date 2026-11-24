@@ -9,6 +9,7 @@ import { authApi, userApi } from '../api/index.js';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
 import Header from '../components/Header.jsx';
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterScreen({ navigation, route }) {
   const { control, reset, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm({
@@ -29,12 +30,13 @@ export default function RegisterScreen({ navigation, route }) {
   const secondInputRef = useRef(null)
   const thirdInputRef = useRef(null);
   const emailInputRef = useRef(null);
+  const { t } = useTranslation();
 
   const inputPath = route?.params.inputPath;
 
 
   if (loading) {
-    return <ActivityItem action='Creating account...' />
+    return <ActivityItem action={`${('creatingAccount')}...`} />
   }
 
   const submitHandler = async (data) => {
@@ -93,10 +95,10 @@ export default function RegisterScreen({ navigation, route }) {
       scrollViewRef.current,
       (x, y) => {
         scrollViewRef.current?.scrollTo({
-          y: y + 200,
+          y: y,
           animated: true
         });
-      }, 
+      },
     );
   };
 
@@ -117,22 +119,22 @@ export default function RegisterScreen({ navigation, route }) {
               <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
             </View>
 
-            <Text style={styles.heading}>Create Account</Text>
+            <Text style={styles.heading}>{t('createAccount')}</Text>
 
             {/* <Text style={styles.subheading}>Start building your personal library</Text> */}
 
             <View onFocus={handleFirstFocus}>
 
-              <Text style={styles.label}>Email address</Text>
+              <Text style={styles.label}>{t('emailAddress')}</Text>
 
               <Controller
                 control={control}
                 name='email'
                 rules={{
-                  required: 'Email is required!',
-                  pattern: {
+                  required: `${t('emailIsRequired')}`,
+                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Invalid email address'
+                    message: `${t('invalidEmailAddress')}`
                   }
                 }}
                 render={({ field: { onBlur, onChange, value } }) => (
@@ -157,24 +159,24 @@ export default function RegisterScreen({ navigation, route }) {
                 <Text style={styles.error}>{errors.email.message}</Text>
               }
 
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('password')}</Text>
 
               <Controller
                 control={control}
                 name='password'
                 rules={{
-                  required: 'Password is required',
+                  required: `${t('passwordIsRequired')}`,
                   minLength: {
                     value: 6,
-                    message: 'Password should be at least 6 characters long!'
+                    message: `${t('passwordShouldBeAtLeast6CharactersLong')}!`
                   },
                   maxLength: {
                     value: 20,
-                    message: 'Password should be no more then 20 characters long!'
+                    message: `${t('passwordShouldBeNoMoreThen20CharactersLong')}!`
                   },
                   pattern: {
                     value: /^(?=.*[A-Z])(?=.*[!@#$%^&*])/,
-                    message: 'Password must contain at least one uppercase letter and one special character!'
+                    message: `${t('passwordMustContainAtLeastOneUppercaseLetterAndOneSpecialCharacter')}!`
                   },
                 }}
                 render={({ field: { onBlur, onChange, value } }) => (
@@ -187,7 +189,7 @@ export default function RegisterScreen({ navigation, route }) {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       onSubmitEditing={() => thirdInputRef.current?.focus()}
-                      placeholder="Create a password"
+                      placeholder={t('createAPassword')}
                       placeholderTextColor={colors.muted}
                       returnKeyType="next"
                       secureTextEntry={!isPasswordVisible['password']}
@@ -209,14 +211,14 @@ export default function RegisterScreen({ navigation, route }) {
                 <Text style={styles.error}>{errors.password.message}</Text>
               }
 
-              <Text style={styles.label}>Confirm password</Text>
+              <Text style={styles.label}>{t('confirmPassword')}</Text>
 
               <Controller
                 control={control}
                 name='confirmPassword'
                 rules={{
-                  required: 'Confirm password is required!',
-                  validate: value => value === getValues('password') || "Passwords don't match!"
+                  required: `${t('confirmPasswordIsRequired')}!`,
+                  validate: value => value === getValues('password') || `${t('passwordsDontMatch')}!`
                 }}
                 render={({ field: { onBlur, onChange, value } }) => (
                   <View style={styles.inputContainer}>
@@ -229,7 +231,7 @@ export default function RegisterScreen({ navigation, route }) {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       onSubmitEditing={handleSubmit(submitHandler)}
-                      placeholder="Repeat your password"
+                      placeholder={t('repeatYourPassword')}
                       placeholderTextColor={colors.muted}
                       secureTextEntry={!isPasswordVisible['confirmPassword']}
                       autoCapitalize="none"
@@ -251,13 +253,13 @@ export default function RegisterScreen({ navigation, route }) {
               }
 
               <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleSubmit(submitHandler)}>
-                <Text style={styles.buttonText}>{isSubmitting ? 'Creating account...' : 'Create Account'}</Text>
+                <Text style={styles.buttonText}>{isSubmitting ? `${t('creatingAccount')}...` : `${t('createAccount')}` }</Text>
               </TouchableOpacity>
 
               <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
-                <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>
+                <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>{`${t('youHaveAnAccount')}?`}</Text>
                 <Pressable onPress={() => goToLoginHandler()}>
-                  <Text style={{ color: colors.primary, fontWeight: '700' }}>Login</Text>
+                  <Text style={{ color: colors.primary, fontWeight: '700' }}>{t('login')}</Text>
                 </Pressable>
               </View>
 

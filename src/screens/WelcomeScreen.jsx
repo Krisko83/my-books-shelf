@@ -2,8 +2,10 @@ import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity } from 'reac
 import { colors } from '../../theme.js';
 import * as Haptics from 'expo-haptics';
 import Header from '../components/Header.jsx';
+import { useTranslation } from 'react-i18next';
 
 export default function WelcomeScreen({ navigation }) {
+const {t} = useTranslation();
 
   const submitHandler = async (screenName) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -25,18 +27,18 @@ export default function WelcomeScreen({ navigation }) {
 
           <View style={styles.brand}>
             <Text style={styles.title}>My BookShelf</Text>
-            <Text style={styles.subtitle}>Your personal library,{"\n"}always with you.</Text>
+            <Text style={styles.subtitle}>{t('yourPersonalLibrary')},{"\n"}{t('alwaysWithYou')}.</Text>
           </View>
 
           <View style={{ width: '100%', paddingBottom: 60, justifyContent: 'center' }}>
 
             <TouchableOpacity activeOpacity={0.95} style={styles.button} onPress={() => submitHandler('Register')}>
-              <Text style={styles.buttonText}>Get Started</Text>
+              <Text style={styles.buttonText}>{t('getStarted')}</Text>
             </TouchableOpacity>
 
             <Pressable onPress={() => submitHandler('Login')} style={{ marginTop: 15 }} >
-              <Text style={styles.signIn}>Already have an account?
-                <Text style={{ color: colors.primary, fontWeight: '700' }}>Sign In</Text>
+              <Text style={styles.signIn}>{`${t('youHaveAnAccount')}?`}
+                <Text style={{ color: colors.primary, fontWeight: '700' }}> {t('signIn')}</Text>
               </Text>
             </Pressable>
 
@@ -75,13 +77,14 @@ const styles = StyleSheet.create({
     fontSize: 45,
     fontWeight: 'bold',
     color: colors.primaryDark,
+    textAlign: "center"
   },
   subtitle: {
-    fontSize: 25,
+    fontSize: 27,
     color: colors.surface,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 20,
   },
   brand: {
     marginBottom: 60
@@ -106,8 +109,8 @@ const styles = StyleSheet.create({
   signIn: {
     color: colors.surface,
     textAlign: 'center',
-    fontSize: 13,
-    // marginTop: 5,
+    fontSize: 13, 
+    
   },
 });
 

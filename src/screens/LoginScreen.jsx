@@ -9,7 +9,7 @@ import { authApi } from '../api/index.js';
 import ActivityItem from '../components/ActivityItem.jsx';
 import * as Haptics from 'expo-haptics';
 import Header from '../components/Header.jsx';
-
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen({ navigation, route }) {
   const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
@@ -28,11 +28,11 @@ export default function LoginScreen({ navigation, route }) {
   const secondInputRef = useRef(null);
   const emailInputRef = useRef(null);
   const inputPath = route?.params.inputPath;
-
+  const { t } = useTranslation()
 
   if (loading) {
     return (
-      <ActivityItem action='Signing...' />
+      <ActivityItem action={`${t('Signing...')}`} />
     )
   }
 
@@ -73,7 +73,7 @@ export default function LoginScreen({ navigation, route }) {
           y: y + 200,
           animated: true
         });
-      }, 
+      },
     );
   };
 
@@ -105,22 +105,22 @@ export default function LoginScreen({ navigation, route }) {
               <Text style={{ fontSize: 23, fontWeight: '900', color: colors.text }}>My BookShelf</Text>
             </View>
 
-            <Text style={styles.heading}>Welcome Back</Text>
+            <Text style={styles.heading}>{t('welcomeBack')}</Text>
 
-            <Text style={styles.subheading}>Sign in to your account</Text>
+            <Text style={styles.subheading}>{t('signInToYourAccount')}</Text>
 
             <View onFocus={handleFirstFocus}>
 
-              <Text style={styles.label}>Email address</Text>
+              <Text style={styles.label}>{t('emailAddress')}</Text>
 
               <Controller
                 control={control}
                 name='email'
                 rules={{
-                  required: 'Email is required',
+                  required: `${t('emailIsRequired')}`,
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Invalid email address'
+                    message: `${t('invalidEmailAddress')}`
                   }
                 }}
                 render={({ field: { onBlur, onChange, value } }) => (
@@ -145,16 +145,16 @@ export default function LoginScreen({ navigation, route }) {
                 <Text style={styles.error}>{errors.email.message}</Text>
               }
 
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('password')}</Text>
 
               <Controller
                 control={control}
                 name='password'
                 rules={{
-                  required: 'Password is required',
+                  required: `${t('passwordIsRequired')}`,
                   minLength: {
                     value: 6,
-                    message: 'Password should be at least 6 characters long!'
+                    message: `${t('passwordShouldBeAtLeast6CharactersLong')}!`
                   }
                 }}
                 render={({ field: { onBlur, onChange, value } }) => (
@@ -167,7 +167,7 @@ export default function LoginScreen({ navigation, route }) {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       onSubmitEditing={handleSubmit(submitHandler)}
-                      placeholder="Enter your password"
+                      placeholder={t('enterYourPassword')}
                       placeholderTextColor={colors.muted}
                       secureTextEntry={!isPasswordVisible['password']}
                       autoCapitalize="none"
@@ -192,16 +192,16 @@ export default function LoginScreen({ navigation, route }) {
                 style={styles.button}
                 onPress={handleSubmit(submitHandler)}
                 disabled={isSubmitting}>
-                <Text style={styles.buttonText}>{isSubmitting ? 'Signing...' : 'Sign In'}</Text>
+                <Text style={styles.buttonText}>{isSubmitting ? `${t('signing')}...` : `${t('signIn')}`}</Text>
               </TouchableOpacity>
             </View>
 
 
 
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 3 }}>
-              <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>Don't have an account?</Text>
+              <Text style={{ textAlign: 'center', color: colors.muted, marginTop: 28, fontSize: 13 }}>{`${t('dontHaveAnAccount')}?`}</Text>
               <Pressable onPress={() => goToRegisterHandler()}>
-                <Text style={{ color: colors.primary, fontWeight: '700' }}>Register</Text>
+                <Text style={{ color: colors.primary, fontWeight: '700' }}>{t('registerAccount')}</Text>
               </Pressable>
             </View>
 
