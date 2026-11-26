@@ -10,16 +10,24 @@ import Header from '../components/Header.jsx';
 import { AuthContext } from '../contexts/auth/AuthContext.js';
 import { useTranslation } from 'react-i18next';
 
+
 export default function BookDetailsScreen({ navigation, route }) {
   const [book, setBook] = useState({})
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const bookId = route.params.bookId;
   const { user } = use(AuthContext);
-const {t} = useTranslation();
-
+  const { t } = useTranslation();
+  
   const isOwner = book.user_id === user.id;
+  
+  const statusMap = {
+    'want-to-read': `${t('wantToRead')}`,
+    'read': `${t('read')}`,
+    'reading': `${t('reading')}`
+  }
 
+  
   useFocusEffect(
     useCallback(() => {
       const getBookDetails = async () => {
@@ -123,7 +131,7 @@ const {t} = useTranslation();
             <Image source={{ uri: book.imageUrl }} style={styles.img} />
           </View>
 
-           <Text style={styles.title}>{book.title}</Text> 
+          <Text style={styles.title}>{book.title}</Text>
 
           <Text>{t('author')}: <Text style={styles.author}>{book.author}</Text></Text>
 
@@ -131,7 +139,7 @@ const {t} = useTranslation();
 
 
           <View style={styles.statusContainer}>
-            <Text style={styles.status}>✓ {book.status}</Text>
+            <Text style={styles.status}>✓ {statusMap[book.status]}</Text>
           </View>
 
         </View>

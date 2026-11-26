@@ -101,5 +101,11 @@
     "repeatYourPassword": "Repeat your password",
    "getStarted": "Get Started", 
    "yourPersonalLibrary": "Your personal library",
-   "alwaysWithYou": "always with you"
+   "alwaysWithYou": "always with you",
+   "inOrderToOpenYourGalleryYouNeedToAllowAccessToYourGallery": "In order to open your gallery you need to allow access to your gallery",
+   "inOrderToOpenYourGalleryYouNeedToAllowAccessPermissionToYourGalleryInPhoneSettingsMenu": "In order to open your gallery you need to allow access permission to your gallery in phone settings menu",
+    "goToSettings": "Go to settings",
+    "inOrderToTakeAictureYouNeedToAllowAccessToYourCamera": "In order to take a picture you need to allow access to your camera",
+    "inOrderToTakeAPictureYouNeedToAllowAccessPermissionToYourCameraInPhoneSettingsMenu": "In order to take a picture you need to allow access permission to your camera in phone settings menu",
+     "notification": "Notification"
 }

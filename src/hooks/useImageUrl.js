@@ -1,23 +1,44 @@
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
+import { Alert, Linking } from "react-native";
+import { useTranslation } from "react-i18next";
 
 export default function useImageUrl() {
     const [imageUri, setImageUri] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
+    const { t } = useTranslation();
+
 
     const pickImage = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-        const permisionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const pickImagePermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
+        if (!pickImagePermission.granted && pickImagePermission.canAskAgain) {
+            Alert.alert(`${t('notification')}`, `${t('inOrderToOpenYourGalleryYouNeedToAllowAccessToYourGallery')}!`, [
+                {
+                    text: `${t('allow')} `,
+                    onPress: async () => await pickImage()
+                },
+                {
+                    text: ` ${t('cancel')}`
+                }
+            ])
+            return
+        }
 
-        if (!permisionResult.granted) {
-            return (
-                <View>
-                    <Text>In order to use the camera you need to grant camera permission!</Text>
-                    <Button title='Grant Camera Permission' onPress={permisionResult} />
-                </View>
-            )
+        if (!pickImagePermission.canAskAgain) {
+
+            Alert.alert(`${t('notification')}`, `${t('inOrderToOpenYourGalleryYouNeedToAllowAccessPermissionToYourGalleryInPhoneSettingsMenu')}!`, [
+                {
+                    text: `${t('goToSettings')}`,
+                    onPress: () => Linking.openSettings()
+                },
+                {
+                    text: ` ${t('cancel')}`
+                }
+            ])
+            return
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -35,11 +56,35 @@ export default function useImageUrl() {
 
     const takePhoto = async () => {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-        const permisionResult = await ImagePicker.requestCameraPermissionsAsync();
+        const takePhotoPermision = await ImagePicker.requestCameraPermissionsAsync();
 
-        if (!permisionResult.granted) {
-            return;
+        if (!takePhotoPermision.granted && takePhotoPermision.canAskAgain) {
+            Alert.alert(`${t('notification')}`, `${t('inOrderToTakeAictureYouNeedToAllowAccessToYourCamera')}!`, [
+                {
+                    text: `${t('allow')} `,
+                    onPress: async () => takePhoto()
+                },
+                {
+                    text: ` ${t('cancel')}`
+                }
+            ])
+            return
         }
+
+        if (!takePhotoPermision.canAskAgain) {
+
+            Alert.alert(`${t('notification')}`, `${t('inOrderToTakeAPictureYouNeedToAllowAccessPermissionToYourCameraInPhoneSettingsMenu')}!`, [
+                {
+                    text: `${t('goToSettings')}`,
+                    onPress: () => Linking.openSettings()
+                },
+                {
+                    text: ` ${t('cancel')}`
+                }
+            ])
+            return
+        }
+
 
         const result = await ImagePicker.launchCameraAsync({
             ediaTypes: ['images'],
